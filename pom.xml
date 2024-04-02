@@ -19,26 +19,38 @@
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <parent>
-        <groupId>org.sonatype.oss</groupId>
-        <artifactId>oss-parent</artifactId>
-        <version>9</version>
-    </parent>
+<!--    <parent>-->
+<!--        <groupId>org.sonatype.oss</groupId>-->
+<!--        <artifactId>oss-parent</artifactId>-->
+<!--        <version>9</version>-->
+<!--    </parent>-->
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>sonatype-nexus-snapshots</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
-            <id>sonatype-nexus-staging</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>releases</id>
+            <name>releases</name>
+            <url>http://mvnrepo.alibaba-inc.com/mvn/releases</url>
         </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>snapshots</name>
+            <url>http://mvnrepo.alibaba-inc.com/mvn/snapshots</url>
+        </snapshotRepository>
     </distributionManagement>
+<!--    <distributionManagement>-->
+<!--        <snapshotRepository>-->
+<!--            <id>sonatype-nexus-snapshots</id>-->
+<!--            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>-->
+<!--        </snapshotRepository>-->
+<!--        <repository>-->
+<!--            <id>sonatype-nexus-staging</id>-->
+<!--            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
+<!--        </repository>-->
+<!--    </distributionManagement>-->
 
     <groupId>com.aliyun.mns</groupId>
-    <artifactId>aliyun-sdk-mns</artifactId>
-    <version>1.1.9.2</version>
+    <artifactId>aliyun-sdk-mns-inner</artifactId>
+    <version>1.1.9.3-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>Aliyun Message and Notification Service SDK for Java</name>
     <url>http://www.aliyun.com</url>
@@ -285,9 +297,9 @@
             </properties>
         </developer>
     </developers>
-    <scm>
-        <connection>scm:git:git://github.com/aliyun/aliyun-mns-java-sdk.git</connection>
-        <developerConnection>scm:git:git@github.com:aliyun/aliyun-mns-java-sdk.git</developerConnection>
-        <url>https://github.com/aliyun/aliyun-mns-java-sdk</url>
-    </scm>
+<!--    <scm>-->
+<!--        <connection>scm:git:git://github.com/aliyun/aliyun-mns-java-sdk.git</connection>-->
+<!--        <developerConnection>scm:git:git@github.com:aliyun/aliyun-mns-java-sdk.git</developerConnection>-->
+<!--        <url>https://github.com/aliyun/aliyun-mns-java-sdk</url>-->
+<!--    </scm>-->
 </project>
