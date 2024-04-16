@@ -28,6 +28,10 @@ import com.aliyun.mns.model.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ *  The product no longer supports this function
+ */
+@Deprecated
 public class TransactionQueue {
     private static Logger log = LoggerFactory.getLogger(TransactionQueue.class);
     private CloudQueue innerQueue;

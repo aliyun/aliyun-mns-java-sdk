@@ -286,6 +286,9 @@ public class CloudTopic {
      * @return, subscription url
      */
     public String subscribe(SubscriptionMeta meta) {
+        if(StringUtils.isEmpty(meta.getSubscriptionName())){
+            throw new NullPointerException("subscriptionName can not be empty.");
+        }
         SubscribeRequest request = new SubscribeRequest();
         SubscribeAction action = new SubscribeAction(serviceClient, credentials, endpoint);
         request.setMeta(meta);
@@ -302,6 +305,9 @@ public class CloudTopic {
      * @return AsyncResult, you can wait result by AsyncResult if you want to do this
      */
     public AsyncResult<String> asyncSubscribe(SubscriptionMeta meta, AsyncCallback<String> callback) {
+        if(StringUtils.isEmpty(meta.getSubscriptionName())){
+            throw new NullPointerException("subscriptionName can not be empty.");
+        }
         SubscribeRequest request = new SubscribeRequest();
         SubscribeAction action = new SubscribeAction(serviceClient, credentials, endpoint);
         request.setMeta(meta);
@@ -315,6 +321,9 @@ public class CloudTopic {
      * @param meta, SubscriptionMeta data
      */
     public void setSubscriptionAttr(SubscriptionMeta meta) {
+        if(StringUtils.isEmpty(meta.getSubscriptionName())){
+            throw new NullPointerException("subscriptionName can not be empty.");
+        }
         SetSubscriptionAttrRequest request = new SetSubscriptionAttrRequest();
         SetSubscriptionAttrAction action = new SetSubscriptionAttrAction(serviceClient, credentials, endpoint);
         request.setMeta(meta);
@@ -330,6 +339,9 @@ public class CloudTopic {
      * @return AsyncResult, you can wait result by AsyncResult if you want to do this
      */
     public AsyncResult<Void> asyncSetSubscriptionAttr(SubscriptionMeta meta, AsyncCallback<Void> callback) {
+        if(StringUtils.isEmpty(meta.getSubscriptionName())){
+            throw new NullPointerException("subscriptionName can not be empty.");
+        }
         SetSubscriptionAttrRequest request = new SetSubscriptionAttrRequest();
         SetSubscriptionAttrAction action = new SetSubscriptionAttrAction(serviceClient, credentials, endpoint);
         request.setMeta(meta);

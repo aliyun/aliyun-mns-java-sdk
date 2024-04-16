@@ -22,6 +22,7 @@ package com.aliyun.mns.common.auth;
 import com.aliyuncs.auth.AlibabaCloudCredentials;
 import com.aliyuncs.auth.AlibabaCloudCredentialsProvider;
 import com.aliyuncs.auth.InstanceProfileCredentials;
+import com.aliyuncs.exceptions.ClientException;
 
 import static com.aliyun.mns.common.utils.CodingUtils.assertParameterNotNull;
 
@@ -33,6 +34,8 @@ public class ServiceCredentials {
     private String accessKeySecret;
     private String securityToken;
     private AlibabaCloudCredentialsProvider credentialsProvider;
+    private AlibabaCloudCredentials credentials;
+
 
     /**
      * 构造函数。
@@ -73,6 +76,20 @@ public class ServiceCredentials {
      */
     public ServiceCredentials(AlibabaCloudCredentialsProvider credentialProvider) {
         setCredentialsProvider(credentialProvider);
+        refreshCredentials();
+    }
+
+    /**
+     * 初始化或刷新凭证。
+     */
+    private void refreshCredentials() {
+        if (credentialsProvider != null) {
+            try {
+                this.credentials = credentialsProvider.getCredentials();
+            } catch (ClientException e) {
+                throw new com.aliyun.mns.common.ClientException(e);
+            }
+        }
     }
 
     /**
@@ -162,7 +179,7 @@ public class ServiceCredentials {
         }
         String tmpAccessKeyId;
         try {
-            tmpAccessKeyId = credentialsProvider.getCredentials().getAccessKeyId();
+            tmpAccessKeyId = credentials.getAccessKeyId();
         } catch (Exception e) {
             tmpAccessKeyId = null;
         }
@@ -180,7 +197,7 @@ public class ServiceCredentials {
         }
         String tmpAccesskeySecret;
         try {
-            tmpAccesskeySecret = credentialsProvider.getCredentials().getAccessKeySecret();
+            tmpAccesskeySecret = credentials.getAccessKeySecret();
         } catch (Exception e) {
             tmpAccesskeySecret = null;
         }
@@ -199,7 +216,7 @@ public class ServiceCredentials {
 
         String tmpSecurityToken;
         try {
-            AlibabaCloudCredentials credential = credentialsProvider.getCredentials();
+            AlibabaCloudCredentials credential = credentials;
             if (credential instanceof InstanceProfileCredentials) {
                 tmpSecurityToken = ((InstanceProfileCredentials) credential).getSessionToken();
             } else {
