@@ -20,6 +20,7 @@
 package com.aliyun.mns.client;
 
 import com.aliyun.mns.common.ClientException;
+import com.aliyun.mns.common.MNSConstants;
 import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.auth.ServiceCredentials;
 import com.aliyun.mns.common.http.ClientConfiguration;
@@ -58,16 +59,38 @@ public final class CloudAccount {
         HttpCallback.setCallbackExecutor(executor);
     }
 
+    public CloudAccount(String accountEndpoint) {
+        this(System.getenv(MNSConstants.ALIYUN_AK_ENV_KEY), System.getenv(MNSConstants.ALIYUN_SK_ENV_KEY), accountEndpoint, "", null, null);
+    }
+
+
+    public CloudAccount(String accountEndpoint, String securityToken) {
+        this(System.getenv(MNSConstants.ALIYUN_AK_ENV_KEY), System.getenv(MNSConstants.ALIYUN_SK_ENV_KEY),  accountEndpoint, securityToken, null, null);
+    }
+
+    public CloudAccount(String accountEndpoint, ClientConfiguration config) {
+        this(System.getenv(MNSConstants.ALIYUN_AK_ENV_KEY), System.getenv(MNSConstants.ALIYUN_SK_ENV_KEY),  accountEndpoint, "", null, config);
+    }
+
+    /**
+     * 推荐使用 {@link #CloudAccount(String)} 作为替代
+     */
     public CloudAccount(String accessId, String accessKey,
         String accountEndpoint) {
         this(accessId, accessKey, accountEndpoint, "", null, null);
     }
 
+    /**
+     * 推荐使用 {@link #CloudAccount(String,String)} 作为替代
+     */
     public CloudAccount(String accessId, String accessKey,
         String accountEndpoint, String securityToken) {
         this(accessId, accessKey, accountEndpoint, securityToken, null, null);
     }
 
+    /**
+     * 推荐使用 {@link #CloudAccount(String,ClientConfiguration)} 作为替代
+     */
     public CloudAccount(String accessId, String accessKey,
         String accountEndpoint, ClientConfiguration config) {
         this(accessId, accessKey, accountEndpoint, "", null, config);
@@ -128,11 +151,20 @@ public final class CloudAccount {
     }
 
     private void init() {
+        if (credentialsProvider != null){
+
+        }
+
         if (this.accessId != null && this.accessKey != null) {
             this.credentials = new ServiceCredentials(accessId, accessKey, securityToken);
-        } else {
+        } else if (credentialsProvider != null) {
             this.credentials = new ServiceCredentials(credentialsProvider);
+        }else {
+            // 基于 env ak/sk 兜底
+
+            this.credentials = new ServiceCredentials(System.getenv(MNSConstants.ALIYUN_AK_ENV_KEY), System.getenv(MNSConstants.ALIYUN_SK_ENV_KEY), securityToken);
         }
+
         if (config == null) {
             config = new ClientConfiguration();
         }
