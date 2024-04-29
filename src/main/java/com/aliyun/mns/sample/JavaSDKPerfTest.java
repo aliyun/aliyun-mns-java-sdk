@@ -23,88 +23,111 @@ import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.common.http.ClientConfiguration;
+import com.aliyun.mns.common.utils.ServiceSettings;
+import com.aliyun.mns.common.utils.ThreadUtil;
 import com.aliyun.mns.model.Message;
 import com.aliyun.mns.model.QueueMeta;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Function;
 
+/**
+ * 并发测试示例代码
+ * 前置要求
+ * 1. 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
+ * 2.  ${"user.home"}/.aliyun-mns.properties 文件配置如下：
+ *          mns.endpoint=http://xxxxxxx
+ *          mns.perf.queueName=JavaSDKPerfTestQueue
+ *          mns.perf.threadNum=200
+ *          mns.perf.totalSeconds=180
+ */
 public class JavaSDKPerfTest {
     private static MNSClient client = null;
-    private static AtomicLong totalCount = new AtomicLong(0);
 
     private static String endpoint = null;
-    private static String accessId = null;
-    private static String accessKey = null;
 
     private static String queueName = "JavaSDKPerfTestQueue";
     private static int threadNum = 100;
-    private static int totalSeconds = 180;
+    private static int totalSeconds = 3;
 
-    protected static boolean parseConf() {
-        String confFilePath = System.getProperty("user.dir") + System.getProperty("file.separator") + "perf_test_config.properties";
-
-        BufferedInputStream bis = null;
-        try {
-            bis = new BufferedInputStream(new FileInputStream(confFilePath));
-            if (bis == null) {
-                System.out.println("ConfFile not opened: " + confFilePath);
-                return false;
-            }
-        } catch (FileNotFoundException e) {
-            System.out.println("ConfFile not found: " + confFilePath);
-            return false;
-        }
-
-        // load file
-        Properties properties = new Properties();
-        try {
-            properties.load(bis);
-        } catch (IOException e) {
-            System.out.println("Load ConfFile Failed: " + e.getMessage());
-            return false;
-        } finally {
-            try {
-                bis.close();
-            } catch (Exception e) {
-                // do nothing
-            }
-        }
-
-        // init the member parameters
-        endpoint = properties.getProperty("Endpoint");
-        System.out.println("Endpoint: " + endpoint);
-        accessId = properties.getProperty("AccessId");
-        System.out.println("AccessId: " + accessId);
-        accessKey = properties.getProperty("AccessKey");
-
-        queueName = properties.getProperty("QueueName", queueName);
-        System.out.println("QueueName: " + queueName);
-        threadNum = Integer.parseInt(properties.getProperty("ThreadNum", String.valueOf(threadNum)));
-        System.out.println("ThreadNum: " + threadNum);
-        totalSeconds = Integer.parseInt(properties.getProperty("TotalSeconds", String.valueOf(totalSeconds)));
-        System.out.println("TotalSeconds: " + totalSeconds);
-
-        return true;
-    }
 
     public static void main(String[] args) {
         if (!parseConf()) {
             return;
         }
 
+        // 1. init client
         ClientConfiguration clientConfiguration = new ClientConfiguration();
         clientConfiguration.setMaxConnections(threadNum);
         clientConfiguration.setMaxConnectionsPerRoute(threadNum);
-
-        // WARNING： Please do not hard code your accessId and accesskey in next line.(more information: https://yq.aliyun.com/articles/55947)
-        CloudAccount cloudAccount = new CloudAccount(accessId, accessKey, endpoint, clientConfiguration);
+        CloudAccount cloudAccount = new CloudAccount(endpoint, clientConfiguration);
         client = cloudAccount.getMNSClient();
 
+        // 2. reCreateQueue
+        reCreateQueue();
+        // 3. SendMessage
+        Function<CloudQueue,Message> sendFunction = queue -> {
+            Message message = new Message();
+            message.setMessageBody("BodyTest");
+            return queue.putMessage(message);
+        };
+        actionProcess("SendMessage", sendFunction , totalSeconds);
+        // 4. Now is the ReceiveMessage
+        int processSeconds = totalSeconds / 3;
+        actionProcess("ReceiveMessage", CloudQueue::popMessage, processSeconds);
+
+        System.out.println("=======end=======");
+    }
+
+    private static void actionProcess(String actionName, Function<CloudQueue, Message> sendFunction, int processSeconds) {
+        System.out.println(actionName +" start!");
+
+        final AtomicLong totalCount = new AtomicLong(0);
+
+        ThreadPoolExecutor executor = ThreadUtil.initThreadPoolExecutorAbort();
+        ThreadUtil.asyncWithReturn(executor, threadNum, () -> {
+            try {
+                String threadName = Thread.currentThread().getName();
+
+                CloudQueue queue = client.getQueueRef(queueName);
+                Message message = new Message();
+                message.setMessageBody("BodyTest");
+                long count = 0;
+
+                Date startDate = new Date();
+                long startTime = startDate.getTime();
+
+                System.out.printf("[Thread%s]startTime:%s %n", threadName, getBjTime(startDate));
+                long endTime = startTime + processSeconds * 1000L;
+                while (true) {
+                    for (int i = 0; i < 50; ++i) {
+                        sendFunction.apply(queue);
+                    }
+                    count += 50;
+
+                    if (System.currentTimeMillis() >= endTime) {
+                        break;
+                    }
+                }
+
+                System.out.printf("[Thread%s]endTime:%s,count:%d %n", threadName, getBjTime(new Date()),count);
+
+                totalCount.addAndGet(count);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        executor.shutdown();
+
+        System.out.println(actionName +" QPS: "+(totalCount.get() / JavaSDKPerfTest.totalSeconds));
+    }
+
+    private static void reCreateQueue() {
         CloudQueue queue = client.getQueueRef(queueName);
         queue.delete();
 
@@ -112,100 +135,32 @@ public class JavaSDKPerfTest {
         meta.setQueueName(queueName);
         client.createQueue(meta);
 
-        // 1. Now check the SendMessage
-        ArrayList<Thread> threads = new ArrayList<Thread>();
-        for (int i = 0; i < threadNum; ++i) {
-            Thread thread = new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        CloudQueue queue = client.getQueueRef(queueName);
-                        Message message = new Message();
-                        message.setMessageBody("Test");
-                        long count = 0;
-                        long startTime = System.currentTimeMillis();
+        // make sure queue exist
+        ThreadUtil.sleep(1000L);
+    }
 
-                        System.out.println(startTime);
-                        long endTime = startTime + totalSeconds * 1000;
-                        while (true) {
-                            for (int i = 0; i < 50; ++i) {
-                                queue.putMessage(message);
-                            }
-                            count += 50;
+    protected static boolean parseConf() {
 
-                            if (System.currentTimeMillis() >= endTime) {
-                                break;
-                            }
-                        }
+        // init the member parameters
+        endpoint = ServiceSettings.getMNSEndPoint();
+        System.out.println("Endpoint: " + endpoint);
 
-                        System.out.println(System.currentTimeMillis());
-                        System.out.println("Thread" + Thread.currentThread().getName() + ": " + String.valueOf(count));
-                        totalCount.addAndGet(count);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, String.valueOf(i));
-            thread.start();
-            threads.add(thread);
-        }
+        queueName = ServiceSettings.getMNSPropertyValue("perf.queueName");
+        System.out.println("QueueName: " + queueName);
+        threadNum = Integer.parseInt(ServiceSettings.getMNSPropertyValue("perf.threadNum"));
+        System.out.println("ThreadNum: " + threadNum);
+        totalSeconds = Integer.parseInt(ServiceSettings.getMNSPropertyValue("perf.totalSeconds"));
+        System.out.println("TotalSeconds: " + totalSeconds);
 
-        for (int i = 0; i < threadNum; ++i) {
-            try {
-                threads.get(i).join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        return true;
+    }
 
-        System.out.println("SendMessage QPS: ");
-        System.out.println(totalCount.get() / totalSeconds);
-
-        // 2. Now is the ReceiveMessage
-        threads.clear();
-        totalCount.set(0);
-
-        totalSeconds = totalSeconds / 3; // To ensure that messages in queue are enough for receiving
-        for (int i = 0; i < threadNum; ++i) {
-            Thread thread = new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        CloudQueue queue = client.getQueueRef(queueName);
-                        long count = 0;
-                        long endTime = System.currentTimeMillis() + totalSeconds * 1000;
-
-                        while (true) {
-                            for (int i = 0; i < 50; ++i) {
-                                queue.popMessage();
-                            }
-                            count += 50;
-
-                            if (System.currentTimeMillis() >= endTime) {
-                                break;
-                            }
-                        }
-
-                        System.out.println("Thread" + Thread.currentThread().getName() + ": " + String.valueOf(count));
-                        totalCount.addAndGet(count);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                }
-            }, String.valueOf(i));
-            thread.start();
-            threads.add(thread);
-        }
-
-        for (int i = 0; i < threadNum; ++i) {
-            try {
-                threads.get(i).join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        System.out.println("ReceiveMessage QPS: ");
-        System.out.println(totalCount.get() / totalSeconds);
-
-        return;
+    /**
+     * 获取北京时间
+     */
+    private static String getBjTime(Date date){
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+        ZonedDateTime zdt = ZonedDateTime.now(ZoneId.of("Asia/Shanghai"));
+        return zdt.format(dtf);
     }
 }
