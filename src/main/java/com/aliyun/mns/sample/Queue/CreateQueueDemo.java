@@ -30,19 +30,18 @@ import com.aliyun.mns.model.QueueMeta;
 public class CreateQueueDemo {
 
     public static void main(String[] args) {
-        // WARNING： Please do not hard code your accessId and accesskey in next line.
-        //(more information: https://yq.aliyun.com/articles/55947)
-        CloudAccount account = new CloudAccount(
-            ServiceSettings.getMNSAccessKeyId(),
-            ServiceSettings.getMNSAccessKeySecret(),
-            ServiceSettings.getMNSAccountEndpoint());
-        MNSClient client = account.getMNSClient(); //this client need only initialize once
+        // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
+        CloudAccount account = new CloudAccount(ServiceSettings.getMNSAccountEndpoint());
+        //this client need only initialize once
+        MNSClient client = account.getMNSClient();
 
-        try {   //Create Queue
+        try {
             QueueMeta qMeta = new QueueMeta();
             qMeta.setQueueName("cloud-queue-demo");
-            qMeta.setPollingWaitSeconds(30);//use long polling when queue is empty.
+            qMeta.setPollingWaitSeconds(30);
+
             CloudQueue cQueue = client.createQueue(qMeta);
+
             System.out.println("Create queue successfully. URL: " + cQueue.getQueueURL());
         } catch (ClientException ce) {
             System.out.println("Something wrong with the network connection between client and MNS service."
@@ -54,17 +53,13 @@ public class CreateQueueDemo {
             } else if (se.getErrorCode().equals("TimeExpired")) {
                 System.out.println("The request is time expired. Please check your local machine timeclock");
             }
-            /*
-            you can get more MNS service error code in following link.
-            https://help.aliyun.com/document_detail/mns/api_reference/error_code/error_code.html?spm=5176.docmns/api_reference/error_code/error_response
-            */
             se.printStackTrace();
         } catch (Exception e) {
             System.out.println("Unknown exception happened!");
             e.printStackTrace();
+        }finally {
+            client.close();
         }
-
-        client.close();
     }
 
 }

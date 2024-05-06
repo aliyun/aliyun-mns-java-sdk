@@ -26,11 +26,10 @@ import com.aliyun.mns.model.response.commonbuy.OpenServiceResponse;
 
 public class OpenServiceDemo {
 
+
     public static void main(String[] args) {
-        CloudAccount account = new CloudAccount(
-            ServiceSettings.getMNSAccessKeyId(),
-            ServiceSettings.getMNSAccessKeySecret(),
-            ServiceSettings.getMNSAccountEndpoint());
+        // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
+        CloudAccount account = new CloudAccount(ServiceSettings.getMNSAccountEndpoint());
         MNSClient client = account.getMNSClient();
 
         OpenServiceResponse openServiceResponse = client.openService();

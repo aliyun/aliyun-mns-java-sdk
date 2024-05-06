@@ -59,12 +59,8 @@ public class Sample {
     private MNSClient client = null;
 
     public Sample() {
-        // WARNING： Please do not hard code your accessId and accesskey in next line.
-        //(more information: https://yq.aliyun.com/articles/55947)
-        CloudAccount account = new CloudAccount(
-            ServiceSettings.getMNSAccessKeyId(),
-            ServiceSettings.getMNSAccessKeySecret(),
-            ServiceSettings.getMNSAccountEndpoint());
+        // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
+        CloudAccount account = new CloudAccount(ServiceSettings.getMNSAccountEndpoint());
         client = account.getMNSClient();
     }
 

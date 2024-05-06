@@ -142,7 +142,7 @@ public class JavaSDKPerfTest {
     protected static boolean parseConf() {
 
         // init the member parameters
-        endpoint = ServiceSettings.getMNSEndPoint();
+        endpoint = ServiceSettings.getMNSAccountEndpoint();
         System.out.println("Endpoint: " + endpoint);
 
         queueName = ServiceSettings.getMNSPropertyValue("perf.queueName");

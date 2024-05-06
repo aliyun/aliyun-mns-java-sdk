@@ -60,13 +60,6 @@ public class ServiceSettings {
     }
 
     /**
-     * 获得 配置的 endpoint 地址
-     */
-    public static String getMNSEndPoint() {
-        return properties.getProperty("mns.endpoint");
-    }
-
-    /**
      * 获得指定 key 的 配置值
      */
     public static String getMNSPropertyValue(String propertyKey) {

@@ -37,13 +37,9 @@ public class CloudPullTopicDemo {
 
     public static void main(String[] args) throws InterruptedException {
         System.out.println("Start CloudPullTopicDemo");
-        String accessKeyId = ServiceSettings.getMNSAccessKeyId();
-        String accessKeySecret = ServiceSettings.getMNSAccessKeySecret();
-        String endpoint = ServiceSettings.getMNSAccountEndpoint();
 
-        // WARNING： Please do not hard code your accessId and accesskey in next lines.
-        //(more information: https://yq.aliyun.com/articles/55947)
-        CloudAccount account = new CloudAccount(accessKeyId, accessKeySecret, endpoint);
+        // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
+        CloudAccount account = new CloudAccount(ServiceSettings.getMNSAccountEndpoint());
         MNSClient client = account.getMNSClient();
 
         // build consumer name list.

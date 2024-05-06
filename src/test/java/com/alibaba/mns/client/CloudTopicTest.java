@@ -5,6 +5,7 @@ import com.aliyun.mns.client.impl.queue.CreateQueueAction;
 import com.aliyun.mns.client.impl.topic.CreateTopicAction;
 import com.aliyun.mns.client.impl.topic.SetSubscriptionAttrAction;
 import com.aliyun.mns.client.impl.topic.SubscribeAction;
+import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.QueueMeta;
 import com.aliyun.mns.model.SubscriptionMeta;
 import com.aliyun.mns.model.TopicMeta;
@@ -240,10 +241,10 @@ public class CloudTopicTest {
     }
 
     private MNSClient getMnsClient() {
-        String accessKeyId = "ak";
-        String accessKeySecret = "sk";
         String endpoint = "http://xxx.mns.test.com";
-        CloudAccount account = new CloudAccount(accessKeyId, accessKeySecret, endpoint);
+        // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
+        CloudAccount account = new CloudAccount(endpoint);
+
         MNSClient mnsClient = account.getMNSClient();
         return mnsClient;
     }
