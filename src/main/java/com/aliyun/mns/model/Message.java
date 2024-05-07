@@ -26,7 +26,7 @@ import org.apache.commons.codec.binary.Base64;
 import static com.aliyun.mns.common.MNSConstants.DEFAULT_CHARSET;
 
 public final class Message extends BaseMessage {
-    public static enum MessageBodyType {
+    public enum MessageBodyType {
         BASE64, RAW_STRING
     }
 
@@ -151,6 +151,14 @@ public final class Message extends BaseMessage {
         setMessageBody(messageBody, MessageBodyType.BASE64);
     }
 
+
+    /**
+     * 设置消息体，文本类型，不做Base64编码
+     */
+    public void setMessageBodyAsRawString(byte[] messageBody) {
+        setMessageBody(messageBody, MessageBodyType.RAW_STRING);
+    }
+
     /**
      * 设置消息体，二进制类型
      * MessageBodyType 为 RAW_STRING时，原String仅支持UTF-8编码
@@ -178,6 +186,13 @@ public final class Message extends BaseMessage {
     }
 
     /**
+     * 设置消息体，文本类型，不做Base64编码
+     */
+    public void setMessageBodyAsRawString(String messageBody) {
+        setMessageBody(messageBody, MessageBodyType.RAW_STRING);
+    }
+
+    /**
      * 设置消息体，指定消息体的类型
      * MessageBodyType 为 RawString 时，使用UTF-8编码
      *
@@ -185,20 +200,14 @@ public final class Message extends BaseMessage {
      * @param bodyType    body type
      */
     public void setMessageBody(String messageBody, MessageBodyType bodyType) {
-        if (bodyType == MessageBodyType.BASE64) {
-            try {
-                byte[] encodeBase64 = Base64.encodeBase64(messageBody.getBytes(DEFAULT_CHARSET));
-                setBaseMessageBody(encodeBase64);
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("Not support encoding: " + DEFAULT_CHARSET);
-            }
-        } else { // Raw String, maybe Base64 already
-            try {
-                setBaseMessageBody(messageBody.getBytes(DEFAULT_CHARSET));
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("Not support encoding: " + DEFAULT_CHARSET);
-            }
+        byte[] bytes;
+        try {
+            bytes = messageBody.getBytes(DEFAULT_CHARSET);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Not support encoding: " + DEFAULT_CHARSET);
         }
+
+        setMessageBody(bytes,bodyType);
     }
 
     /**
@@ -213,17 +222,10 @@ public final class Message extends BaseMessage {
 
     /**
      * 获取Base64编码的消息体，即 不进行 base64 解密
-     *
-     * @return message body
+     * 推荐 {@link #getMessageBodyAsRawString()}作为替代
      */
+    @Deprecated
     public String getMessageBodyAsBase64() {
-        return getMessageBodyAsNormal();
-    }
-
-    /**
-     * 获取消息体，不进行 任何解密动作
-     */
-    public String getMessageBodyAsNormal(){
         if (getMessageBodyBytes() == null) {
             return null;
         }

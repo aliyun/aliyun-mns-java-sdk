@@ -29,11 +29,31 @@ public class RawTopicMessage extends TopicMessage {
     }
 
     /**
+     * 获取消息体，文本类型
+     *
+     * @return message body
+     */
+    @Override
+    public String getMessageBody() {
+        return getMessageBodyAsString();
+    }
+
+    @Override
+    public void setMessageBody(String messageBody) {
+        setBaseMessageBody(messageBody);
+    }
+
+    @Override
+    public void setMessageBody(byte[] messageBody) {
+        setBaseMessageBody(messageBody);
+    }
+
+    /**
      * 获取文本消息体
      *
      * @return message body
      */
-    public String getMessageBodyAsString() {
+    private String getMessageBodyAsString() {
         if (getMessageBodyBytes() == null) {
             return null;
         }
@@ -44,14 +64,5 @@ public class RawTopicMessage extends TopicMessage {
         }
     }
 
-    /**
-     * 获取消息体，文本类型
-     *
-     * @return message body
-     */
-    @Override
-    public String getMessageBody() {
-        return getMessageBodyAsString();
-    }
 
 }

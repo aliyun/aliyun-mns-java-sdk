@@ -77,6 +77,7 @@ public class PublishMessageAction extends AbstractAction<PublishMessageRequest, 
     @Override
     protected ResultParser<TopicMessage> buildResultParser() {
         return new ResultParser<TopicMessage>() {
+            @Override
             public TopicMessage parse(ResponseMessage response) throws ResultParseException {
 
                 TopicMessageDeserializer deserializer = new TopicMessageDeserializer(messageType);
