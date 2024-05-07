@@ -31,8 +31,9 @@ public class Base64TopicMessage extends TopicMessage {
      * @return message body
      */
     public String getMessageBodyAsBase64() {
-        if (getMessageBodyBytes() == null)
+        if (getMessageBodyBytes() == null) {
             return null;
+        }
         return Base64.encodeBase64String(getMessageBodyBytes());
     }
 
@@ -41,6 +42,7 @@ public class Base64TopicMessage extends TopicMessage {
      *
      * @return message body
      */
+    @Override
     public String getMessageBody() {
         return getMessageBodyAsBase64();
     }

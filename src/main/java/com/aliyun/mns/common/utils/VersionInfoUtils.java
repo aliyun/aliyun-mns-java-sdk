@@ -58,9 +58,10 @@ public class VersionInfoUtils {
             .getResourceAsStream(VERSION_INFO_FILE);
         Properties versionInfoProperties = new Properties();
         try {
-            if (inputStream == null)
+            if (inputStream == null) {
                 throw new Exception(VERSION_INFO_FILE
                     + " not found on classpath");
+            }
 
             versionInfoProperties.load(inputStream);
             version = versionInfoProperties.getProperty("version");

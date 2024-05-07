@@ -35,6 +35,7 @@ public abstract class TopicMessage extends BaseMessage {
      *
      * @param messageBody message body
      */
+    @Override
     public void setMessageBody(byte[] messageBody) {
         setBaseMessageBody(messageBody);
     }
@@ -44,9 +45,9 @@ public abstract class TopicMessage extends BaseMessage {
      *
      * @param messageBody message body
      */
+    @Override
     public void setMessageBody(String messageBody) {
         setBaseMessageBody(messageBody);
-
     }
 
     /**

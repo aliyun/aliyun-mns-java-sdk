@@ -323,8 +323,9 @@ public class Sample {
             do {
                 batchPopMessage = queue.batchPopMessage(2);
 
-                if (batchPopMessage != null)
+                if (batchPopMessage != null) {
                     popedMessages.addAll(batchPopMessage);
+                }
             }
             while (batchPopMessage != null);
 
@@ -583,10 +584,12 @@ public class Sample {
             System.out.println("create topic error, " + e.getMessage());
         } finally {
             //删除topic
-            if (topic != null)
+            if (topic != null) {
                 topic.delete();
-            if (topic2 != null)
+            }
+            if (topic2 != null) {
                 topic2.delete();
+            }
         }
 
     }
@@ -637,8 +640,9 @@ public class Sample {
             System.out.println("subscribe/unsubribe error");
         } finally {
             //删除topic, 删除后，订阅关系不可用
-            if (topic != null)
+            if (topic != null) {
                 topic.delete();
+            }
         }
 
     }
@@ -695,8 +699,9 @@ public class Sample {
             e.printStackTrace();
         } finally {
             //删除topic
-            if (topic != null)
+            if (topic != null) {
                 topic.delete();
+            }
             ep.stop();
         }
     }
@@ -756,8 +761,9 @@ public class Sample {
             e.printStackTrace();
         } finally {
             //删除topic
-            if (topic != null)
+            if (topic != null) {
                 topic.delete();
+            }
             ep.stop();
         }
     }
@@ -816,8 +822,9 @@ public class Sample {
             e.printStackTrace();
         } finally {
             //删除topic
-            if (topic != null)
+            if (topic != null) {
                 topic.delete();
+            }
             ep.stop();
         }
     }
@@ -834,24 +841,28 @@ public class Sample {
         public int mNum;
 
         public void waitComplete() {
-            mLock.lock();
             if (!mFinished.get()) {
+                mLock.lock();
                 try {
                     mCondition.await();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                }finally {
+                    mLock.unlock();
                 }
             }
-            mLock.unlock();
         }
 
         public int updateCompleteCount() {
             int num = mCount.incrementAndGet();
             if (num >= mNum) {
                 mLock.lock();
-                mFinished.set(true);
-                mCondition.signal();
-                mLock.unlock();
+                try {
+                    mFinished.set(true);
+                    mCondition.signal();
+                } finally {
+                    mLock.unlock();
+                }
             }
             return num;
         }
@@ -866,6 +877,7 @@ public class Sample {
             mNum = sendNum;
         }
 
+        @Override
         public void run() {
             int hasSendNum = 0;
             while (hasSendNum++ < mNum) {
@@ -1008,7 +1020,8 @@ public class Sample {
     }
 
     public void clear() {
-        if (client.isOpen())
+        if (client.isOpen()) {
             client.close();
+        }
     }
 }

@@ -34,8 +34,9 @@ public class RawTopicMessage extends TopicMessage {
      * @return message body
      */
     public String getMessageBodyAsString() {
-        if (getMessageBodyBytes() == null)
+        if (getMessageBodyBytes() == null) {
             return null;
+        }
         try {
             return new String(getMessageBodyBytes(), DEFAULT_CHARSET);
         } catch (UnsupportedEncodingException e) {
@@ -48,6 +49,7 @@ public class RawTopicMessage extends TopicMessage {
      *
      * @return message body
      */
+    @Override
     public String getMessageBody() {
         return getMessageBodyAsString();
     }

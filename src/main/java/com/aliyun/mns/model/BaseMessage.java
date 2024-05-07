@@ -104,7 +104,6 @@ public abstract class BaseMessage {
      */
     public void setBaseMessageBody(String messageBody) {
         setMessageBodyBytes(messageBody.getBytes(Charset.forName("utf-8")));
-
     }
 
     /**

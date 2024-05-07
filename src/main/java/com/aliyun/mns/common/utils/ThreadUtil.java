@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author zxg
  */
 public class ThreadUtil {
     private static final Logger logger = LoggerFactory.getLogger(ThreadUtil.class);
@@ -55,7 +54,12 @@ public class ThreadUtil {
         return initThreadPoolExecutorAbort(corePoolSize, coreMaxPoolSize);
     }
 
-    // 超出缓存队列则 丢弃
+    /**
+     *
+     * @param corePoolSize
+     * @param coreMaxPoolSize
+     * @return
+     */
     public static ThreadPoolExecutor initThreadPoolExecutorAbort(int corePoolSize, int coreMaxPoolSize) {
         //当前线程数大于corePoolSize、小于maximumPoolSize时，超出corePoolSize的线程数的生命周期，1000ms内不使用才释放，当间隔时间过久时，能保证线程的高可用
         long keepActiveTime = 1000;

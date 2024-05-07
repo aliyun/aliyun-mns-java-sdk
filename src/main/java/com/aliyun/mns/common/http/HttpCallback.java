@@ -288,8 +288,8 @@ public class HttpCallback<T> implements FutureCallback<HttpResponse> {
         @Override
         public T getResult(long timewait) {
             if (!completed) {
+                rlock.lock();
                 try {
-                    rlock.lock();
                     if (!completed) {
                         boolean signaled = false;
                         if (timewait <= 0) {
@@ -316,8 +316,8 @@ public class HttpCallback<T> implements FutureCallback<HttpResponse> {
         }
 
         public void onSuccess(T result) {
+            rlock.lock();
             try {
-                rlock.lock();
                 if (completed) {
                     return;
                 }
@@ -331,8 +331,8 @@ public class HttpCallback<T> implements FutureCallback<HttpResponse> {
         }
 
         public void onFail(Exception ex) {
+            rlock.lock();
             try {
-                rlock.lock();
                 if (completed) {
                     return;
                 }

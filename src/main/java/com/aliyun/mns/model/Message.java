@@ -146,6 +146,7 @@ public final class Message extends BaseMessage {
      *
      * @param messageBody message body
      */
+    @Override
     public void setMessageBody(byte[] messageBody) {
         setMessageBody(messageBody, MessageBodyType.BASE64);
     }
@@ -171,6 +172,7 @@ public final class Message extends BaseMessage {
      *
      * @param messageBody message body
      */
+    @Override
     public void setMessageBody(String messageBody) {
         setMessageBody(messageBody, MessageBodyType.BASE64);
     }
@@ -204,23 +206,34 @@ public final class Message extends BaseMessage {
      *
      * @return message body
      */
+    @Override
     public String getMessageBody() {
         return getMessageBodyAsString();
     }
 
     /**
-     * 获取Base64编码的消息体
+     * 获取Base64编码的消息体，即 不进行 base64 解密
      *
      * @return message body
      */
     public String getMessageBodyAsBase64() {
-        if (getMessageBodyBytes() == null)
+        return getMessageBodyAsNormal();
+    }
+
+    /**
+     * 获取消息体，不进行 任何解密动作
+     */
+    public String getMessageBodyAsNormal(){
+        if (getMessageBodyBytes() == null) {
             return null;
+        }
         return new String(getMessageBodyBytes());
     }
 
     /**
-     * 获取文本消息体, 文本编码UTF-8
+     * 获取文本消息体
+     * 解密：base64
+     * charSet： UTF-8
      *
      * @return message body
      */
@@ -228,10 +241,14 @@ public final class Message extends BaseMessage {
         return getMessageBodyAsString(DEFAULT_CHARSET);
     }
 
+    /**
+     * 获取文本消息体，base 64 默认 解密
+     */
     public String getMessageBodyAsString(String charSet) {
         byte[] messageBodyAsBytes = getMessageBodyBytes();
-        if (messageBodyAsBytes == null)
+        if (messageBodyAsBytes == null) {
             return null;
+        }
         try {
             return new String(Base64.decodeBase64(messageBodyAsBytes), charSet);
         } catch (UnsupportedEncodingException e) {

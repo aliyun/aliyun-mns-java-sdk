@@ -29,14 +29,21 @@ import com.aliyun.mns.model.Message;
 
 public class ConsumerDemo {
 
+    /**
+     * replace with your queue name
+     */
+    private static final String QUEUE_NAME = "cloud-queue-demo";
+
     public static void main(String[] args) {
         // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
         CloudAccount account = new CloudAccount(ServiceSettings.getMNSAccountEndpoint());
-        MNSClient client = account.getMNSClient(); //this client need only initialize once
+        //this client need only initialize once
+        MNSClient client = account.getMNSClient();
 
         // Demo for receive message code
         try {
-            CloudQueue queue = client.getQueueRef("cloud-queue-demo");// replace with your queue name
+
+            CloudQueue queue = client.getQueueRef(QUEUE_NAME);
             for (int i = 0; i < 10; i++) {
                 Message popMsg = queue.popMessage();
                 if (popMsg != null) {

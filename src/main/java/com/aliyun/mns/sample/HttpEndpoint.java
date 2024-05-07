@@ -262,8 +262,9 @@ public class HttpEndpoint {
 
         List<String> tmp = new ArrayList<String>();
         for (Map.Entry<String, String> entry : headers.entrySet()) {
-            if (entry.getKey().startsWith("x-mns-"))
+            if (entry.getKey().startsWith("x-mns-")) {
                 tmp.add(entry.getKey() + ":" + entry.getValue());
+            }
         }
         Collections.sort(tmp);
 
@@ -277,10 +278,11 @@ public class HttpEndpoint {
     }
 
     private String safeGetHeader(Map<String, String> headers, String name) {
-        if (headers.containsKey(name))
+        if (headers.containsKey(name)) {
             return headers.get(name);
-        else
+        } else {
             return "";
+        }
     }
 
     public class SimplifiedNSHandler implements HttpRequestHandler {
@@ -293,6 +295,7 @@ public class HttpEndpoint {
          * @throws HttpException exception
          * @throws IOException   exception
          */
+        @Override
         public void handle(
             final HttpRequest request,
             final HttpResponse response,
@@ -571,8 +574,9 @@ public class HttpEndpoint {
                     System.err.println("Endpoint http server stop or IO error: "
                         + e.getMessage());
                     try {
-                        if (t != null)
+                        if (t != null) {
                             t.join(5 * 1000);
+                        }
                     } catch (InterruptedException e1) {
                         //e1.printStackTrace();
                     }
