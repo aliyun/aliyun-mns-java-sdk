@@ -51,7 +51,7 @@ public class MessageListSerializer extends XMLSerializer<List<Message>> {
                 messages.appendChild(root);
 
                 Element node = safeCreateContentElement(doc, MESSAGE_BODY_TAG,
-                    msg.getMessageBodyAsRawString(), "");
+                    msg.getOriginalMessageBody(), "");
 
                 if (node != null) {
                     root.appendChild(node);

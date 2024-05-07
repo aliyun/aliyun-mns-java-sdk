@@ -30,6 +30,8 @@ import com.aliyun.mns.model.QueueMeta;
 public class CreateQueueDemo {
 
     public static void main(String[] args) {
+        String queueName = "TestQueue";
+
         // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
         CloudAccount account = new CloudAccount(ServiceSettings.getMNSAccountEndpoint());
         //this client need only initialize once
@@ -37,7 +39,7 @@ public class CreateQueueDemo {
 
         try {
             QueueMeta qMeta = new QueueMeta();
-            qMeta.setQueueName("cloud-queue-demo");
+            qMeta.setQueueName(queueName);
             qMeta.setPollingWaitSeconds(30);
 
             CloudQueue cQueue = client.createQueue(qMeta);

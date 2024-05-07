@@ -70,7 +70,7 @@ public class TopicMessageSerializer extends XMLSerializer<PublishMessageRequest>
         doc.appendChild(root);
 
         Element node = safeCreateContentElement(doc, MESSAGE_BODY_TAG,
-            msg.getMessageBody(), "");
+            msg.getOriginalMessageBody(), "");
         if (node != null) {
             root.appendChild(node);
         }

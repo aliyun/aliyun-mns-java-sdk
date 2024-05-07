@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.aliyun.mns.sample.Queue;
+package com.aliyun.mns.sample.Topic;
 
 import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
@@ -26,34 +26,46 @@ import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
+import java.io.IOException;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
+ * 在 topic 模型下，queue 有三个类型，xml、json、simple，在 base 64 加密下不一样，详见下文
  * 1. 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
  * 2. ${"user.home"}/.aliyun-mns.properties 文件配置如下：
  *           mns.endpoint=http://xxxxxxx
  *           mns.msgBodyBase64Switch=true/false
  */
-public class ConsumerDemo {
+public class ConsumerQueueForTopicDemo {
     /**
      * 是否做 base64 编码
      */
     private static final Boolean IS_BASE64 = Boolean.valueOf(ServiceSettings.getMNSPropertyValue("msgBodyBase64Switch","false"));
 
     public static void main(String[] args) {
-        String queueName = "cloud-queue-demo";
+        String QUEUE_NAME = "TestQueue";
 
         // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
         CloudAccount account = new CloudAccount(ServiceSettings.getMNSAccountEndpoint());
         //this client need only initialize once
         MNSClient client = account.getMNSClient();
-        CloudQueue queue = client.getQueueRef(queueName);
+        CloudQueue queue = client.getQueueRef(QUEUE_NAME);
 
         try {
-            // 基础: 单次拉取
-            singleReceive(queue);
-
-            // 推荐: 使用的 长轮询批量拉取模型
             longPollingBatchReceive(queue);
         } catch (ClientException ce) {
             System.out.println("Something wrong with the network connection between client and MNS service."
@@ -86,7 +98,16 @@ public class ConsumerDemo {
         if (messages != null && messages.size() > 0) {
 
             for (Message message : messages) {
-                printMsgAndDelete(queue,message);
+                System.out.println("message handle: " + message.getReceiptHandle());
+                System.out.println("message body: " + message.getOriginalMessageBody());
+                System.out.println("message body real data: " + getMessageBodyData(message));
+                System.out.println("message id: " + message.getMessageId());
+                System.out.println("message dequeue count:" + message.getDequeueCount());
+                //<<to add your special logic.>>
+
+                //remember to  delete message when consume message successfully.
+                queue.deleteMessage(message.getReceiptHandle());
+                System.out.println("delete message successfully.\n");
             }
         }
 
@@ -94,27 +115,55 @@ public class ConsumerDemo {
 
     }
 
-    private static void singleReceive(CloudQueue queue) {
-        System.out.println("=============start singleReceive=============");
-
-        Message popMsg = queue.popMessage();
-        printMsgAndDelete(queue, popMsg);
-
-        System.out.println("=============end singleReceive=============");
-    }
-
-    private static void printMsgAndDelete(CloudQueue queue, Message popMsg) {
-        if (popMsg != null) {
-            System.out.println("message handle: " + popMsg.getReceiptHandle());
-            System.out.println("message body: " + (IS_BASE64 ? popMsg.getMessageBody() : popMsg.getMessageBodyAsRawString()));
-            System.out.println("message id: " + popMsg.getMessageId());
-            System.out.println("message dequeue count:" + popMsg.getDequeueCount());
-            //<<to add your special logic.>>
-
-            //remember to  delete message when consume message successfully.
-            queue.deleteMessage(popMsg.getReceiptHandle());
-            System.out.println("delete message successfully.\n");
+    private static String getMessageBodyData(Message message){
+        if (message == null){
+            return null;
         }
+        String originalMessageBody = message.getOriginalMessageBody();
+
+        // 1. 尝试解析为JSON
+        try {
+            JSONObject object = new JSONObject(originalMessageBody);
+            String jsonMessageData = String.valueOf(object.get("Message"));
+            System.out.println("message body type: JSON,value:"+jsonMessageData );
+            return IS_BASE64? new String(Base64.getDecoder().decode(jsonMessageData), StandardCharsets.UTF_8): jsonMessageData;
+        } catch (JSONException ex1) {
+            // 不是JSON，继续检查XML
+        }
+
+        // 2. 尝试解析为XML
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            Document doc = builder.parse(new InputSource(new StringReader(originalMessageBody)));
+            Element root = doc.getDocumentElement();
+            NodeList nodeList = root.getElementsByTagName("Message");
+            String content = nodeList.item(0).getTextContent();
+            System.out.println("message body type: XML,value:"+content );
+
+            return IS_BASE64? new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8): content;
+        } catch (ParserConfigurationException | SAXException | IOException ex) {
+            // 不是有效的XML
+        }
+
+        // 既不是JSON也不是XML，视为普通文本
+        System.out.println("message body type: SIMPLE" );
+        return IS_BASE64 ? message.getMessageBody() : message.getMessageBodyAsRawString();
+
     }
 
+
+    public String safeGetElementContent(Element root, String tagName,
+        String defaultValue) {
+        NodeList nodes = root.getElementsByTagName(tagName);
+        if (nodes != null) {
+            Node node = nodes.item(0);
+            if (node == null) {
+                return defaultValue;
+            } else {
+                return node.getTextContent();
+            }
+        }
+        return defaultValue;
+    }
 }

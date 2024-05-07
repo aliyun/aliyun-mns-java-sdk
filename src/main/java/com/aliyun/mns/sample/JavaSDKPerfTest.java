@@ -50,9 +50,9 @@ public class JavaSDKPerfTest {
 
     private static String endpoint = null;
 
-    private static String queueName = "JavaSDKPerfTestQueue";
-    private static int threadNum = 100;
-    private static int totalSeconds = 3;
+    private static String queueName;
+    private static int threadNum;
+    private static int totalSeconds;
 
 
     public static void main(String[] args) {
@@ -145,11 +145,11 @@ public class JavaSDKPerfTest {
         endpoint = ServiceSettings.getMNSAccountEndpoint();
         System.out.println("Endpoint: " + endpoint);
 
-        queueName = ServiceSettings.getMNSPropertyValue("perf.queueName");
+        queueName = ServiceSettings.getMNSPropertyValue("perf.queueName","JavaSDKPerfTestQueue");
         System.out.println("QueueName: " + queueName);
-        threadNum = Integer.parseInt(ServiceSettings.getMNSPropertyValue("perf.threadNum"));
+        threadNum = Integer.parseInt(ServiceSettings.getMNSPropertyValue("perf.threadNum","2"));
         System.out.println("ThreadNum: " + threadNum);
-        totalSeconds = Integer.parseInt(ServiceSettings.getMNSPropertyValue("perf.totalSeconds"));
+        totalSeconds = Integer.parseInt(ServiceSettings.getMNSPropertyValue("perf.totalSeconds","6"));
         System.out.println("TotalSeconds: " + totalSeconds);
 
         return true;

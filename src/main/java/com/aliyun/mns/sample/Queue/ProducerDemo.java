@@ -27,12 +27,21 @@ import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
 
+/**
+ * 1. 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
+ * 2. ${"user.home"}/.aliyun-mns.properties 文件配置如下：
+ *           mns.endpoint=http://xxxxxxx
+ *           mns.msgBodyBase64Switch=true/false
+ */
 public class ProducerDemo {
 
     /**
      * replace with your queue name
      */
     private static final String QUEUE_NAME = "cloud-queue-demo";
+
+    private static final Boolean IS_BASE64 = Boolean.valueOf(ServiceSettings.getMNSPropertyValue("msgBodyBase64Switch","false"));
+
 
     public static void main(String[] args) {
         // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
@@ -44,7 +53,15 @@ public class ProducerDemo {
             CloudQueue queue = client.getQueueRef(QUEUE_NAME);
             for (int i = 0; i < 10; i++) {
                 Message message = new Message();
-                message.setMessageBody("demo_message_body" + i);
+                String messageValue = "demo_message_body" + i;
+                if (IS_BASE64) {
+                    // base 64 编码
+                    message.setMessageBody(messageValue);
+                }else {
+                    // 不进行任何编码
+                    message.setMessageBodyAsRawString(messageValue);
+                }
+
                 Message putMsg = queue.putMessage(message);
                 System.out.println("Send message id is: " + putMsg.getMessageId());
             }

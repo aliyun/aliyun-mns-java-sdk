@@ -66,6 +66,7 @@ public class CreateQueueAction extends
     @Override
     protected ResultParser<String> buildResultParser() {
         return new ResultParser<String>() {
+            @Override
             public String parse(ResponseMessage response)
                 throws ResultParseException {
                 return response.getHeaders().get(MNSConstants.LOCATION);

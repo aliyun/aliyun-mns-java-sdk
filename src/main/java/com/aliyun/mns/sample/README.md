@@ -13,15 +13,13 @@ This is a sample that demonstrates how to interactive with Aliyun MNS using the 
 
 The basic steps are:
 
-1. Create a file with name ".aliyun-mns.properties" in user home directory which is "~/" in Linux or "C:
+1. Set AliCloud Ak/SK In Env, please see: [configure-the-alibaba-cloud-accesskey-environment](https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems)
+2. Create a file with name ".aliyun-mns.properties" in user home directory which is "~/" in Linux or "C:
    \Users\YOURNAME\" in Windows.
-2. Fill the file with your Access Key ID, Secret Access Key, Account Id and Account Endpoint (
+3. Fill the file with your Access Key ID, Secret Access Key, Account Id and Account Endpoint (
    Example: http://AccountId.mns.cn-hangzhou.aliyuncs.com) :
 
 > mns.accountendpoint=
-> mns.accesskeyid=
-> mns.accesskeysecret=
-> mns.securitytoken=
 
 3. Save the file.
 4. Run the `QueueSample.java` and `TopicSample.java` file, located in the same directory.

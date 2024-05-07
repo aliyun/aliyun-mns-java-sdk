@@ -62,11 +62,11 @@ public class ServiceSettings {
     /**
      * 获得指定 key 的 配置值
      */
-    public static String getMNSPropertyValue(String propertyKey) {
-        if (StringUtils.isBlank(propertyKey)){
-            return null;
+    public static String getMNSPropertyValue(String propertyKey, String defaultValue) {
+        if (StringUtils.isBlank(propertyKey)) {
+            return defaultValue;
         }
-        return properties.getProperty("mns."+propertyKey);
+        return properties.getProperty("mns." + propertyKey, defaultValue);
     }
 
     /**
@@ -101,16 +101,10 @@ public class ServiceSettings {
         properties.setProperty("mns.accesskeysecret", accessKeySecret);
     }
 
-
     /**
      * Load settings from the configuration file.
      * <p>
-     * The configuration format:
-     * mns.endpoint=
-     * mns.accesskeyid=
-     * mns.accesskeysecret=
-     * proxy.host=
-     * proxy.port=
+     * The configuration format: mns.endpoint= mns.accesskeyid= mns.accesskeysecret= proxy.host= proxy.port=
      * </p>
      */
     public static void load() {
