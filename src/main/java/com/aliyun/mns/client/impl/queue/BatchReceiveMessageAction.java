@@ -53,7 +53,7 @@ public class BatchReceiveMessageAction extends
 
         String uri = reqObject.getRequestPath() + "/" + LOCATION_MESSAGES
             + "?numOfMessages=" + reqObject.getBatchSize();
-        if (reqObject.getWaitSeconds() > 0) {
+        if (reqObject.getWaitSeconds() != null && reqObject.getWaitSeconds() >= 0) {
             uri += "&" + PARAM_WAITSECONDS + "=" + reqObject.getWaitSeconds();
         }
 
