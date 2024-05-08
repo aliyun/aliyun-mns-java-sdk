@@ -1,11 +1,16 @@
 package com.alibaba.mns.client;
 
-import com.aliyun.mns.client.*;
+import com.aliyun.mns.client.AsyncCallback;
+import com.aliyun.mns.client.AsyncResult;
+import com.aliyun.mns.client.CloudAccount;
+import com.aliyun.mns.client.CloudQueue;
+import com.aliyun.mns.client.CloudTopic;
+import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.client.impl.queue.CreateQueueAction;
 import com.aliyun.mns.client.impl.topic.CreateTopicAction;
 import com.aliyun.mns.client.impl.topic.SetSubscriptionAttrAction;
 import com.aliyun.mns.client.impl.topic.SubscribeAction;
-import com.aliyun.mns.common.utils.ServiceSettings;
+import com.aliyun.mns.common.MNSConstants;
 import com.aliyun.mns.model.QueueMeta;
 import com.aliyun.mns.model.SubscriptionMeta;
 import com.aliyun.mns.model.TopicMeta;
@@ -13,11 +18,12 @@ import com.aliyun.mns.model.request.queue.CreateQueueRequest;
 import com.aliyun.mns.model.request.topic.CreateTopicRequest;
 import com.aliyun.mns.model.request.topic.SetSubscriptionAttrRequest;
 import com.aliyun.mns.model.request.topic.SubscribeRequest;
+import java.util.Map;
+import java.util.concurrent.Future;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.function.ThrowingRunnable;
-import org.junit.runner.Result;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
@@ -27,16 +33,16 @@ import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import java.util.Map;
-import java.util.concurrent.Future;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.isNull;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({CreateTopicAction.class, MNSClient.class, CloudTopic.class, CreateQueueAction.class,
-        SubscribeAction.class, CloudQueue.class})
+        SubscribeAction.class, CloudQueue.class, System.class,CloudAccount.class})
 @PowerMockIgnore({"javax.net.ssl.*", "javax.security.*", "javax.crypto.*"})
 public class CloudTopicTest {
 
@@ -242,6 +248,11 @@ public class CloudTopicTest {
 
     private MNSClient getMnsClient() {
         String endpoint = "http://xxx.mns.test.com";
+        // mock env
+        PowerMockito.mockStatic(System.class);
+        when(System.getenv(MNSConstants.ALIYUN_AK_ENV_KEY)).thenReturn("ak-mock-test");
+        when(System.getenv(MNSConstants.ALIYUN_SK_ENV_KEY)).thenReturn("sk-mock-test");
+
         // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
         CloudAccount account = new CloudAccount(endpoint);
 

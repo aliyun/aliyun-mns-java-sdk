@@ -161,7 +161,6 @@ public final class CloudAccount {
             this.credentials = new ServiceCredentials(credentialsProvider);
         }else {
             // 基于 env ak/sk 兜底
-
             this.credentials = new ServiceCredentials(System.getenv(MNSConstants.ALIYUN_AK_ENV_KEY), System.getenv(MNSConstants.ALIYUN_SK_ENV_KEY), securityToken);
         }
 
