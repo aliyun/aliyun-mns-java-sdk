@@ -18,13 +18,13 @@
  */
 
 /**
- * HttpEndpoint类可以作为一个完整的MNS的notification的Endpint实现使用。
+ * HttpEndpoint类可以作为一个完整的MNS的notification的Endpoint实现使用。
  * 实现功能：
  * 1：在本起启动一个http服务
  * 2：接收发到/notifications的请求
  * 3：解析并验证发送到/notifications的请求
  * <p>
- * HttpEndpoint类不依赖MNS的JAVA SDK, 但依赖apache的httpcomponents。如果你的项目用maven管理，
+ * HttpEndpoint类不依赖MNS的JAVA SDK, 但依赖apache的 httpcomponents。如果你的项目用maven管理，
  * 请在pom中添加以下依赖：
  * <dependency>
  * <groupId>org.apache.httpcomponents</groupId>
@@ -33,7 +33,7 @@
  * </dependency>
  */
 
-package com.aliyun.mns.sample;
+package com.aliyun.mns.sample.Topic.subscription;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -96,9 +96,10 @@ import org.xml.sax.SAXException;
 
 /**
  * HTTP/1.1 file server,处理发送到/notifications的请求
+ * 用户侧 http 服务样例，用于接收订阅消息
  */
-public class HttpEndpoint {
-    public static Logger logger = LoggerFactory.getLogger(HttpEndpoint.class);
+public class HttpEndpointSubscription {
+    public static Logger logger = LoggerFactory.getLogger(HttpEndpointSubscription.class);
     public static Thread t;
     private int port;
 
@@ -107,8 +108,8 @@ public class HttpEndpoint {
      *
      * @return http endpoint
      */
-    public static String GenEndpointLocal() {
-        return HttpEndpoint.GenEndpointLocal(80);
+    public static String genEndpointLocal() {
+        return HttpEndpointSubscription.genEndpointLocal(80);
     }
 
     /**
@@ -117,7 +118,7 @@ public class HttpEndpoint {
      * @param port, http server port
      * @return http endpoint
      */
-    public static String GenEndpointLocal(int port) {
+    public static String genEndpointLocal(int port) {
         try {
             InetAddress addr = InetAddress.getLocalHost();
             String ip = addr.getHostAddress().toString();
@@ -135,14 +136,14 @@ public class HttpEndpoint {
      *
      * @param port， http server port
      */
-    public HttpEndpoint(int port) {
+    public HttpEndpointSubscription(int port) {
         init(port);
     }
 
     /**
      * 构造函数，构造HttpEndpoint对象,默认80端口
      */
-    public HttpEndpoint() {
+    public HttpEndpointSubscription() {
         init(80);
     }
 
@@ -387,7 +388,7 @@ public class HttpEndpoint {
          *
          * @param notify, xml element
          */
-        private void paserContent(Element notify) {
+        private void parserContent(Element notify) {
             try {
                 String topicOwner = safeGetElementContent(notify, "TopicOwner");
                 System.out.println("TopicOwner:\t" + topicOwner);
@@ -453,6 +454,7 @@ public class HttpEndpoint {
          * @throws HttpException exception
          * @throws IOException   exception
          */
+        @Override
         public void handle(
             final HttpRequest request,
             final HttpResponse response,
@@ -528,7 +530,7 @@ public class HttpEndpoint {
                     response.setStatusCode(HttpStatus.SC_BAD_REQUEST);
                     return;
                 }
-                paserContent(notify);
+                parserContent(notify);
 
             }
 
@@ -643,14 +645,16 @@ public class HttpEndpoint {
      */
     public static void main(String[] args) {
         int port = 8080;
-        HttpEndpoint httpEndpoint = null;
+        HttpEndpointSubscription httpEndpointSubscription = null;
         try {
-            httpEndpoint = new HttpEndpoint(port);
-            httpEndpoint.start();
+            httpEndpointSubscription = new HttpEndpointSubscription(port);
+            httpEndpointSubscription.start();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            httpEndpoint.stop();
+            if (httpEndpointSubscription != null) {
+                httpEndpointSubscription.stop();
+            }
         }
     }
 

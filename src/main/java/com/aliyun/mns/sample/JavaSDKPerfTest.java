@@ -32,6 +32,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Function;
 
@@ -41,9 +42,9 @@ import java.util.function.Function;
  * 1. 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
  * 2.  ${"user.home"}/.aliyun-mns.properties 文件配置如下：
  *          mns.endpoint=http://xxxxxxx
- *          mns.perf.queueName=JavaSDKPerfTestQueue
- *          mns.perf.threadNum=200
- *          mns.perf.totalSeconds=180
+ *          mns.perf.queueName=JavaSDKPerfTestQueue # queue名称
+ *          mns.perf.threadNum=200 # 并发线程数
+ *          mns.perf.durationTime=180 # 测试持续时间（秒）
  */
 public class JavaSDKPerfTest {
     private static MNSClient client = null;
@@ -52,10 +53,14 @@ public class JavaSDKPerfTest {
 
     private static String queueName;
     private static int threadNum;
-    private static int totalSeconds;
+
+    /**
+     * 测试持续时间（秒）
+     */
+    private static long durationTime;
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         if (!parseConf()) {
             return;
         }
@@ -75,15 +80,15 @@ public class JavaSDKPerfTest {
             message.setMessageBody("BodyTest");
             return queue.putMessage(message);
         };
-        actionProcess("SendMessage", sendFunction , totalSeconds);
+        actionProcess("SendMessage", sendFunction , durationTime);
         // 4. Now is the ReceiveMessage
-        int processSeconds = totalSeconds / 3;
-        actionProcess("ReceiveMessage", CloudQueue::popMessage, processSeconds);
+        actionProcess("ReceiveMessage", CloudQueue::popMessage, durationTime);
 
+        client.close();
         System.out.println("=======end=======");
     }
 
-    private static void actionProcess(String actionName, Function<CloudQueue, Message> sendFunction, int processSeconds) {
+    private static void actionProcess(String actionName, Function<CloudQueue, Message> sendFunction, long durationSeconds) throws InterruptedException {
         System.out.println(actionName +" start!");
 
         final AtomicLong totalCount = new AtomicLong(0);
@@ -102,7 +107,7 @@ public class JavaSDKPerfTest {
                 long startTime = startDate.getTime();
 
                 System.out.printf("[Thread%s]startTime:%s %n", threadName, getBjTime(startDate));
-                long endTime = startTime + processSeconds * 1000L;
+                long endTime = startTime + durationSeconds * 1000L;
                 while (true) {
                     for (int i = 0; i < 50; ++i) {
                         sendFunction.apply(queue);
@@ -123,8 +128,11 @@ public class JavaSDKPerfTest {
         });
 
         executor.shutdown();
+        if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
+            executor.shutdownNow();
+        }
 
-        System.out.println(actionName +" QPS: "+(totalCount.get() / JavaSDKPerfTest.totalSeconds));
+        System.out.println(actionName +" QPS: "+(totalCount.get() / durationSeconds));
     }
 
     private static void reCreateQueue() {
@@ -149,8 +157,8 @@ public class JavaSDKPerfTest {
         System.out.println("QueueName: " + queueName);
         threadNum = Integer.parseInt(ServiceSettings.getMNSPropertyValue("perf.threadNum","2"));
         System.out.println("ThreadNum: " + threadNum);
-        totalSeconds = Integer.parseInt(ServiceSettings.getMNSPropertyValue("perf.totalSeconds","6"));
-        System.out.println("TotalSeconds: " + totalSeconds);
+        durationTime = Long.parseLong(ServiceSettings.getMNSPropertyValue("perf.totalSeconds","6"));
+        System.out.println("DurationTime: " + durationTime);
 
         return true;
     }

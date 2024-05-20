@@ -28,6 +28,11 @@ import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
 import com.aliyun.mns.model.QueueMeta;
 
+/**
+ * 2025.05 当前事务存在 业务执行耗时短导致概率性丢消息的问题，不建议使用
+ * 若有强烈的事务诉求，辛苦提工单，排期用更优方案支持
+ */
+@Deprecated
 public class TransactionMessageDemo {
     public class MyTransactionChecker implements TransactionChecker {
         public boolean checkTransactionStatus(Message message) {

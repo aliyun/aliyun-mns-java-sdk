@@ -151,10 +151,6 @@ public final class CloudAccount {
     }
 
     private void init() {
-        if (credentialsProvider != null){
-
-        }
-
         if (this.accessId != null && this.accessKey != null) {
             this.credentials = new ServiceCredentials(accessId, accessKey, securityToken);
         } else if (credentialsProvider != null) {

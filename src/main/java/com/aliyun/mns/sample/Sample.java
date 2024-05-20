@@ -38,6 +38,7 @@ import com.aliyun.mns.model.SubscriptionMeta;
 import com.aliyun.mns.model.SubscriptionMeta.NotifyContentFormat;
 import com.aliyun.mns.model.TopicMessage;
 import com.aliyun.mns.model.TopicMeta;
+import com.aliyun.mns.sample.Topic.subscription.HttpEndpointSubscription;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -609,7 +610,7 @@ public class Sample {
             //订阅这个topic
             SubscriptionMeta subMeta = new SubscriptionMeta();
             subMeta.setSubscriptionName(SUB_NAME);
-            subMeta.setEndpoint(HttpEndpoint.GenEndpointLocal());
+            subMeta.setEndpoint(HttpEndpointSubscription.genEndpointLocal());
             subMeta.setNotifyContentFormat(SubscriptionMeta.NotifyContentFormat.XML);
             String subUrl = topic.subscribe(subMeta);
             System.out.println("subscription url: " + subUrl);
@@ -649,7 +650,7 @@ public class Sample {
 
     public void publishMsg() {
         int http_port = 8080;
-        HttpEndpoint ep = new HttpEndpoint(http_port);
+        HttpEndpointSubscription ep = new HttpEndpointSubscription(http_port);
         CloudTopic topic = null;
         try {
             ep.start();
@@ -664,7 +665,7 @@ public class Sample {
             //订阅topic
             SubscriptionMeta subMeta = new SubscriptionMeta();
             subMeta.setSubscriptionName(SUB_NAME);
-            subMeta.setEndpoint(HttpEndpoint.GenEndpointLocal(http_port));
+            subMeta.setEndpoint(HttpEndpointSubscription.genEndpointLocal(http_port));
             topic.subscribe(subMeta);
 
             //向这个topic发送消息
@@ -708,7 +709,7 @@ public class Sample {
 
     public void publishMsgUsingSimplifiedFormat() {
         int http_port = 8089;
-        HttpEndpoint ep = new HttpEndpoint(http_port);
+        HttpEndpointSubscription ep = new HttpEndpointSubscription(http_port);
         CloudTopic topic = null;
         try {
             ep.start();
@@ -724,7 +725,7 @@ public class Sample {
             SubscriptionMeta subMeta = new SubscriptionMeta();
             subMeta.setSubscriptionName(SUB_NAME);
             //Endpoint 的一级目录设置为 "/simplified"，需要在HttpServer有对应的请求处理Handler
-            String endpoint = HttpEndpoint.GenEndpointLocal(http_port) + "/simplified";
+            String endpoint = HttpEndpointSubscription.genEndpointLocal(http_port) + "/simplified";
             subMeta.setEndpoint(endpoint);
             subMeta.setNotifyContentFormat(NotifyContentFormat.SIMPLIFIED);
             topic.subscribe(subMeta);
@@ -770,7 +771,7 @@ public class Sample {
 
     public void publishMsgWithTag() {
         int http_port = 8082;
-        HttpEndpoint ep = new HttpEndpoint(http_port);
+        HttpEndpointSubscription ep = new HttpEndpointSubscription(http_port);
         CloudTopic topic = null;
         try {
             ep.start();
@@ -786,7 +787,7 @@ public class Sample {
             SubscriptionMeta subMeta = new SubscriptionMeta();
             subMeta.setSubscriptionName(SUB_NAME);
             subMeta.setFilterTag("SampleTag"); //TagName最多16个字符
-            subMeta.setEndpoint(HttpEndpoint.GenEndpointLocal(http_port));
+            subMeta.setEndpoint(HttpEndpointSubscription.genEndpointLocal(http_port));
             topic.subscribe(subMeta);
 
             //向这个topic发送消息
