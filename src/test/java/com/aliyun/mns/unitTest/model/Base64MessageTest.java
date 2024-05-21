@@ -1,5 +1,9 @@
-package com.aliyun.mns.model;
+package com.aliyun.mns.unitTest.model;
 
+import com.aliyun.mns.model.Base64TopicMessage;
+import com.aliyun.mns.model.Message;
+import com.aliyun.mns.model.RawTopicMessage;
+import com.aliyun.mns.model.TopicMessage;
 import java.util.Arrays;
 import java.util.Base64;
 import org.junit.Assert;
@@ -20,7 +24,7 @@ public class Base64MessageTest {
         message.setMessageBodyAsRawString(testBytes);
 
         // 验证消息体是否正确设置, body 值为 原始值
-        Assert.assertArrayEquals(testBytes, message.getMessageBodyBytes());
+        Assert.assertEquals(testString, message.getOriginalMessageBody());
         Assert.assertArrayEquals(testBytes, message.getMessageBodyAsRawBytes());
     }
 
@@ -34,9 +38,10 @@ public class Base64MessageTest {
         message.setMessageBody(testBytes);
 
         // 验证消息体是否正确设置, body 值 非原始值
-        Assert.assertFalse(Arrays.equals(testBytes, message.getMessageBodyBytes()));
+        Assert.assertNotEquals(testString, message.getOriginalMessageBody());
+
         // body 值 为 base 64 后 值
-        Assert.assertArrayEquals(Base64.getEncoder().encode(testBytes), message.getMessageBodyBytes());
+        Assert.assertArrayEquals(Base64.getEncoder().encode(testBytes), message.getOriginalMessageBody().getBytes());
     }
 
 
@@ -50,7 +55,7 @@ public class Base64MessageTest {
         message.setMessageBody(testBytes);
 
         // 验证消息体是否正确设置, body 值为 原始值
-        Assert.assertArrayEquals(testBytes, message.getMessageBodyBytes());
+        Assert.assertArrayEquals(testBytes, message.getOriginalMessageBody().getBytes());
         Assert.assertEquals(testString, message.getMessageBody());
     }
 
@@ -64,10 +69,10 @@ public class Base64MessageTest {
         message.setMessageBody(testBytes);
 
         // 验证消息体是否正确设置, body 值 非原始值
-        Assert.assertFalse(Arrays.equals(testBytes, message.getMessageBodyBytes()));
+        Assert.assertFalse(Arrays.equals(testBytes, message.getOriginalMessageBody().getBytes()));
 
         // body 值 为 base 64 后 值
-        Assert.assertArrayEquals(Base64.getEncoder().encode(testBytes), message.getMessageBodyBytes());
+        Assert.assertArrayEquals(Base64.getEncoder().encode(testBytes), message.getOriginalMessageBody().getBytes());
 
         // get 也 做过解码，因此匹配
         Assert.assertEquals(testString, message.getMessageBody());

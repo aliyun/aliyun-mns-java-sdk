@@ -1,4 +1,4 @@
-package com.alibaba.mns.client;
+package com.aliyun.mns.unitTest.client;
 
 import com.aliyun.mns.client.AsyncCallback;
 import com.aliyun.mns.client.AsyncResult;

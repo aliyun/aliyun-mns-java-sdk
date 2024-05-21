@@ -1,4 +1,4 @@
-package com.alibaba.mns.client.impl.queue;
+package com.aliyun.mns.unitTest.client.queue;
 
 import com.aliyun.mns.client.impl.queue.BatchReceiveMessageAction;
 import com.aliyun.mns.common.MNSConstants;
