@@ -17,24 +17,17 @@
  * under the License.
  */
 
-package com.aliyun.mns.sample.OpenService;
+package com.aliyun.mns.sample.scenarios.quickstart;
 
-import com.aliyun.mns.client.CloudAccount;
-import com.aliyun.mns.client.MNSClient;
-import com.aliyun.mns.common.utils.ServiceSettings;
-import com.aliyun.mns.model.response.commonbuy.OpenServiceResponse;
+import com.aliyun.mns.sample.scenarios.quickstart.service.Sample;
 
-public class OpenServiceDemo {
-
+public class TopicSample {
 
     public static void main(String[] args) {
-        // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
-        CloudAccount account = new CloudAccount(ServiceSettings.getMNSAccountEndpoint());
-        MNSClient client = account.getMNSClient();
+        Sample sample = new Sample();
+        sample.runTopic();
+        sample.clear();
 
-        OpenServiceResponse openServiceResponse = client.openService();
-        System.out.println(openServiceResponse.getOrderId());
-        System.out.println(openServiceResponse.getRequestId());
-        client.close();
+        System.exit(0);
     }
 }

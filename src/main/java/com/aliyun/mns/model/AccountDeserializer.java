@@ -37,7 +37,7 @@ public class AccountDeserializer extends XMLDeserializer<String> {
 //		 while(stream.read(bytes, 0, stream.available())>0){
 //		 System.out.println(new String(bytes));
 //		 }
-        Document doc = getDocmentBuilder().parse(stream);
+        Document doc = getDocumentBuilder().parse(stream);
 
         root = doc.getDocumentElement();
         String accountId = safeGetElementContent(root, ACCOUNT_ID_TAG, null);

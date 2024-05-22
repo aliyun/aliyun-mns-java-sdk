@@ -143,7 +143,7 @@ public class HttpClientConfig {
             @Override
             public InetAddress[] resolve(final String host)
                 throws UnknownHostException {
-                if (host.equalsIgnoreCase("myhost")) {
+                if ("myhost".equalsIgnoreCase(host)) {
                     return new InetAddress[] {
                         InetAddress
                             .getByAddress(new byte[] {127, 0, 0, 1})};

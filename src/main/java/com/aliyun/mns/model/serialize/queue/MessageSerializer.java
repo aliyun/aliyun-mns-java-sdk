@@ -41,7 +41,7 @@ public class MessageSerializer extends XMLSerializer<Message> {
 
     @Override
     public InputStream serialize(Message msg, String encoding) throws Exception {
-        Document doc = getDocmentBuilder().newDocument();
+        Document doc = getDocumentBuilder().newDocument();
 
         Element root = doc.createElementNS(DEFAULT_XML_NAMESPACE, MESSAGE_TAG);
         doc.appendChild(root);

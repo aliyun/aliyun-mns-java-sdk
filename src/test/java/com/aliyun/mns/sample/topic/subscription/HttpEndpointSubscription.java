@@ -33,7 +33,7 @@
  * </dependency>
  */
 
-package com.aliyun.mns.sample.Topic.subscription;
+package com.aliyun.mns.sample.topic.subscription;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;

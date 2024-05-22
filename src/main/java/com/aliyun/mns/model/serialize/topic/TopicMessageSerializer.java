@@ -63,7 +63,7 @@ public class TopicMessageSerializer extends XMLSerializer<PublishMessageRequest>
 
     @Override
     public InputStream serialize(PublishMessageRequest request, String encoding) throws Exception {
-        Document doc = getDocmentBuilder().newDocument();
+        Document doc = getDocumentBuilder().newDocument();
 
         TopicMessage msg = request.getMessage();
         Element root = doc.createElementNS(DEFAULT_XML_NAMESPACE, MESSAGE_TAG);

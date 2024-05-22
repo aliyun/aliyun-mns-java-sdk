@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.aliyun.mns.sample.Queue;
+package com.aliyun.mns.sample.queue;
 
 import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.aliyun.mns.sample.Queue;
+package com.aliyun.mns.sample.queue;
 
 import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
@@ -34,7 +34,7 @@ import java.util.List;
  *           mns.endpoint=http://xxxxxxx
  *           mns.msgBodyBase64Switch=true/false
  */
-public class ConsumerDemo {
+public class ReceiveMessageDemo {
     /**
      * 是否做 base64 编码
      */

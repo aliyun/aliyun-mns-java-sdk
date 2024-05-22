@@ -17,10 +17,12 @@
  * under the License.
  */
 
-package com.aliyun.mns.sample.Queue;
+package com.aliyun.mns.sample.queue;
 
 import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.MNSClient;
+import com.aliyun.mns.client.TransactionChecker;
+import com.aliyun.mns.client.TransactionOperations;
 import com.aliyun.mns.client.TransactionQueue;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
@@ -31,10 +33,34 @@ import com.aliyun.mns.model.QueueMeta;
  * 若有强烈的事务诉求，辛苦提工单，排期用更优方案支持
  */
 @Deprecated
-public class TransactionMessageDemo2 {
-    public static boolean doLocalOperation(String messageHandler) {
-        //TODO: add your own operation and return op result properly.
-        return true;
+public class TransactionMessageDemo {
+    public class MyTransactionChecker implements TransactionChecker {
+        public boolean checkTransactionStatus(Message message) {
+            boolean checkResult = false;
+            String messageHandler = message.getReceiptHandle();
+            try {
+                //TODO: check if the messageHandler related transaction is success.
+                checkResult = true;
+            } catch (Exception e) {
+                checkResult = false;
+            }
+            return checkResult;
+        }
+    }
+
+    public class MyTransactionOperations implements TransactionOperations {
+        public boolean doTransaction(Message message) {
+            boolean transactionResult = false;
+            String messageHandler = message.getReceiptHandle();
+            String messageBody = message.getMessageBody();
+            try {
+                //TODO: do your local transaction according to the messageHandler and messageBody here.
+                transactionResult = true;
+            } catch (Exception e) {
+                transactionResult = false;
+            }
+            return transactionResult;
+        }
     }
 
     public static void main(String[] args) {
@@ -44,42 +70,27 @@ public class TransactionMessageDemo2 {
         CloudAccount account = new CloudAccount(ServiceSettings.getMNSAccountEndpoint());
         MNSClient client = account.getMNSClient(); //this client need only initialize once
 
-        //create queue for transaction queue.
+        // create queue for transaction queue.
         QueueMeta queueMeta = new QueueMeta();
         queueMeta.setQueueName(transQueueName);
         queueMeta.setPollingWaitSeconds(15);
-        TransactionQueue transQueue = client.createTransQueue(queueMeta, null);
+
+        TransactionMessageDemo demo = new TransactionMessageDemo();
+        TransactionChecker transChecker = demo.new MyTransactionChecker();
+        TransactionOperations transOperations = demo.new MyTransactionOperations();
+
+        TransactionQueue transQueue = client.createTransQueue(queueMeta, transChecker);
 
         // do transaction.
-        String handler = null;
-        try {
-            Message msg = new Message();
-            String messageBody = "prepare message with the infomation of local operation going to do.";
-            msg.setMessageBody(messageBody);
-            Message prepareMsg = transQueue.sendPrepareMessage(msg);
-            if (prepareMsg != null) {
-                handler = prepareMsg.getReceiptHandle();
-            } else {
-                throw new Exception("send prepareMessage fail.");
-            }
-
-            //do local transaction operation.
-            boolean localOpResult = doLocalOperation(prepareMsg.getReceiptHandle());
-
-            if (localOpResult) {
-                //commit message, it will retry 3 times by default if it was fail.
-                transQueue.commitMessage(prepareMsg.getReceiptHandle());
-            } else {
-                throw new Exception("message is committed fail");
-            }
-        } catch (Exception e) {
-            if (handler != null) {
-                transQueue.rollbackMessage(handler);
-            }
-        }
+        Message msg = new Message();
+        String messageBody = "TransactionMessageDemo";
+        msg.setMessageBody(messageBody);
+        transQueue.sendTransMessage(msg, transOperations);
 
         // delete queue and close client if we won't use them.
-        transQueue.getInnerQueue().delete();
+        transQueue.delete();
+
+        // close the client at the end.
         client.close();
         System.out.println("End TransactionMessageDemo");
     }

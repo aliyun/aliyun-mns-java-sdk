@@ -30,7 +30,7 @@ public class BaseXMLSerializer<T> {
 
     private static ThreadLocal<DocumentBuilder> sps = new ThreadLocal<DocumentBuilder>();
 
-    protected DocumentBuilder getDocmentBuilder() throws ParserConfigurationException {
+    protected DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
         DocumentBuilder db = sps.get();
         if (db == null) {
             db = factory.newDocumentBuilder();

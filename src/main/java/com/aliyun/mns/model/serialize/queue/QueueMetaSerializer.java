@@ -41,7 +41,7 @@ public class QueueMetaSerializer extends XMLSerializer<QueueMeta> {
     @Override
     public InputStream serialize(QueueMeta obj, String encoding)
         throws Exception {
-        Document doc = getDocmentBuilder().newDocument();
+        Document doc = getDocumentBuilder().newDocument();
 
         Element root = doc.createElementNS(DEFAULT_XML_NAMESPACE, QUEUE_TAG);
         doc.appendChild(root);

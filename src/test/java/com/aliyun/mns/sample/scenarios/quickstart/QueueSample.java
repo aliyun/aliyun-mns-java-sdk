@@ -17,7 +17,9 @@
  * under the License.
  */
 
-package com.aliyun.mns.sample;
+package com.aliyun.mns.sample.scenarios.quickstart;
+
+import com.aliyun.mns.sample.scenarios.quickstart.service.Sample;
 
 public class QueueSample {
 

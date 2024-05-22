@@ -17,34 +17,54 @@
  * under the License.
  */
 
-package com.aliyun.mns.sample.Queue;
+package com.aliyun.mns.sample.queue;
 
 import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
+import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
-import com.aliyuncs.auth.InstanceProfileCredentialsProvider;
 
-public class CredentialsProviderDemo {
+/**
+ * 1. 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
+ * 2. ${"user.home"}/.aliyun-mns.properties 文件配置如下：
+ *           mns.endpoint=http://xxxxxxx
+ *           mns.msgBodyBase64Switch=true/false
+ */
+public class SendMessageDemo {
+
+    /**
+     * replace with your queue name
+     */
+    private static final String QUEUE_NAME = "cloud-queue-demo";
+
+    private static final Boolean IS_BASE64 = Boolean.valueOf(ServiceSettings.getMNSPropertyValue("msgBodyBase64Switch","false"));
+
 
     public static void main(String[] args) {
-        // WARNING： Please do not hard code your accessId and accesskey in next line.
-        //(more information: https://yq.aliyun.com/articles/55947)
+        // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
+        CloudAccount account = new CloudAccount(ServiceSettings.getMNSAccountEndpoint());
+        MNSClient client = account.getMNSClient();
 
-        InstanceProfileCredentialsProvider provider = new InstanceProfileCredentialsProvider("{ecsRole}");
-        String endpoint = "http://{accountId}.mns.{region}.aliyuncs.com";
-        CloudAccount account = new CloudAccount(endpoint, provider);
-        MNSClient client = account.getMNSClient(); //this client need only initialize once
+        // Demo for send message code, send 10 test message
+        try {
+            CloudQueue queue = client.getQueueRef(QUEUE_NAME);
+            for (int i = 0; i < 10; i++) {
+                Message message = new Message();
+                String messageValue = "demo_message_body" + i;
+                if (IS_BASE64) {
+                    // base 64 编码
+                    message.setMessageBody(messageValue);
+                }else {
+                    // 不进行任何编码
+                    message.setMessageBodyAsRawString(messageValue);
+                }
 
-        try {   //Create Queue
-            CloudQueue queue = client.getQueueRef("gongshi-test");// replace with your queue name
-            Message message = new Message();
-            message.setMessageBody("demo_message_body"); // use your own message body here
-            Message putMsg = queue.putMessage(message);
-            System.out.println("msgId:" + putMsg.getMessageId());
-            System.out.println("msgMd5:" + putMsg.getMessageBodyMD5());
+                Message putMsg = queue.putMessage(message);
+                System.out.println("Send message id is: " + putMsg.getMessageId());
+            }
         } catch (ClientException ce) {
             System.out.println("Something wrong with the network connection between client and MNS service."
                 + "Please check your network and DNS availablity.");
@@ -55,10 +75,6 @@ public class CredentialsProviderDemo {
             } else if (se.getErrorCode().equals("TimeExpired")) {
                 System.out.println("The request is time expired. Please check your local machine timeclock");
             }
-            /*
-            you can get more MNS service error code in following link.
-            https://help.aliyun.com/document_detail/mns/api_reference/error_code/error_code.html?spm=5176.docmns/api_reference/error_code/error_response
-            */
             se.printStackTrace();
         } catch (Exception e) {
             System.out.println("Unknown exception happened!");

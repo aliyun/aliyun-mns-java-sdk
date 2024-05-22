@@ -1,4 +1,4 @@
-package com.aliyun.mns.sample.Topic;
+package com.aliyun.mns.sample.topic;
 
 import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudTopic;

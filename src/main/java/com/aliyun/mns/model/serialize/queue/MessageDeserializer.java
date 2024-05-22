@@ -47,7 +47,7 @@ public class MessageDeserializer extends XMLDeserializer<Message> {
         // }
 
         //DocumentBuilder db = factory.newDocumentBuilder();
-        Document doc = getDocmentBuilder().parse(stream);
+        Document doc = getDocumentBuilder().parse(stream);
 
         Element root = doc.getDocumentElement();
         return parseMessage(root);

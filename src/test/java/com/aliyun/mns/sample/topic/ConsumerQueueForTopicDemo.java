@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.aliyun.mns.sample.Topic;
+package com.aliyun.mns.sample.topic;
 
 import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
@@ -26,22 +26,17 @@ import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
-import java.io.IOException;
 import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
-import java.util.Base64;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.codec.binary.Base64;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * 在 topic 模型下，queue 有三个类型，xml、json、simple，在 base 64 加密下不一样，详见下文
@@ -126,7 +121,7 @@ public class ConsumerQueueForTopicDemo {
             JSONObject object = new JSONObject(originalMessageBody);
             String jsonMessageData = String.valueOf(object.get("Message"));
             System.out.println("message body type: JSON,value:"+jsonMessageData );
-            return IS_BASE64? new String(Base64.getDecoder().decode(jsonMessageData), StandardCharsets.UTF_8): jsonMessageData;
+            return IS_BASE64? new String(Base64.decodeBase64(jsonMessageData)): jsonMessageData;
         } catch (JSONException ex1) {
             // 不是JSON，继续检查XML
         }
@@ -141,8 +136,8 @@ public class ConsumerQueueForTopicDemo {
             String content = nodeList.item(0).getTextContent();
             System.out.println("message body type: XML,value:"+content );
 
-            return IS_BASE64? new String(Base64.getDecoder().decode(content), StandardCharsets.UTF_8): content;
-        } catch (ParserConfigurationException | SAXException | IOException ex) {
+            return IS_BASE64? new String(Base64.decodeBase64(content)): content;
+        } catch (Exception ex) {
             // 不是有效的XML
         }
 
@@ -150,20 +145,5 @@ public class ConsumerQueueForTopicDemo {
         System.out.println("message body type: SIMPLE" );
         return IS_BASE64 ? message.getMessageBody() : message.getMessageBodyAsRawString();
 
-    }
-
-
-    public String safeGetElementContent(Element root, String tagName,
-        String defaultValue) {
-        NodeList nodes = root.getElementsByTagName(tagName);
-        if (nodes != null) {
-            Node node = nodes.item(0);
-            if (node == null) {
-                return defaultValue;
-            } else {
-                return node.getTextContent();
-            }
-        }
-        return defaultValue;
     }
 }

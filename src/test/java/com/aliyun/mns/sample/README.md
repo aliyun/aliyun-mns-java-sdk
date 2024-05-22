@@ -22,4 +22,7 @@ The basic steps are:
 > mns.accountendpoint=
 
 3. Save the file.
-4. Run the `QueueSample.java` and `TopicSample.java` file, located in the same directory.
+4. Run:
+    - package `queue`:  `SendMessageDemo.java` - `ReceiveMessageDemo.java` - `DeleteMessageDemo.java`
+    - package `topic`:  `SubscribeMessageDemo.java` - `PublishMessageDemo.java` - `UnsubscribeMessageDemo.java`
+    - package `scenarios/largeMessage`:  `LargeMessageDemo.java`

@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.aliyun.mns.sample.Queue;
+package com.aliyun.mns.sample.queue;
 
 import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
@@ -25,46 +25,18 @@ import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.utils.ServiceSettings;
-import com.aliyun.mns.model.Message;
 
-/**
- * 1. 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
- * 2. ${"user.home"}/.aliyun-mns.properties 文件配置如下：
- *           mns.endpoint=http://xxxxxxx
- *           mns.msgBodyBase64Switch=true/false
- */
-public class ProducerDemo {
-
-    /**
-     * replace with your queue name
-     */
-    private static final String QUEUE_NAME = "cloud-queue-demo";
-
-    private static final Boolean IS_BASE64 = Boolean.valueOf(ServiceSettings.getMNSPropertyValue("msgBodyBase64Switch","false"));
-
+public class DeleteQueueDemo {
 
     public static void main(String[] args) {
-        // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
         CloudAccount account = new CloudAccount(ServiceSettings.getMNSAccountEndpoint());
+        //this client need only initialize once
         MNSClient client = account.getMNSClient();
 
-        // Demo for send message code, send 10 test message
-        try {
-            CloudQueue queue = client.getQueueRef(QUEUE_NAME);
-            for (int i = 0; i < 10; i++) {
-                Message message = new Message();
-                String messageValue = "demo_message_body" + i;
-                if (IS_BASE64) {
-                    // base 64 编码
-                    message.setMessageBody(messageValue);
-                }else {
-                    // 不进行任何编码
-                    message.setMessageBodyAsRawString(messageValue);
-                }
-
-                Message putMsg = queue.putMessage(message);
-                System.out.println("Send message id is: " + putMsg.getMessageId());
-            }
+        try {   //Delete Queue
+            CloudQueue queue = client.getQueueRef("cloud-queue-demo");
+            queue.delete();
+            System.out.println("Delete cloud-queue-demo successfully!");
         } catch (ClientException ce) {
             System.out.println("Something wrong with the network connection between client and MNS service."
                 + "Please check your network and DNS availablity.");
@@ -75,6 +47,10 @@ public class ProducerDemo {
             } else if (se.getErrorCode().equals("TimeExpired")) {
                 System.out.println("The request is time expired. Please check your local machine timeclock");
             }
+            /*
+            you can get more MNS service error code in following link.
+            https://help.aliyun.com/document_detail/mns/api_reference/error_code/error_code.html?spm=5176.docmns/api_reference/error_code/error_response
+            */
             se.printStackTrace();
         } catch (Exception e) {
             System.out.println("Unknown exception happened!");

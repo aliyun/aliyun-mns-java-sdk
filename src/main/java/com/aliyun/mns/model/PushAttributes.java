@@ -66,7 +66,7 @@ public class PushAttributes implements BaseAttributes {
             result.setMessage("Invalid PushTarget");
             return result;
         }
-        if (targetValue == null || (target == PushTarget.ALL && !targetValue.equals("ALL"))) {
+        if (targetValue == null || (target == PushTarget.ALL && !"ALL".equals(targetValue))) {
             result.setSuccess(false);
             result.setMessage("Invalid TargetValue");
             return result;

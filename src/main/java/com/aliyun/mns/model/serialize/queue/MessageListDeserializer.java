@@ -52,7 +52,7 @@ public class MessageListDeserializer extends XMLDeserializer<List<Message>> {
         // while(stream.read(bytes, 0, stream.available())>0){
         // System.out.println(new String(bytes));
         // }
-        Document doc = getDocmentBuilder().parse(stream);
+        Document doc = getDocumentBuilder().parse(stream);
         return deserialize(doc);
 
     }

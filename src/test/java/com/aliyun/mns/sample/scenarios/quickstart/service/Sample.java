@@ -16,7 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package com.aliyun.mns.sample;
+package com.aliyun.mns.sample.scenarios.quickstart.service;
 
 import com.aliyun.mns.client.AsyncCallback;
 import com.aliyun.mns.client.AsyncResult;
@@ -38,7 +38,7 @@ import com.aliyun.mns.model.SubscriptionMeta;
 import com.aliyun.mns.model.SubscriptionMeta.NotifyContentFormat;
 import com.aliyun.mns.model.TopicMessage;
 import com.aliyun.mns.model.TopicMeta;
-import com.aliyun.mns.sample.Topic.subscription.HttpEndpointSubscription;
+import com.aliyun.mns.sample.topic.subscription.HttpEndpointSubscription;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;

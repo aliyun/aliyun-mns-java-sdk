@@ -17,26 +17,45 @@
  * under the License.
  */
 
-package com.aliyun.mns.sample.Queue;
+package com.aliyun.mns.sample.queue;
 
 import com.aliyun.mns.client.CloudAccount;
-import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.utils.ServiceSettings;
+import com.aliyun.mns.model.PagingListResult;
+import java.util.List;
 
-public class DeleteQueueDemo {
+public class ListQueueDemo {
 
     public static void main(String[] args) {
+        // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
         CloudAccount account = new CloudAccount(ServiceSettings.getMNSAccountEndpoint());
-        //this client need only initialize once
-        MNSClient client = account.getMNSClient();
+        MNSClient client = account.getMNSClient(); //this client need only initialize once
 
-        try {   //Delete Queue
-            CloudQueue queue = client.getQueueRef("cloud-queue-demo");
-            queue.delete();
-            System.out.println("Delete cloud-queue-demo successfully!");
+        try {
+            // List Queue
+            String marker = null;
+            do {
+                PagingListResult<String> list = new PagingListResult<String>();
+                try {
+                    list = client.listQueueURL("cloud-", marker, 1);
+                } catch (ClientException ex) {
+                    ex.printStackTrace();
+                } catch (ServiceException ex) {
+                    ex.printStackTrace();
+                }
+                List<String> queues = list.getResult();
+                marker = list.getMarker();
+
+                System.out.println("Result:");
+                for (String queue : queues) {
+                    System.out.println(queue);
+                }
+            }
+            while (marker != null && marker != "");
+
         } catch (ClientException ce) {
             System.out.println("Something wrong with the network connection between client and MNS service."
                 + "Please check your network and DNS availablity.");

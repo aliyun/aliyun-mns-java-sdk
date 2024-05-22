@@ -48,7 +48,7 @@ public class ErrorReceiptHandleListDeserializer extends XMLDeserializer<Exceptio
         // while(stream.read(bytes, 0, stream.available())>0){
         // System.out.println(new String(bytes));
         // }
-        Document doc = getDocmentBuilder().parse(stream);
+        Document doc = getDocumentBuilder().parse(stream);
         Exception ret = null;
         Element root = doc.getDocumentElement();
 

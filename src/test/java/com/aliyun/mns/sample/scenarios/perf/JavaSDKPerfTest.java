@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.aliyun.mns.sample;
+package com.aliyun.mns.sample.scenarios.perf;
 
 import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
@@ -26,15 +26,12 @@ import com.aliyun.mns.common.http.ClientConfiguration;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.common.utils.ThreadUtil;
 import com.aliyun.mns.model.Message;
-import com.aliyun.mns.model.QueueMeta;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import com.aliyun.mns.sample.utils.ReCreateUtil;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
 
 /**
  * 并发测试示例代码
@@ -73,59 +70,72 @@ public class JavaSDKPerfTest {
         client = cloudAccount.getMNSClient();
 
         // 2. reCreateQueue
-        reCreateQueue();
+        ReCreateUtil.reCreateQueue(client,queueName);
         // 3. SendMessage
-        Function<CloudQueue,Message> sendFunction = queue -> {
-            Message message = new Message();
-            message.setMessageBody("BodyTest");
-            return queue.putMessage(message);
+        Function<CloudQueue,Message> sendFunction = new Function<CloudQueue, Message>() {
+            @Override
+            public Message apply(CloudQueue queue) {
+                Message message = new Message();
+                message.setMessageBody("BodyTest");
+                return queue.putMessage(message);
+            }
         };
         actionProcess("SendMessage", sendFunction , durationTime);
         // 4. Now is the ReceiveMessage
-        actionProcess("ReceiveMessage", CloudQueue::popMessage, durationTime);
+        Function<CloudQueue,Message> receiveFunction = new Function<CloudQueue, Message>() {
+            @Override
+            public Message apply(CloudQueue queue) {
+                return queue.popMessage();
+            }
+        };
+        actionProcess("ReceiveMessage", receiveFunction, durationTime);
 
         client.close();
         System.out.println("=======end=======");
     }
 
-    private static void actionProcess(String actionName, Function<CloudQueue, Message> sendFunction, long durationSeconds) throws InterruptedException {
+    private static void actionProcess(String actionName, final Function<CloudQueue, Message> sendFunction, final long durationSeconds) throws InterruptedException {
         System.out.println(actionName +" start!");
 
         final AtomicLong totalCount = new AtomicLong(0);
 
         ThreadPoolExecutor executor = ThreadUtil.initThreadPoolExecutorAbort();
-        ThreadUtil.asyncWithReturn(executor, threadNum, () -> {
-            try {
-                String threadName = Thread.currentThread().getName();
+        ThreadUtil.asyncWithReturn(executor, threadNum, new ThreadUtil.AsyncRunInterface() {
+            @Override
+            public void run() {
+                try {
+                    String threadName = Thread.currentThread().getName();
 
-                CloudQueue queue = client.getQueueRef(queueName);
-                Message message = new Message();
-                message.setMessageBody("BodyTest");
-                long count = 0;
+                    CloudQueue queue = client.getQueueRef(queueName);
+                    Message message = new Message();
+                    message.setMessageBody("BodyTest");
+                    long count = 0;
 
-                Date startDate = new Date();
-                long startTime = startDate.getTime();
+                    Date startDate = new Date();
+                    long startTime = startDate.getTime();
 
-                System.out.printf("[Thread%s]startTime:%s %n", threadName, getBjTime(startDate));
-                long endTime = startTime + durationSeconds * 1000L;
-                while (true) {
-                    for (int i = 0; i < 50; ++i) {
-                        sendFunction.apply(queue);
+                    System.out.printf("[Thread%s]startTime:%s %n", threadName, getBjTime(startDate));
+                    long endTime = startTime + durationSeconds * 1000L;
+                    while (true) {
+                        for (int i = 0; i < 50; ++i) {
+                            sendFunction.apply(queue);
+                        }
+                        count += 50;
+
+                        if (System.currentTimeMillis() >= endTime) {
+                            break;
+                        }
                     }
-                    count += 50;
 
-                    if (System.currentTimeMillis() >= endTime) {
-                        break;
-                    }
+                    System.out.printf("[Thread%s]endTime:%s,count:%d %n", threadName, getBjTime(new Date()),count);
+
+                    totalCount.addAndGet(count);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-
-                System.out.printf("[Thread%s]endTime:%s,count:%d %n", threadName, getBjTime(new Date()),count);
-
-                totalCount.addAndGet(count);
-            } catch (Exception e) {
-                e.printStackTrace();
             }
         });
+
 
         executor.shutdown();
         if (!executor.awaitTermination(60, TimeUnit.SECONDS)) {
@@ -135,17 +145,6 @@ public class JavaSDKPerfTest {
         System.out.println(actionName +" QPS: "+(totalCount.get() / durationSeconds));
     }
 
-    private static void reCreateQueue() {
-        CloudQueue queue = client.getQueueRef(queueName);
-        queue.delete();
-
-        QueueMeta meta = new QueueMeta();
-        meta.setQueueName(queueName);
-        client.createQueue(meta);
-
-        // make sure queue exist
-        ThreadUtil.sleep(1000L);
-    }
 
     protected static boolean parseConf() {
 
@@ -167,8 +166,20 @@ public class JavaSDKPerfTest {
      * 获取北京时间
      */
     private static String getBjTime(Date date){
-        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
-        ZonedDateTime zdt = ZonedDateTime.now(ZoneId.of("Asia/Shanghai"));
-        return zdt.format(dtf);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+        return sdf.format(date);
+    }
+
+
+    public interface Function<T, R> {
+
+        /**
+         * Applies this function to the given argument.
+         *
+         * @param t the function argument
+         * @return the function result
+         */
+        R apply(T t);
+
     }
 }
