@@ -46,7 +46,7 @@ public class PublishMessageDemo {
             System.out.println("md5:"+publishResultMsg.getMessageBodyMD5());
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("subscribe error");
+            System.out.println("publishMsg error");
         }
     }
 }

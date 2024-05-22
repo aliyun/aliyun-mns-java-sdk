@@ -32,6 +32,7 @@ import java.util.Date;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 并发测试示例代码
@@ -85,16 +86,23 @@ public class JavaSDKPerfTest {
         Function<CloudQueue,Message> receiveFunction = new Function<CloudQueue, Message>() {
             @Override
             public Message apply(CloudQueue queue) {
-                return queue.popMessage();
+                Message message = queue.popMessage();
+                String handle = message == null?null:message.getReceiptHandle();
+                if (StringUtils.isNotBlank(handle)) {
+                    queue.deleteMessage(handle);
+                }
+                return message;
             }
         };
-        actionProcess("ReceiveMessage", receiveFunction, durationTime);
+        actionProcess("ReceiveAndDelMessage", receiveFunction, durationTime);
+
+
 
         client.close();
         System.out.println("=======end=======");
     }
 
-    private static void actionProcess(String actionName, final Function<CloudQueue, Message> sendFunction, final long durationSeconds) throws InterruptedException {
+    private static void actionProcess(String actionName, final Function<CloudQueue, Message> function, final long durationSeconds) throws InterruptedException {
         System.out.println(actionName +" start!");
 
         final AtomicLong totalCount = new AtomicLong(0);
@@ -118,7 +126,7 @@ public class JavaSDKPerfTest {
                     long endTime = startTime + durationSeconds * 1000L;
                     while (true) {
                         for (int i = 0; i < 50; ++i) {
-                            sendFunction.apply(queue);
+                            function.apply(queue);
                         }
                         count += 50;
 

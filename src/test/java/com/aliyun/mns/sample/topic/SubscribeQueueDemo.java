@@ -46,7 +46,7 @@ public class SubscribeQueueDemo {
             return topic.subscribe(subMeta);
         } catch (Exception e) {
             e.printStackTrace();
-            System.out.println("subscribe/unsubribe error");
+            System.out.println("subscribe error");
         }
         return null;
     }
