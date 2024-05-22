@@ -138,6 +138,7 @@ public abstract class AbstractAction<T extends AbstractRequest, V> implements
         return asyncResult;
     }
 
+    @Override
     public V execute(T reqObject) throws ClientException, ServiceException {
         return this.executeWithCustomHeaders(reqObject, null);
     }
@@ -297,8 +298,9 @@ public abstract class AbstractAction<T extends AbstractRequest, V> implements
                     + "]不匹配.");
             } else {
                 requestPath = requestPath.substring(endpoint.toString().length());
-                if (requestPath.startsWith("/"))
+                if (requestPath.startsWith("/")) {
                     requestPath = requestPath.substring(1);
+                }
                 request.setResourcePath(requestPath);
             }
         }

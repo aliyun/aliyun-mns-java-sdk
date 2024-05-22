@@ -38,12 +38,12 @@ public class TopicMessageDeserializer extends XMLDeserializer<TopicMessage> {
         this.messageType = type;
     }
 
+    @Override
     public TopicMessage deserialize(InputStream stream) throws Exception {
-        Document doc = getDocmentBuilder().parse(stream);
+        Document doc = getDocumentBuilder().parse(stream);
 
         Element root = doc.getDocumentElement();
         return parseMessage(root);
-
     }
 
     private TopicMessage parseMessage(Element root) throws ClientException {

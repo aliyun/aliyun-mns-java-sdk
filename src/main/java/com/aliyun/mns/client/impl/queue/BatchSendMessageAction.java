@@ -40,6 +40,7 @@ import java.util.List;
 
 import static com.aliyun.mns.common.MNSConstants.DEFAULT_CHARSET;
 import static com.aliyun.mns.common.MNSConstants.LOCATION_MESSAGES;
+import static com.aliyun.mns.common.MNSConstants.X_HEADER_MNS_REQUEST_ID;
 
 public class BatchSendMessageAction extends
     AbstractAction<BatchSendMessageRequest, List<Message>> {
@@ -71,12 +72,17 @@ public class BatchSendMessageAction extends
     @Override
     protected ResultParser<List<Message>> buildResultParser() {
         return new ResultParser<List<Message>>() {
+            @Override
             public List<Message> parse(ResponseMessage response)
                 throws ResultParseException {
                 MessageListDeserializer deserializer = new MessageListDeserializer();
                 try {
-                    return deserializer.deserialize(response
-                        .getContent());
+
+                    List<Message> msgs = deserializer.deserialize(response.getContent());
+                    for (Message msg : msgs) {
+                        msg.setRequestId(response.getHeader(X_HEADER_MNS_REQUEST_ID));
+                    }
+                    return msgs;
                 } catch (Exception e) {
                     throw new ResultParseException("Unmarshal error,cause by:"
                         + e.getMessage(), e);
@@ -88,6 +94,7 @@ public class BatchSendMessageAction extends
     @Override
     protected ResultParser<Exception> buildExceptionParser() {
         return new ResultParser<Exception>() {
+            @Override
             public Exception parse(ResponseMessage response)
                 throws ResultParseException {
                 ErrorMessageListDeserializer deserializer = new ErrorMessageListDeserializer();

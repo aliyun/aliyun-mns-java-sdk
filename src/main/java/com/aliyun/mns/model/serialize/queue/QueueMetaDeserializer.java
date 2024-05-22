@@ -33,7 +33,7 @@ public class QueueMetaDeserializer extends AbstractQueueMetaDeserializer<QueueMe
 //			 while(stream.read(bytes, 0, stream.available())>0){
 //			 System.out.println(new String(bytes));
 //		 }
-        Document doc = getDocmentBuilder().parse(stream);
+        Document doc = getDocumentBuilder().parse(stream);
 
         Element root = doc.getDocumentElement();
         return parseQueueMeta(root);

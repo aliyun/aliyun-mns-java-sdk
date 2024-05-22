@@ -19,21 +19,31 @@
 
 package com.aliyun.mns.model;
 
+import java.io.UnsupportedEncodingException;
 import org.apache.commons.codec.binary.Base64;
+
+import static com.aliyun.mns.common.MNSConstants.DEFAULT_CHARSET;
 
 public class Base64TopicMessage extends TopicMessage {
     public Base64TopicMessage() {
         super();
     }
 
-    /**
-     * 获取Base64编码的消息体
-     * @return message body
-     */
-    public String getMessageBodyAsBase64() {
-        if (getMessageBodyBytes() == null)
-            return null;
-        return Base64.encodeBase64String(getMessageBodyBytes());
+    @Override
+    public void setMessageBody(String messageBody) {
+        byte[] bytes;
+        try {
+            bytes = messageBody.getBytes(DEFAULT_CHARSET);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Not support encoding: " + DEFAULT_CHARSET);
+        }
+        setMessageBody(bytes);
+    }
+
+    @Override
+    public void setMessageBody(byte[] messageBody) {
+        byte[] encodeBase64 = Base64.encodeBase64(messageBody);
+        setBaseMessageBody(encodeBase64);
     }
 
     /**
@@ -41,7 +51,26 @@ public class Base64TopicMessage extends TopicMessage {
      *
      * @return message body
      */
+    @Override
     public String getMessageBody() {
         return getMessageBodyAsBase64();
     }
+
+    /**
+     * 获取Base64编码的消息体
+     * @return message body
+     */
+    private String getMessageBodyAsBase64() {
+        byte[] bytes = getMessageBodyBytes();
+        if (bytes == null) {
+            return null;
+        }
+        try {
+            return new String(Base64.decodeBase64(bytes), DEFAULT_CHARSET);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

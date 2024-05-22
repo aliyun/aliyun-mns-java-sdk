@@ -31,25 +31,6 @@ public abstract class TopicMessage extends BaseMessage {
     }
 
     /**
-     * 设置消息体，二进制类型
-     *
-     * @param messageBody message body
-     */
-    public void setMessageBody(byte[] messageBody) {
-        setBaseMessageBody(messageBody);
-    }
-
-    /**
-     * 设置消息体，文本类型，文本编码utf-8
-     *
-     * @param messageBody message body
-     */
-    public void setMessageBody(String messageBody) {
-        setBaseMessageBody(messageBody);
-
-    }
-
-    /**
      * 获取二进制消息体
      *
      * @return message body
@@ -70,5 +51,7 @@ public abstract class TopicMessage extends BaseMessage {
     public void setMessageTag(String messageTag) {
         this.messageTag = messageTag;
     }
+
+
 
 }

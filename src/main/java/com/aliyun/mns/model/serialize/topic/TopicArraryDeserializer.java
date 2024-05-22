@@ -33,7 +33,7 @@ import static com.aliyun.mns.common.MNSConstants.TOPIC_TAG;
 
 public class TopicArraryDeserializer extends AbstractTopicMetaDeserializer<PagingListResult<TopicMeta>> {
     public PagingListResult<TopicMeta> deserialize(InputStream stream) throws Exception {
-        Document doc = getDocmentBuilder().parse(stream);
+        Document doc = getDocumentBuilder().parse(stream);
         NodeList list = doc.getElementsByTagName(TOPIC_TAG);
         List<TopicMeta> topics = new ArrayList<TopicMeta>();
 

@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.net.URI;
 
 import static com.aliyun.mns.common.MNSConstants.DEFAULT_CHARSET;
+import static com.aliyun.mns.common.MNSConstants.X_HEADER_MNS_REQUEST_ID;
 
 public class PublishMessageAction extends AbstractAction<PublishMessageRequest, TopicMessage> {
     private TopicMessage.BodyType messageType;
@@ -77,11 +78,14 @@ public class PublishMessageAction extends AbstractAction<PublishMessageRequest, 
     @Override
     protected ResultParser<TopicMessage> buildResultParser() {
         return new ResultParser<TopicMessage>() {
+            @Override
             public TopicMessage parse(ResponseMessage response) throws ResultParseException {
 
                 TopicMessageDeserializer deserializer = new TopicMessageDeserializer(messageType);
                 try {
-                    return deserializer.deserialize(response.getContent());
+                    TopicMessage msg = deserializer.deserialize(response.getContent());
+                    msg.setRequestId(response.getHeader(X_HEADER_MNS_REQUEST_ID));
+                    return msg;
                 } catch (Exception e) {
                     logger.warn("Unmarshal error,cause by:" + e.getMessage());
                     throw new ResultParseException(

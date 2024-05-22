@@ -33,7 +33,7 @@ import static com.aliyun.mns.common.MNSConstants.SUBSCRIPTION_TAG;
 
 public class SubscriptionArraryDeserializer extends AbstractSubscriptionDeserializer<PagingListResult<SubscriptionMeta>> {
     public PagingListResult<SubscriptionMeta> deserialize(InputStream stream) throws Exception {
-        Document doc = getDocmentBuilder().parse(stream);
+        Document doc = getDocumentBuilder().parse(stream);
         NodeList list = doc.getElementsByTagName(SUBSCRIPTION_TAG);
         List<SubscriptionMeta> topics = new ArrayList<SubscriptionMeta>();
 

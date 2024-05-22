@@ -52,7 +52,7 @@ public class MessageListDeserializer extends XMLDeserializer<List<Message>> {
         // while(stream.read(bytes, 0, stream.available())>0){
         // System.out.println(new String(bytes));
         // }
-        Document doc = getDocmentBuilder().parse(stream);
+        Document doc = getDocumentBuilder().parse(stream);
         return deserialize(doc);
 
     }
@@ -112,29 +112,34 @@ public class MessageListDeserializer extends XMLDeserializer<List<Message>> {
         message.setReceiptHandle(receiptHandle);
 
         String enqueTime = safeGetElementContent(root, ENQUEUE_TIME_TAG, null);
-        if (enqueTime != null)
+        if (enqueTime != null) {
             message.setEnqueueTime(new Date(Long.parseLong(enqueTime)));
+        }
 
         String nextVisibleTime = safeGetElementContent(root,
             NEXT_VISIBLE_TIME_TAG, null);
-        if (nextVisibleTime != null)
+        if (nextVisibleTime != null) {
             message.setNextVisibleTime(new Date(Long.parseLong(nextVisibleTime)));
+        }
 
         String firstDequeueTime = safeGetElementContent(root,
             FIRST_DEQUEUE_TIME_TAG, null);
-        if (firstDequeueTime != null)
+        if (firstDequeueTime != null) {
             message.setFirstDequeueTime(new Date(
                 Long.parseLong(firstDequeueTime)));
+        }
 
         String dequeueCount = safeGetElementContent(root, DEQUEUE_COUNT_TAG,
             null);
-        if (dequeueCount != null)
+        if (dequeueCount != null) {
             message.setDequeueCount(Integer.parseInt(dequeueCount));
+        }
 
         String priority = safeGetElementContent(root, PRIORITY_TAG,
             null);
-        if (priority != null)
+        if (priority != null) {
             message.setPriority(Integer.parseInt(priority));
+        }
 
         return message;
     }

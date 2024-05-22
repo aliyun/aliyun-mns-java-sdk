@@ -19,7 +19,10 @@
 
 package com.aliyun.mns.model;
 
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+
+import static com.aliyun.mns.common.MNSConstants.DEFAULT_CHARSET;
 
 public abstract class BaseMessage {
 
@@ -104,12 +107,25 @@ public abstract class BaseMessage {
      */
     public void setBaseMessageBody(String messageBody) {
         setMessageBodyBytes(messageBody.getBytes(Charset.forName("utf-8")));
+    }
 
+    /**
+     * 基于 bytes 获得最原始的 string 值，不受子类影响
+     */
+    public String getOriginalMessageBody() {
+        byte[] messageBodyAsBytes = getMessageBodyBytes();
+        if (messageBodyAsBytes == null) {
+            return null;
+        }
+        try {
+            return new String(messageBodyAsBytes, DEFAULT_CHARSET);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException("Not support encoding: " + DEFAULT_CHARSET);
+        }
     }
 
     /**
      * 获取消息体，文本类型，获取的文本是否为原始消息，由子类方法决定
-     *
      * @return message body
      */
     public abstract String getMessageBody();
