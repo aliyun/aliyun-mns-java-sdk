@@ -5,6 +5,13 @@ Aliyun MNS  JAVA SDK Documents: [https://help.aliyun.com/zh/mns/developer-refere
 
 Aliyun MNS Console: [https://mns.console.aliyun.com/](https://mns.console.aliyun.com/)
 
+## 二、目录结构
+
+1. sdk 主目录：src/main/java/com/aliyun/mns
+2. 用户 sample 样例目录： src/test/java/com/aliyun/mns/sample
+3. sdk 单测目录：src/test/java/com/aliyun/mns/unitTest
+3. sdk 特定问题目录：src/test/java/com/aliyun/mns/issueTest
+
 ## 二、Samples
 
 ### 2.1 前置准备

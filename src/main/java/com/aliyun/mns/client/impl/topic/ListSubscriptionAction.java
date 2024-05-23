@@ -63,6 +63,7 @@ public class ListSubscriptionAction extends AbstractAction<ListSubscriptionReque
         return requestMessage;
     }
 
+    @Override
     protected ResultParser<PagingListResult<SubscriptionMeta>> buildResultParser() {
         return new ResultParser<PagingListResult<SubscriptionMeta>>() {
             @Override

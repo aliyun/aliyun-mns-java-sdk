@@ -17,31 +17,65 @@
  * under the License.
  */
 
-package com.aliyun.mns.sample.queue;
+package com.aliyun.mns.sample.credential;
 
 import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
+import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
-import com.aliyuncs.auth.InstanceProfileCredentialsProvider;
+import com.aliyun.oss.common.auth.CredentialsProviderFactory;
+import com.aliyuncs.auth.AlibabaCloudCredentialsProvider;
+import com.aliyuncs.auth.BasicCredentials;
+import com.aliyuncs.auth.STSAssumeRoleSessionCredentialsProvider;
+import com.aliyuncs.profile.DefaultProfile;
 
-public class CredentialsProviderDemo {
+/**
+ *  env 设置：
+ * export MNS_ACCESS_KEY_ID=xxxx
+ * export MNS_ACCESS_KEY_SECRET=xxxx
+ * export MNS_STS_ROLE_ARN=acs:ram::xxxx:role/xxxxrole
+ *
+ * 子账号需要有如下权限：
+ * AliyunSTSAssumeRoleAccess
+ */
+public class RamRoleCredentialsDemo {
 
     public static void main(String[] args) {
-        // WARNING： Please do not hard code your accessId and accesskey in next line.
-        //(more information: https://yq.aliyun.com/articles/55947)
 
-        InstanceProfileCredentialsProvider provider = new InstanceProfileCredentialsProvider("{ecsRole}");
-        String endpoint = "http://{accountId}.mns.{region}.aliyuncs.com";
+        String queueName = "testQueue";
+        // 这个 region Id 和 mns endpoint 为一个region
+        String regionId = "cn-hangzhou";
+
+        // 从环境变量中获取RAM用户的访问密钥（AccessKey ID和AccessKey Secret）。
+        String accessKeyId = System.getenv("MNS_ACCESS_KEY_ID");
+        String accessKeySecret = System.getenv("MNS_ACCESS_KEY_SECRET");
+        // 从环境变量中获取RAM角色的RamRoleArn。
+        String roleArn = System.getenv("MNS_STS_ROLE_ARN");
+
+        DefaultProfile profile = DefaultProfile.getProfile(regionId);
+        AlibabaCloudCredentialsProvider provider = new STSAssumeRoleSessionCredentialsProvider(
+            new BasicCredentials(accessKeyId, accessKeySecret),
+            roleArn,
+            profile
+        );
+
+
+        // 以 mns queue 发消息操作为业务逻辑模拟
+        mnsQueueSendMessage(queueName, provider);
+    }
+
+    private static void mnsQueueSendMessage(String queueName, AlibabaCloudCredentialsProvider provider) {
+        String endpoint = ServiceSettings.getMNSAccountEndpoint();
         CloudAccount account = new CloudAccount(endpoint, provider);
-        MNSClient client = account.getMNSClient(); //this client need only initialize once
+        MNSClient client = account.getMNSClient();
 
-        try {   //Create Queue
-            CloudQueue queue = client.getQueueRef("gongshi-test");// replace with your queue name
+        try {
+            CloudQueue queue = client.getQueueRef(queueName);
             Message message = new Message();
-            message.setMessageBody("demo_message_body"); // use your own message body here
+            message.setMessageBody("demo_message_body");
             Message putMsg = queue.putMessage(message);
             System.out.println("msgId:" + putMsg.getMessageId());
             System.out.println("msgMd5:" + putMsg.getMessageBodyMD5());
@@ -55,17 +89,14 @@ public class CredentialsProviderDemo {
             } else if (se.getErrorCode().equals("TimeExpired")) {
                 System.out.println("The request is time expired. Please check your local machine timeclock");
             }
-            /*
-            you can get more MNS service error code in following link.
-            https://help.aliyun.com/document_detail/mns/api_reference/error_code/error_code.html?spm=5176.docmns/api_reference/error_code/error_response
-            */
             se.printStackTrace();
         } catch (Exception e) {
             System.out.println("Unknown exception happened!");
             e.printStackTrace();
-        }
+        }finally {
 
-        client.close();
+            client.close();
+        }
     }
 
 }

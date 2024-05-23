@@ -37,6 +37,7 @@ public class GetSubscriptionAttrAction extends AbstractAction<GetSubscriptionAtt
         super(HttpMethod.GET, "GetSubscriptionAttribute", client, credentials, endpoint);
     }
 
+    @Override
     public RequestMessage buildRequest(GetSubscriptionAttrRequest request) {
         RequestMessage requestMessage = new RequestMessage();
         requestMessage.setResourcePath(request.getRequestPath());
