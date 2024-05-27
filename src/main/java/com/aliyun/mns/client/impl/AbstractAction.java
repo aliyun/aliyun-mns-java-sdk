@@ -203,7 +203,7 @@ public abstract class AbstractAction<T extends AbstractRequest, V> implements
 
     protected void addSignatureHeader(RequestMessage request)
         throws ClientException {
-        if (credentials == null){
+        if (credentials == null) {
             return;
         }
         AlibabaCloudCredentialsProvider provider = credentials.getCredentialsProvider();
@@ -220,11 +220,11 @@ public abstract class AbstractAction<T extends AbstractRequest, V> implements
         String accessKeySecret = null;
         String securityToken = null;
 
-        if (akSkMode){
+        if (akSkMode) {
             accessKeyId = credentials.getAccessKeyId();
             accessKeySecret = credentials.getAccessKeySecret();
             securityToken = credentials.getSecurityToken();
-        }else if (alibabaCredentialsMode){
+        } else if (alibabaCredentialsMode) {
             AlibabaCloudCredentials alibabaCloudCredentials = getAlibabaCloudCredentials(provider);
             if (alibabaCloudCredentials != null) {
                 accessKeyId = alibabaCloudCredentials.getAccessKeyId();
@@ -235,7 +235,7 @@ public abstract class AbstractAction<T extends AbstractRequest, V> implements
 
         // Add signature
         request.addHeader(MNSConstants.AUTHORIZATION,
-            "MNS " + accessKeyId + ":" + getSignature(request,accessKeySecret)
+            "MNS " + accessKeyId + ":" + getSignature(request, accessKeySecret)
         );
         // add security_token if security token is not empty.
         if (StringUtils.isNotBlank(securityToken)) {
@@ -244,15 +244,16 @@ public abstract class AbstractAction<T extends AbstractRequest, V> implements
     }
 
     private AlibabaCloudCredentials getAlibabaCloudCredentials(AlibabaCloudCredentialsProvider provider) {
-        AlibabaCloudCredentials alibabaCloudCredentials = null;
-        if (provider != null){
-            try {
-                alibabaCloudCredentials = provider.getCredentials();
-            } catch (com.aliyuncs.exceptions.ClientException e) {
-                logger.error("get credentials failed,e:"+e.getMessage(),e);
-            }
+        if (provider == null) {
+            return null;
         }
-        return alibabaCloudCredentials;
+
+        try {
+            return provider.getCredentials();
+        } catch (Exception e) {
+            logger.error("get credentials failed,e:" + e.getMessage(), e);
+        }
+        return null;
     }
 
     private String getRelativeResourcePath(String subPath) {
@@ -270,7 +271,7 @@ public abstract class AbstractAction<T extends AbstractRequest, V> implements
     }
 
     private String getSignature(RequestMessage request, String accessKeySecret) throws ClientException {
-        if (StringUtils.isBlank(accessKeySecret)){
+        if (StringUtils.isBlank(accessKeySecret)) {
             return null;
         }
 
