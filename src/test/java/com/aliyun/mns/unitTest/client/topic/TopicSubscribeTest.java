@@ -1,4 +1,4 @@
-package com.aliyun.mns.unitTest.client;
+package com.aliyun.mns.unitTest.client.topic;
 
 import com.aliyun.mns.client.AsyncCallback;
 import com.aliyun.mns.client.AsyncResult;
@@ -44,7 +44,7 @@ import static org.mockito.Mockito.when;
 @PrepareForTest({CreateTopicAction.class, MNSClient.class, CloudTopic.class, CreateQueueAction.class,
         SubscribeAction.class, CloudQueue.class, System.class,CloudAccount.class})
 @PowerMockIgnore({"javax.net.ssl.*", "javax.security.*", "javax.crypto.*"})
-public class CloudTopicTest {
+public class TopicSubscribeTest {
 
     private MNSClient mnsClient;
     private CloudTopic topic;
@@ -109,7 +109,7 @@ public class CloudTopicTest {
     @Test
     public void testAsyncSubscribeNameIsNull() {
         final AsyncCallback<String> callback = null;
-        // create tipic and queue
+        // create topic and queue
         createTopicAndQueue(mnsClient);
         // create subscription
         final SubscriptionMeta subMeta = new SubscriptionMeta();
@@ -163,7 +163,7 @@ public class CloudTopicTest {
     @Test
     public void testSubscriptionAttrNameIsNull() {
 
-        // create tipic and queue
+        // create topic and queue
         createTopicAndQueue(mnsClient);
         // create subscription
         final SubscriptionMeta subMeta = new SubscriptionMeta();
@@ -182,7 +182,7 @@ public class CloudTopicTest {
     @Test
     public void testAsyncSetSubscriptionAttrNameIsNull() {
         final AsyncCallback<Void> callback = null;
-        // create tipic and queue
+        // create topic and queue
         createTopicAndQueue(mnsClient);
         // create subscription
         final SubscriptionMeta subMeta = new SubscriptionMeta();

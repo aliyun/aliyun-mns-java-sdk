@@ -33,8 +33,6 @@ public class ServiceCredentials {
     private String accessKeySecret;
     private String securityToken;
     private AlibabaCloudCredentialsProvider credentialsProvider;
-    private AlibabaCloudCredentials credentials;
-
 
     /**
      * 构造函数。
@@ -75,20 +73,6 @@ public class ServiceCredentials {
      */
     public ServiceCredentials(AlibabaCloudCredentialsProvider credentialProvider) {
         setCredentialsProvider(credentialProvider);
-        refreshCredentials();
-    }
-
-    /**
-     * 初始化或刷新凭证。
-     */
-    private void refreshCredentials() {
-        if (credentialsProvider != null) {
-            try {
-                this.credentials = credentialsProvider.getCredentials();
-            } catch (ClientException e) {
-                throw new com.aliyun.mns.common.ClientException(e);
-            }
-        }
     }
 
     /**

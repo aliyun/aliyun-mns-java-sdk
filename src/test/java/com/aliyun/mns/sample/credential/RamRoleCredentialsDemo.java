@@ -32,6 +32,7 @@ import com.aliyuncs.auth.BasicCredentials;
 import com.aliyuncs.auth.STSAssumeRoleSessionCredentialsProvider;
 import com.aliyuncs.profile.DefaultProfile;
 
+
 /**
  *  env 设置：
  * export MNS_ACCESS_KEY_ID=xxxx
@@ -40,6 +41,11 @@ import com.aliyuncs.profile.DefaultProfile;
  *
  * 子账号需要有如下权限：
  * AliyunSTSAssumeRoleAccess
+ *
+ *
+ * 1. 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
+ * 2. ${"user.home"}/.aliyun-mns.properties 文件配置如下：
+ *           mns.endpoint=http://xxxxxxx
  */
 public class RamRoleCredentialsDemo {
 
