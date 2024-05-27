@@ -17,7 +17,7 @@
  * under the License.
  */
 
-package com.aliyun.mns.sample.queue;
+package com.aliyun.mns.sample.credential;
 
 import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
@@ -25,22 +25,66 @@ import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.utils.ServiceSettings;
+import com.aliyun.mns.model.Message;
+import com.aliyun.oss.common.auth.CredentialsProviderFactory;
+import com.aliyuncs.auth.AlibabaCloudCredentialsProvider;
+import com.aliyuncs.auth.BasicCredentials;
+import com.aliyuncs.auth.STSAssumeRoleSessionCredentialsProvider;
+import com.aliyuncs.profile.DefaultProfile;
+
+
 /**
+ *  env 设置：
+ * export MNS_ACCESS_KEY_ID=xxxx
+ * export MNS_ACCESS_KEY_SECRET=xxxx
+ * export MNS_STS_ROLE_ARN=acs:ram::xxxx:role/xxxxrole
+ *
+ * 子账号需要有如下权限：
+ * AliyunSTSAssumeRoleAccess
+ *
+ *
  * 1. 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
  * 2. ${"user.home"}/.aliyun-mns.properties 文件配置如下：
  *           mns.endpoint=http://xxxxxxx
  */
-public class DeleteQueueDemo {
+public class RamRoleCredentialsDemo {
 
     public static void main(String[] args) {
-        CloudAccount account = new CloudAccount(ServiceSettings.getMNSAccountEndpoint());
-        //this client need only initialize once
+
+        String queueName = "testQueue";
+        // 这个 region Id 和 mns endpoint 为一个region
+        String regionId = "cn-hangzhou";
+
+        // 从环境变量中获取RAM用户的访问密钥（AccessKey ID和AccessKey Secret）。
+        String accessKeyId = System.getenv("MNS_ACCESS_KEY_ID");
+        String accessKeySecret = System.getenv("MNS_ACCESS_KEY_SECRET");
+        // 从环境变量中获取RAM角色的RamRoleArn。
+        String roleArn = System.getenv("MNS_STS_ROLE_ARN");
+
+        DefaultProfile profile = DefaultProfile.getProfile(regionId);
+        AlibabaCloudCredentialsProvider provider = new STSAssumeRoleSessionCredentialsProvider(
+            new BasicCredentials(accessKeyId, accessKeySecret),
+            roleArn,
+            profile
+        );
+
+
+        // 以 mns queue 发消息操作为业务逻辑模拟
+        mnsQueueSendMessage(queueName, provider);
+    }
+
+    private static void mnsQueueSendMessage(String queueName, AlibabaCloudCredentialsProvider provider) {
+        String endpoint = ServiceSettings.getMNSAccountEndpoint();
+        CloudAccount account = new CloudAccount(endpoint, provider);
         MNSClient client = account.getMNSClient();
 
-        try {   //Delete Queue
-            CloudQueue queue = client.getQueueRef("cloud-queue-demo");
-            queue.delete();
-            System.out.println("Delete cloud-queue-demo successfully!");
+        try {
+            CloudQueue queue = client.getQueueRef(queueName);
+            Message message = new Message();
+            message.setMessageBody("demo_message_body");
+            Message putMsg = queue.putMessage(message);
+            System.out.println("msgId:" + putMsg.getMessageId());
+            System.out.println("msgMd5:" + putMsg.getMessageBodyMD5());
         } catch (ClientException ce) {
             System.out.println("Something wrong with the network connection between client and MNS service."
                 + "Please check your network and DNS availablity.");
@@ -51,17 +95,14 @@ public class DeleteQueueDemo {
             } else if (se.getErrorCode().equals("TimeExpired")) {
                 System.out.println("The request is time expired. Please check your local machine timeclock");
             }
-            /*
-            you can get more MNS service error code in following link.
-            https://help.aliyun.com/document_detail/mns/api_reference/error_code/error_code.html?spm=5176.docmns/api_reference/error_code/error_response
-            */
             se.printStackTrace();
         } catch (Exception e) {
             System.out.println("Unknown exception happened!");
             e.printStackTrace();
-        }
+        }finally {
 
-        client.close();
+            client.close();
+        }
     }
 
 }

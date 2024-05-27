@@ -7,12 +7,6 @@ import com.aliyun.mns.common.utils.ThreadUtil;
 import com.aliyun.mns.model.QueueMeta;
 import com.aliyun.mns.model.TopicMeta;
 
-/**
- * @author zxg
- * @date 2024/05/21
- * @Description if it has bugs.please forgive me ~~~
- * @Description 待添加详细描述
- */
 public class ReCreateUtil {
 
     public static void reCreateQueue(MNSClient client, String queueName) {

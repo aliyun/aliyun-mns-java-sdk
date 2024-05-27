@@ -4,12 +4,6 @@ import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.CloudTopic;
 import com.aliyun.oss.OSS;
 
-/**
- * @author zxg
- * @date 2024/05/21
- * @Description if it has bugs.please forgive me ~~~
- * @Description 待添加详细描述
- */
 public class MNSExtendedConfiguration {
 
     /**

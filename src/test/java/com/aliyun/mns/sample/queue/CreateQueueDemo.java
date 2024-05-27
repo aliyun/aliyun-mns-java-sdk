@@ -27,6 +27,11 @@ import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.QueueMeta;
 
+/**
+ * 1. 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
+ * 2. ${"user.home"}/.aliyun-mns.properties 文件配置如下：
+ *           mns.endpoint=http://xxxxxxx
+ */
 public class CreateQueueDemo {
 
     public static void main(String[] args) {

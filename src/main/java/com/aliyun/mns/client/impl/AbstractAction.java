@@ -33,8 +33,11 @@ import com.aliyun.mns.common.http.HttpCallback;
 import com.aliyun.mns.common.http.RequestMessage;
 import com.aliyun.mns.common.http.ServiceClient;
 import com.aliyun.mns.common.parser.ResultParser;
+import com.aliyun.mns.common.utils.AlibabaCloudCredentialsUtil;
 import com.aliyun.mns.common.utils.DateUtil;
 import com.aliyun.mns.model.AbstractRequest;
+import com.aliyuncs.auth.AlibabaCloudCredentials;
+import com.aliyuncs.auth.AlibabaCloudCredentialsProvider;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
@@ -42,6 +45,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
 import java.util.concurrent.Future;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,18 +99,22 @@ public abstract class AbstractAction<T extends AbstractRequest, V> implements
         return value;
     }
 
+    @Override
     public String getActionName() {
         return actionName;
     }
 
+    @Override
     public ServiceClient getClient() {
         return client;
     }
 
+    @Override
     public ServiceCredentials getCredentials() {
         return credentials;
     }
 
+    @Override
     public HttpMethod getMethod() {
         return method;
     }
@@ -115,6 +123,7 @@ public abstract class AbstractAction<T extends AbstractRequest, V> implements
         return this.endpoint;
     }
 
+    @Override
     public AsyncResult<V> execute(T reqObject, AsyncCallback<V> asyncHandler)
         throws ClientException, ServiceException {
         return this.executeWithCustomHeaders(reqObject, asyncHandler, null);
@@ -194,38 +203,57 @@ public abstract class AbstractAction<T extends AbstractRequest, V> implements
 
     protected void addSignatureHeader(RequestMessage request)
         throws ClientException {
-        if (credentials != null) {
-            // Add signature
-            if ((credentials.getAccessKeyId() == null || credentials.getAccessKeySecret() == null)
-                && credentials.getCredentialsProvider() == null) {
-                return;
-            }
-            String accessKeyId;
-            if (credentials.getAccessKeyId() != null && credentials.getAccessKeySecret() != null) {
-                accessKeyId = credentials.getAccessKeyId();
-            } else if (credentials.getCredentialsProvider() != null) {
-                accessKeyId = credentials.getAccessKeyIdByProvider();
-            } else {
-                accessKeyId = null;
-            }
-            request.addHeader(MNSConstants.AUTHORIZATION,
-                "MNS " + accessKeyId + ":"
-                    + getSignature(request)
-            );
+        if (credentials == null) {
+            return;
+        }
+        AlibabaCloudCredentialsProvider provider = credentials.getCredentialsProvider();
 
-            // add security_token if security token is not empty.
-            String securityToken;
-            if (credentials.getAccessKeyId() != null && credentials.getAccessKeySecret() != null) {
-                securityToken = credentials.getSecurityToken();
-            } else if (credentials.getCredentialsProvider() != null) {
-                securityToken = credentials.getSecurityTokenByProvider();
-            } else {
-                securityToken = null;
-            }
-            if (securityToken != null && !"".equals(securityToken)) {
-                request.addHeader(MNSConstants.SECURITY_TOKEN, securityToken);
+        if ((credentials.getAccessKeyId() == null || credentials.getAccessKeySecret() == null) && provider == null) {
+            return;
+        }
+        // ak/sk 模式 和 credentials 模式
+        boolean akSkMode = (credentials.getAccessKeyId() != null && credentials.getAccessKeySecret() != null);
+        boolean alibabaCredentialsMode = (provider != null);
+
+        // init ak/sk/token
+        String accessKeyId = null;
+        String accessKeySecret = null;
+        String securityToken = null;
+
+        if (akSkMode) {
+            accessKeyId = credentials.getAccessKeyId();
+            accessKeySecret = credentials.getAccessKeySecret();
+            securityToken = credentials.getSecurityToken();
+        } else if (alibabaCredentialsMode) {
+            AlibabaCloudCredentials alibabaCloudCredentials = getAlibabaCloudCredentials(provider);
+            if (alibabaCloudCredentials != null) {
+                accessKeyId = alibabaCloudCredentials.getAccessKeyId();
+                accessKeySecret = alibabaCloudCredentials.getAccessKeySecret();
+                securityToken = AlibabaCloudCredentialsUtil.getSecurityToken(alibabaCloudCredentials);
             }
         }
+
+        // Add signature
+        request.addHeader(MNSConstants.AUTHORIZATION,
+            "MNS " + accessKeyId + ":" + getSignature(request, accessKeySecret)
+        );
+        // add security_token if security token is not empty.
+        if (StringUtils.isNotBlank(securityToken)) {
+            request.addHeader(MNSConstants.SECURITY_TOKEN, securityToken);
+        }
+    }
+
+    private AlibabaCloudCredentials getAlibabaCloudCredentials(AlibabaCloudCredentialsProvider provider) {
+        if (provider == null) {
+            return null;
+        }
+
+        try {
+            return provider.getCredentials();
+        } catch (Exception e) {
+            logger.error("get credentials failed,e:" + e.getMessage(), e);
+        }
+        return null;
     }
 
     private String getRelativeResourcePath(String subPath) {
@@ -242,7 +270,11 @@ public abstract class AbstractAction<T extends AbstractRequest, V> implements
         return rootPath;
     }
 
-    private String getSignature(RequestMessage request) throws ClientException {
+    private String getSignature(RequestMessage request, String accessKeySecret) throws ClientException {
+        if (StringUtils.isBlank(accessKeySecret)) {
+            return null;
+        }
+
         Map<String, String> headers = request.getHeaders();
 
         StringBuffer canonicalizedMNSHeaders = new StringBuffer();
@@ -271,15 +303,8 @@ public abstract class AbstractAction<T extends AbstractRequest, V> implements
         String signature;
 
         try {
-            if (credentials.getAccessKeyId() != null && credentials.getAccessKeySecret() != null) {
-                signature = ServiceSignature.create().computeSignature(
-                    credentials.getAccessKeySecret(), stringToSign.toString());
-            } else if (credentials.getCredentialsProvider() != null) {
-                signature = ServiceSignature.create().computeSignature(
-                    credentials.getAccessKeySecretByProvider(), stringToSign.toString());
-            } else {
-                signature = null;
-            }
+            signature = ServiceSignature.create().computeSignature(
+                accessKeySecret, stringToSign.toString());
         } catch (Exception e) {
             throw new ClientException("Signature fail", userRequestId, e);
         }

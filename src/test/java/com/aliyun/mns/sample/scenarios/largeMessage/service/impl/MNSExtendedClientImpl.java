@@ -24,12 +24,6 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * @author zxg
- * @date 2024/05/21
- * @Description if it has bugs.please forgive me ~~~
- * @Description 待添加详细描述
- */
 public class MNSExtendedClientImpl implements MNSExtendedClient {
     public static Logger logger = LoggerFactory.getLogger(MNSExtendedClientImpl.class);
 

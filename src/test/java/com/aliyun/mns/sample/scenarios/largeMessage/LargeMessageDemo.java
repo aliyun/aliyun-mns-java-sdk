@@ -18,8 +18,6 @@ import com.aliyuncs.exceptions.ClientException;
 import org.junit.Assert;
 
 /**
- * @author zxg
- * @date 2024/05/21
  * 下述常量均可替换为 业务自身的变量
  */
 public class LargeMessageDemo {

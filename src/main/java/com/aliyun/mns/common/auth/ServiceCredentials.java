@@ -21,7 +21,6 @@ package com.aliyun.mns.common.auth;
 
 import com.aliyuncs.auth.AlibabaCloudCredentials;
 import com.aliyuncs.auth.AlibabaCloudCredentialsProvider;
-import com.aliyuncs.auth.InstanceProfileCredentials;
 import com.aliyuncs.exceptions.ClientException;
 
 import static com.aliyun.mns.common.utils.CodingUtils.assertParameterNotNull;
@@ -34,8 +33,6 @@ public class ServiceCredentials {
     private String accessKeySecret;
     private String securityToken;
     private AlibabaCloudCredentialsProvider credentialsProvider;
-    private AlibabaCloudCredentials credentials;
-
 
     /**
      * 构造函数。
@@ -76,20 +73,6 @@ public class ServiceCredentials {
      */
     public ServiceCredentials(AlibabaCloudCredentialsProvider credentialProvider) {
         setCredentialsProvider(credentialProvider);
-        refreshCredentials();
-    }
-
-    /**
-     * 初始化或刷新凭证。
-     */
-    private void refreshCredentials() {
-        if (credentialsProvider != null) {
-            try {
-                this.credentials = credentialsProvider.getCredentials();
-            } catch (ClientException e) {
-                throw new com.aliyun.mns.common.ClientException(e);
-            }
-        }
     }
 
     /**
@@ -166,65 +149,5 @@ public class ServiceCredentials {
     public void setCredentialsProvider(AlibabaCloudCredentialsProvider credentialsProvider) {
         assertParameterNotNull(credentialsProvider, "credentialsProvider");
         this.credentialsProvider = credentialsProvider;
-    }
-
-    /**
-     * 通过credential provider获取access id
-     *
-     * @return accessKeyId.
-     */
-    public String getAccessKeyIdByProvider() {
-        if (credentialsProvider == null) {
-            return null;
-        }
-        String tmpAccessKeyId;
-        try {
-            tmpAccessKeyId = credentials.getAccessKeyId();
-        } catch (Exception e) {
-            tmpAccessKeyId = null;
-        }
-        return tmpAccessKeyId;
-    }
-
-    /**
-     * 通过credential provider获取access key
-     *
-     * @return accessKeySecret.
-     */
-    public String getAccessKeySecretByProvider() {
-        if (credentialsProvider == null) {
-            return null;
-        }
-        String tmpAccesskeySecret;
-        try {
-            tmpAccesskeySecret = credentials.getAccessKeySecret();
-        } catch (Exception e) {
-            tmpAccesskeySecret = null;
-        }
-        return tmpAccesskeySecret;
-    }
-
-    /**
-     * 通过credential provider获取security token
-     *
-     * @return securityToken.
-     */
-    public String getSecurityTokenByProvider() {
-        if (credentialsProvider == null) {
-            return null;
-        }
-
-        String tmpSecurityToken;
-        try {
-            AlibabaCloudCredentials credential = credentials;
-            if (credential instanceof InstanceProfileCredentials) {
-                tmpSecurityToken = ((InstanceProfileCredentials) credential).getSessionToken();
-            } else {
-                tmpSecurityToken = null;
-            }
-        } catch (Exception e) {
-            tmpSecurityToken = null;
-        }
-        return tmpSecurityToken;
     }
 }

@@ -5,10 +5,7 @@ import com.aliyun.mns.model.TopicMessage;
 import java.util.List;
 
 /**
- * @author zxg
- * @date 2024/05/21
- * @Description if it has bugs.please forgive me ~~~
- * @Description 待添加详细描述
+ * 大文件 Client 类
  */
 public interface MNSExtendedClient {
 
