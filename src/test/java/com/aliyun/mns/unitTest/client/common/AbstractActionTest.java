@@ -118,7 +118,7 @@ public class AbstractActionTest {
         PowerMockito.when(alibabaCloudCredentialsV2.getAccessKeySecret()).thenReturn("sk2");
         PowerMockito.when(alibabaCloudCredentialsV2.getSessionToken()).thenReturn("token2");
 
-        // 凭证：两次调用，刷新不通的凭证
+        // 凭证：两次调用，刷新不同的凭证
         PowerMockito.when(alibabaCloudCredentialsProvider.getCredentials()).thenReturn(alibabaCloudCredentialsV1).thenReturn(alibabaCloudCredentialsV2);
 
 
