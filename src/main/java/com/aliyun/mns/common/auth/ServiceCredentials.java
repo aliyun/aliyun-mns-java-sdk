@@ -19,9 +19,7 @@
 
 package com.aliyun.mns.common.auth;
 
-import com.aliyuncs.auth.AlibabaCloudCredentials;
 import com.aliyuncs.auth.AlibabaCloudCredentialsProvider;
-import com.aliyuncs.exceptions.ClientException;
 
 import static com.aliyun.mns.common.utils.CodingUtils.assertParameterNotNull;
 
