@@ -281,7 +281,7 @@
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
                 <includes>
-                    <include>versionInfo.properties</include>
+                    <include>mns-version-Info.properties</include>
                 </includes>
             </resource>
         </resources>
