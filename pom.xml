@@ -17,41 +17,34 @@
   ~ under the License.
   -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-<!--    <parent>-->
-<!--        <groupId>org.sonatype.oss</groupId>-->
-<!--        <artifactId>oss-parent</artifactId>-->
-<!--        <version>9</version>-->
-<!--    </parent>-->
-
-<!--    <distributionManagement>-->
-<!--        <snapshotRepository>-->
-<!--            <id>sonatype-nexus-snapshots</id>-->
-<!--            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>-->
-<!--        </snapshotRepository>-->
-<!--        <repository>-->
-<!--            <id>sonatype-nexus-staging</id>-->
-<!--            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>-->
-<!--        </repository>-->
-<!--    </distributionManagement>-->
+    <parent>
+        <groupId>org.sonatype.oss</groupId>
+        <artifactId>oss-parent</artifactId>
+        <version>9</version>
+    </parent>
+    <scm>
+        <connection>scm:git:git://github.com/aliyun/aliyun-mns-java-sdk.git</connection>
+        <developerConnection>scm:git:git@github.com:aliyun/aliyun-mns-java-sdk.git</developerConnection>
+        <url>https://github.com/aliyun/aliyun-mns-java-sdk</url>
+    </scm>
 
     <distributionManagement>
-        <repository>
-            <id>releases</id>
-            <name>releases</name>
-            <url>http://mvnrepo.alibaba-inc.com/mvn/releases</url>
-        </repository>
         <snapshotRepository>
-            <id>snapshots</id>
-            <name>snapshots</name>
-            <url>http://mvnrepo.alibaba-inc.com/mvn/snapshots</url>
+            <id>sonatype-nexus-snapshots</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
+        <repository>
+            <id>sonatype-nexus-staging</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
     </distributionManagement>
 
     <groupId>com.aliyun.mns</groupId>
     <artifactId>aliyun-sdk-mns</artifactId>
-    <version>1.1.10-SNAPSHOT</version>
+    <version>1.1.10</version>
     <packaging>jar</packaging>
     <name>Aliyun Message and Notification Service SDK for Java</name>
     <url>http://www.aliyun.com</url>
@@ -107,7 +100,7 @@
             <scope>test</scope>
         </dependency>
 
-<!--        Test: oversized Message sample used-->
+        <!--        Test: oversized Message sample used-->
         <dependency>
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
@@ -248,31 +241,31 @@
                     </relocations>
                 </configuration>
             </plugin>
-            <!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-gpg-plugin</artifactId>-->
-<!--                <version>1.5</version>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <id>sign-artifacts</id>-->
-<!--                        <phase>verify</phase>-->
-<!--                        <goals>-->
-<!--                            <goal>sign</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
-<!--            <plugin>-->
-<!--                <groupId>org.sonatype.plugins</groupId>-->
-<!--                <artifactId>nexus-staging-maven-plugin</artifactId>-->
-<!--                <version>1.6.3</version>-->
-<!--                <extensions>true</extensions>-->
-<!--                <configuration>-->
-<!--                    <serverId>sonatype-nexus-staging</serverId>-->
-<!--                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>-->
-<!--                    <autoReleaseAfterClose>true</autoReleaseAfterClose>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <id>sign-artifacts</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.sonatype.plugins</groupId>
+                <artifactId>nexus-staging-maven-plugin</artifactId>
+                <version>1.6.3</version>
+                <extensions>true</extensions>
+                <configuration>
+                    <serverId>sonatype-nexus-staging</serverId>
+                    <nexusUrl>https://s01.oss.sonatype.org/</nexusUrl>
+                    <autoReleaseAfterClose>true</autoReleaseAfterClose>
+                </configuration>
+            </plugin>
         </plugins>
 
 
@@ -280,9 +273,6 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <filtering>true</filtering>
-                <includes>
-                    <include>mns-version-Info.properties</include>
-                </includes>
             </resource>
         </resources>
     </build>
@@ -298,7 +288,7 @@
         <developer>
             <id>mns</id>
             <name>mns</name>
-            <email />
+            <email/>
             <url>http://www.aliyun.com</url>
             <organization>aliyun</organization>
             <organizationUrl>http://www.aliyun.com</organizationUrl>
@@ -306,15 +296,10 @@
                 <role>architect</role>
                 <role>developer</role>
             </roles>
-            <timezone />
+            <timezone/>
             <properties>
-                <picUrl />
+                <picUrl/>
             </properties>
         </developer>
     </developers>
-<!--    <scm>-->
-<!--        <connection>scm:git:git://github.com/aliyun/aliyun-mns-java-sdk.git</connection>-->
-<!--        <developerConnection>scm:git:git@github.com:aliyun/aliyun-mns-java-sdk.git</developerConnection>-->
-<!--        <url>https://github.com/aliyun/aliyun-mns-java-sdk</url>-->
-<!--    </scm>-->
 </project>
