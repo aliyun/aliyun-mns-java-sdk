@@ -25,6 +25,11 @@
         <artifactId>oss-parent</artifactId>
         <version>9</version>
     </parent>
+    <scm>
+        <connection>scm:git:git://github.com/aliyun/aliyun-mns-java-sdk.git</connection>
+        <developerConnection>scm:git:git@github.com:aliyun/aliyun-mns-java-sdk.git</developerConnection>
+        <url>https://github.com/aliyun/aliyun-mns-java-sdk</url>
+    </scm>
 
     <distributionManagement>
         <snapshotRepository>
@@ -297,9 +302,4 @@
             </properties>
         </developer>
     </developers>
-    <scm>
-        <connection>scm:git:git://github.com/aliyun/aliyun-mns-java-sdk.git</connection>
-        <developerConnection>scm:git:git@github.com:aliyun/aliyun-mns-java-sdk.git</developerConnection>
-        <url>https://github.com/aliyun/aliyun-mns-java-sdk</url>
-    </scm>
 </project>
