@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class VersionInfoUtils {
-    private static final String VERSION_INFO_FILE = "versioninfo.properties";
+    private static final String VERSION_INFO_FILE = "mns-version-Info.properties";
 
     private static Logger log = LoggerFactory.getLogger(VersionInfoUtils.class);
 
@@ -58,9 +58,10 @@ public class VersionInfoUtils {
             .getResourceAsStream(VERSION_INFO_FILE);
         Properties versionInfoProperties = new Properties();
         try {
-            if (inputStream == null)
+            if (inputStream == null) {
                 throw new Exception(VERSION_INFO_FILE
                     + " not found on classpath");
+            }
 
             versionInfoProperties.load(inputStream);
             version = versionInfoProperties.getProperty("version");

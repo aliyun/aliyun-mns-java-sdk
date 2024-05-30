@@ -19,9 +19,7 @@
 
 package com.aliyun.mns.common.auth;
 
-import com.aliyuncs.auth.AlibabaCloudCredentials;
 import com.aliyuncs.auth.AlibabaCloudCredentialsProvider;
-import com.aliyuncs.auth.InstanceProfileCredentials;
 
 import static com.aliyun.mns.common.utils.CodingUtils.assertParameterNotNull;
 
@@ -149,65 +147,5 @@ public class ServiceCredentials {
     public void setCredentialsProvider(AlibabaCloudCredentialsProvider credentialsProvider) {
         assertParameterNotNull(credentialsProvider, "credentialsProvider");
         this.credentialsProvider = credentialsProvider;
-    }
-
-    /**
-     * 通过credential provider获取access id
-     *
-     * @return accessKeyId.
-     */
-    public String getAccessKeyIdByProvider() {
-        if (credentialsProvider == null) {
-            return null;
-        }
-        String tmpAccessKeyId;
-        try {
-            tmpAccessKeyId = credentialsProvider.getCredentials().getAccessKeyId();
-        } catch (Exception e) {
-            tmpAccessKeyId = null;
-        }
-        return tmpAccessKeyId;
-    }
-
-    /**
-     * 通过credential provider获取access key
-     *
-     * @return accessKeySecret.
-     */
-    public String getAccessKeySecretByProvider() {
-        if (credentialsProvider == null) {
-            return null;
-        }
-        String tmpAccesskeySecret;
-        try {
-            tmpAccesskeySecret = credentialsProvider.getCredentials().getAccessKeySecret();
-        } catch (Exception e) {
-            tmpAccesskeySecret = null;
-        }
-        return tmpAccesskeySecret;
-    }
-
-    /**
-     * 通过credential provider获取security token
-     *
-     * @return securityToken.
-     */
-    public String getSecurityTokenByProvider() {
-        if (credentialsProvider == null) {
-            return null;
-        }
-
-        String tmpSecurityToken;
-        try {
-            AlibabaCloudCredentials credential = credentialsProvider.getCredentials();
-            if (credential instanceof InstanceProfileCredentials) {
-                tmpSecurityToken = ((InstanceProfileCredentials) credential).getSessionToken();
-            } else {
-                tmpSecurityToken = null;
-            }
-        } catch (Exception e) {
-            tmpSecurityToken = null;
-        }
-        return tmpSecurityToken;
     }
 }

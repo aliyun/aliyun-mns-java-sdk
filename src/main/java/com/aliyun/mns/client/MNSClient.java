@@ -86,7 +86,10 @@ public interface MNSClient {
      * @param queueName queueName
      * @param checker   TransactionChecker to check the transaction message status.
      * @return TransactionQueue object
+     *
+     * The product no longer supports this function
      */
+    @Deprecated
     public TransactionQueue getTransQueueRef(String queueName, TransactionChecker checker);
 
     /**
@@ -101,7 +104,10 @@ public interface MNSClient {
      * @return transaction queue
      * @throws ClientException  exception
      * @throws ServiceException exception
+     *
+     * The product no longer supports this function
      */
+    @Deprecated
     public TransactionQueue createTransQueue(QueueMeta queueMeta, TransactionChecker checker, long lifeTime,
         long delayTime) throws ClientException,
         ServiceException;
@@ -114,7 +120,10 @@ public interface MNSClient {
      * @return transaction queue
      * @throws ClientException  exception
      * @throws ServiceException exception
+     *
+     * The product no longer supports this function
      */
+    @Deprecated
     public TransactionQueue createTransQueue(QueueMeta queueMeta,
         TransactionChecker checker) throws ClientException, ServiceException;
 
@@ -166,7 +175,10 @@ public interface MNSClient {
      * @return transaction queue
      * @throws ClientException  exception
      * @throws ServiceException exception
+     *
+     * The product no longer supports this function
      */
+    @Deprecated
     public TransactionQueue createTransQueue(QueueMeta queueMeta) throws ClientException, ServiceException;
 
     /**

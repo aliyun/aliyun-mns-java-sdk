@@ -35,7 +35,7 @@ public class ReceiptHandleListSerializer extends XMLSerializer<List<String>> {
 
     @Override
     public InputStream serialize(List<String> receipts, String encoding) throws Exception {
-        Document doc = getDocmentBuilder().newDocument();
+        Document doc = getDocumentBuilder().newDocument();
 
         Element root = doc.createElementNS(DEFAULT_XML_NAMESPACE, RECEIPT_HANDLE_LIST_TAG);
 

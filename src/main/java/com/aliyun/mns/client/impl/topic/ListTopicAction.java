@@ -63,6 +63,7 @@ public class ListTopicAction extends AbstractAction<ListTopicRequest, PagingList
         return requestMessage;
     }
 
+    @Override
     protected ResultParser<PagingListResult<TopicMeta>> buildResultParser() {
         return new ResultParser<PagingListResult<TopicMeta>>() {
             @Override

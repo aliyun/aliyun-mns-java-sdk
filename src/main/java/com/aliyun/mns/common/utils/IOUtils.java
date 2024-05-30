@@ -33,8 +33,9 @@ public class IOUtils {
 
     public static String readStreamAsString(InputStream in, String charset)
         throws IOException {
-        if (in == null)
+        if (in == null) {
             return "";
+        }
 
         Reader reader = null;
         Writer writer = new StringWriter();

@@ -73,6 +73,7 @@ public class BatchDeleteMessageAction extends
     @Override
     protected ResultParser<Exception> buildExceptionParser() {
         return new ResultParser<Exception>() {
+            @Override
             public Exception parse(ResponseMessage response)
                 throws ResultParseException {
                 ErrorReceiptHandleListDeserializer deserializer = new ErrorReceiptHandleListDeserializer();

@@ -30,7 +30,7 @@ public class OpenServiceResponseDeserializer extends AbstractTopicMetaDeserializ
 
     @Override
     public OpenServiceResponse deserialize(InputStream stream) throws Exception {
-        Document doc = getDocmentBuilder().parse(stream);
+        Document doc = getDocumentBuilder().parse(stream);
         OpenServiceResponse response = new OpenServiceResponse();
         response.setOrderId(safeGetElementContent(doc.getDocumentElement(), OPEN_SERVICE_ORDER_TAG, ""));
 

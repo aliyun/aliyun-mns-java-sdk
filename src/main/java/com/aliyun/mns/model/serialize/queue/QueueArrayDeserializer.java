@@ -41,7 +41,7 @@ public class QueueArrayDeserializer extends AbstractQueueMetaDeserializer<Paging
 //		 while(stream.read(bytes, 0, stream.available())>0){
 //		 System.out.println(new String(bytes));
 //		 }
-        Document doc = getDocmentBuilder().parse(stream);
+        Document doc = getDocumentBuilder().parse(stream);
         NodeList list = doc.getElementsByTagName(QUEUE_TAG);
 
         List<QueueMeta> queues = new ArrayList<QueueMeta>();

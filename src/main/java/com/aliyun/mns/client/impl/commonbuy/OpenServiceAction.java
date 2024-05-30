@@ -48,6 +48,7 @@ public class OpenServiceAction extends AbstractAction<OpenServiceRequest, OpenSe
         return requestMessage;
     }
 
+    @Override
     protected ResultParser<OpenServiceResponse> buildResultParser() {
         return new ResultParser<OpenServiceResponse>() {
             @Override

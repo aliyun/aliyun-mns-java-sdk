@@ -39,7 +39,7 @@ public class MessageListSerializer extends XMLSerializer<List<Message>> {
 
     @Override
     public InputStream serialize(List<Message> msgs, String encoding) throws Exception {
-        Document doc = getDocmentBuilder().newDocument();
+        Document doc = getDocumentBuilder().newDocument();
 
         Element messages = doc.createElementNS(DEFAULT_XML_NAMESPACE, MESSAGE_LIST_TAG);
 
@@ -51,7 +51,7 @@ public class MessageListSerializer extends XMLSerializer<List<Message>> {
                 messages.appendChild(root);
 
                 Element node = safeCreateContentElement(doc, MESSAGE_BODY_TAG,
-                    msg.getMessageBodyAsRawString(), "");
+                    msg.getOriginalMessageBody(), "");
 
                 if (node != null) {
                     root.appendChild(node);

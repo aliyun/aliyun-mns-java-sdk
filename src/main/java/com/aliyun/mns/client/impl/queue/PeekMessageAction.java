@@ -58,6 +58,7 @@ public class PeekMessageAction extends
     @Override
     protected ResultParser<Message> buildResultParser() {
         return new ResultParser<Message>() {
+            @Override
             public Message parse(ResponseMessage response) throws ResultParseException {
                 MessageDeserializer deserializer = new MessageDeserializer();
                 try {

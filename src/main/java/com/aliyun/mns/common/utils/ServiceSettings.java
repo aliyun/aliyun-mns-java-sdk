@@ -24,6 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,22 +51,6 @@ public class ServiceSettings {
         properties.setProperty("mns.accountendpoint", accountEndpoint);
     }
 
-    public static String getMNSAccessKeyId() {
-        return properties.getProperty("mns.accesskeyid");
-    }
-
-    public static void setMNSAccessKeyId(String accessKeyId) {
-        properties.setProperty("mns.accesskeyid", accessKeyId);
-    }
-
-    public static String getMNSAccessKeySecret() {
-        return properties.getProperty("mns.accesskeysecret");
-    }
-
-    public static void setMNSAccessKeySecret(String accessKeySecret) {
-        properties.setProperty("mns.accesskeysecret", accessKeySecret);
-    }
-
     public static String getMNSSecurityToken() {
         return properties.getProperty("mns.securitytoken");
     }
@@ -75,14 +60,51 @@ public class ServiceSettings {
     }
 
     /**
+     * 获得指定 key 的 配置值
+     */
+    public static String getMNSPropertyValue(String propertyKey, String defaultValue) {
+        if (StringUtils.isBlank(propertyKey)) {
+            return defaultValue;
+        }
+        return properties.getProperty("mns." + propertyKey, defaultValue);
+    }
+
+    /**
+     * @deprecated 该方案不再推荐使用，请使用非硬编码形式：https://help.aliyun.com/zh/sdk/developer-reference/ak-security-scheme?#faa5f4905bxkr
+     */
+    @Deprecated
+    public static String getMNSAccessKeyId() {
+        return properties.getProperty("mns.accesskeyid");
+    }
+
+    /**
+     * @deprecated 该方案不再推荐使用，请使用非硬编码形式：https://help.aliyun.com/zh/sdk/developer-reference/ak-security-scheme?#faa5f4905bxkr
+     */
+    @Deprecated
+    public static void setMNSAccessKeyId(String accessKeyId) {
+        properties.setProperty("mns.accesskeyid", accessKeyId);
+    }
+
+    /**
+     * @deprecated 该方案不再推荐使用，请使用非硬编码形式：https://help.aliyun.com/zh/sdk/developer-reference/ak-security-scheme?#faa5f4905bxkr
+     */
+    @Deprecated
+    public static String getMNSAccessKeySecret() {
+        return properties.getProperty("mns.accesskeysecret");
+    }
+
+    /**
+     * @deprecated 该方案不再推荐使用，请使用非硬编码形式：https://help.aliyun.com/zh/sdk/developer-reference/ak-security-scheme?#faa5f4905bxkr
+     */
+    @Deprecated
+    public static void setMNSAccessKeySecret(String accessKeySecret) {
+        properties.setProperty("mns.accesskeysecret", accessKeySecret);
+    }
+
+    /**
      * Load settings from the configuration file.
      * <p>
-     * The configuration format:
-     * mns.endpoint=
-     * mns.accesskeyid=
-     * mns.accesskeysecret=
-     * proxy.host=
-     * proxy.port=
+     * The configuration format: mns.endpoint= mns.accesskeyid= mns.accesskeysecret= proxy.host= proxy.port=
      * </p>
      */
     public static void load() {

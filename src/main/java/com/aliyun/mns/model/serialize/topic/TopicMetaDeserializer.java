@@ -31,7 +31,7 @@ public class TopicMetaDeserializer extends AbstractTopicMetaDeserializer<TopicMe
 
     @Override
     public TopicMeta deserialize(InputStream stream) throws Exception {
-        Document doc = getDocmentBuilder().parse(stream);
+        Document doc = getDocumentBuilder().parse(stream);
         Element root = doc.getDocumentElement();
         return parseMeta(root);
     }

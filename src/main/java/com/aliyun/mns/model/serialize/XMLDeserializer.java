@@ -25,18 +25,18 @@ import org.w3c.dom.NodeList;
 
 public abstract class XMLDeserializer<T> extends BaseXMLSerializer<T> implements Deserializer<T> {
 
-    public String safeGetElementContent(Element root, String tagName,
-        String defualValue) {
+    protected String safeGetElementContent(Element root, String tagName,
+        String defaultValue) {
         NodeList nodes = root.getElementsByTagName(tagName);
         if (nodes != null) {
             Node node = nodes.item(0);
             if (node == null) {
-                return defualValue;
+                return defaultValue;
             } else {
                 return node.getTextContent();
             }
         }
-        return defualValue;
+        return defaultValue;
     }
 
 }

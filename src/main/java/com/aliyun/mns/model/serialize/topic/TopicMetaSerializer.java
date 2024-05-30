@@ -35,7 +35,7 @@ import static com.aliyun.mns.common.MNSConstants.TOPIC_TAG;
 public class TopicMetaSerializer extends XMLSerializer<TopicMeta> {
     @Override
     public InputStream serialize(TopicMeta obj, String encoding) throws Exception {
-        Document doc = getDocmentBuilder().newDocument();
+        Document doc = getDocumentBuilder().newDocument();
         Element root = doc.createElementNS(DEFAULT_XML_NAMESPACE, TOPIC_TAG);
         doc.appendChild(root);
 
