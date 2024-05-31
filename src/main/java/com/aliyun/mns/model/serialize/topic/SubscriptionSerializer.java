@@ -37,7 +37,7 @@ import static com.aliyun.mns.common.MNSConstants.SUBSCRIPTION_TAG;
 public class SubscriptionSerializer extends XMLSerializer<SubscriptionMeta> {
 
     public InputStream serialize(SubscriptionMeta obj, String encoding) throws Exception {
-        Document doc = getDocmentBuilder().newDocument();
+        Document doc = getDocumentBuilder().newDocument();
         Element root = doc.createElementNS(DEFAULT_XML_NAMESPACE, SUBSCRIPTION_TAG);
         doc.appendChild(root);
 

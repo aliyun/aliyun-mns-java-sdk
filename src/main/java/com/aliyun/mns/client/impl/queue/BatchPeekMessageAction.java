@@ -60,6 +60,7 @@ public class BatchPeekMessageAction extends
     @Override
     protected ResultParser<List<Message>> buildResultParser() {
         return new ResultParser<List<Message>>() {
+            @Override
             public List<Message> parse(ResponseMessage response) throws ResultParseException {
                 MessageListDeserializer deserializer = new MessageListDeserializer();
                 try {

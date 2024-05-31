@@ -36,7 +36,7 @@ public class AccountAttributesSerializer extends XMLSerializer<AccountAttributes
     @Override
     public InputStream serialize(AccountAttributes obj, String encoding)
         throws Exception {
-        Document doc = getDocmentBuilder().newDocument();
+        Document doc = getDocumentBuilder().newDocument();
 
         Element root = doc.createElementNS(DEFAULT_XML_NAMESPACE, ACCOUNT_TAG);
         doc.appendChild(root);

@@ -30,7 +30,7 @@ public class SubscriptionDeserializer extends AbstractSubscriptionDeserializer<S
     }
 
     public SubscriptionMeta deserialize(InputStream stream) throws Exception {
-        Document doc = getDocmentBuilder().parse(stream);
+        Document doc = getDocumentBuilder().parse(stream);
         Element root = doc.getDocumentElement();
         return parseMeta(root);
     }

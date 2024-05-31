@@ -71,7 +71,7 @@ public final class CloudQueue {
         this.credentials = credentials;
         this.endpoint = endpoint;
 
-        if (queueURL == null || queueURL.equals("")) {
+        if (queueURL == null || "".equals(queueURL)) {
             throw new NullPointerException(
                 "QueueURL parameter can not be empty.");
         }
@@ -791,7 +791,7 @@ public final class CloudQueue {
             this.getAttributes();
             res = true;  // queue exists if get attributes successfully.
         } catch (ServiceException se) {
-            if (se.getErrorCode().equals("QueueNotExist")) {// queue does not exist;
+            if ("QueueNotExist".equals(se.getErrorCode())) {// queue does not exist;
                 res = false;
             } else {
                 // other errors.
