@@ -40,4 +40,9 @@ public class BatchSendException extends ServiceException {
     public void setMessages(List<Message> messages) {
         this.messages = messages;
     }
+
+    @Override
+    public String getMessage() {
+        return messages.toString();
+    }
 }
