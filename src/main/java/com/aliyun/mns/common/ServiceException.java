@@ -42,7 +42,7 @@ package com.aliyun.mns.common;
 public class ServiceException extends RuntimeException {
 
     private static final long serialVersionUID = 430933593095358673L;
-    private String errorCode;
+    protected String errorCode;
     private String requestId;
     private String hostId;
 

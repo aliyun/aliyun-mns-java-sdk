@@ -38,4 +38,12 @@ public class ErrorMessageResult {
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
+
+    @Override
+    public String toString() {
+        return "ErrorMessageResult{" +
+            "errorCode='" + errorCode + '\'' +
+            ", errorMessage='" + errorMessage + '\'' +
+            '}';
+    }
 }

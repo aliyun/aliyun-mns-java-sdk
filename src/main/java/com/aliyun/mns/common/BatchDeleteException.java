@@ -19,8 +19,9 @@
 
 package com.aliyun.mns.common;
 
-import com.aliyun.mns.model.ErrorMessageResult;
 import java.util.Map;
+
+import com.aliyun.mns.model.ErrorMessageResult;
 
 public class BatchDeleteException extends ServiceException {
     /**
@@ -31,6 +32,9 @@ public class BatchDeleteException extends ServiceException {
 
     public BatchDeleteException(Map<String, ErrorMessageResult> errorMsgs) {
         this.errorMessages = errorMsgs;
+        if (errorMessages !=null && !errorMessages.isEmpty()) {
+            this.errorCode = errorMessages.entrySet().iterator().next().getValue().getErrorCode();
+        }
     }
 
     public Map<String, ErrorMessageResult> getErrorMessages() {
@@ -39,5 +43,30 @@ public class BatchDeleteException extends ServiceException {
 
     public void setErrorMessages(Map<String, ErrorMessageResult> errorMessages) {
         this.errorMessages = errorMessages;
+    }
+
+    @Override
+    public String getMessage() {
+        return this.toString();
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        if (errorMessages !=null && !errorMessages.isEmpty()) {
+            sb.append("{");
+            for (Map.Entry<String, ErrorMessageResult> entry : errorMessages.entrySet()) {
+                sb.append(entry.getKey())
+                    .append("=")
+                    .append(entry.getValue().toString())
+                    .append(", ");
+            }
+            if (sb.length() > 1) {
+                // 移除最后的逗号和空格
+                sb.delete(sb.length() - 2, sb.length());
+            }
+            sb.append("}");
+        }
+        return sb.toString();
     }
 }
