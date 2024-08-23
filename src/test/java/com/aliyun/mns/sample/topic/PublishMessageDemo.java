@@ -38,6 +38,7 @@ public class PublishMessageDemo {
         try {
             msg.setMessageBody(message);
             // 可选。设置该条发布消息的filterTag
+            // 设置后，消息服务MNS在推送消息时会根据标签进行过滤，仅推送消息标签与订阅中指定的过滤标签匹配的消息到指定队列上。
             //msg.setMessageTag("filterTag");
             TopicMessage publishResultMsg = topic.publishMessage(msg);
             System.out.println("message publish.");
