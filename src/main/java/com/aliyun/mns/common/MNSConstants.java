@@ -41,7 +41,7 @@ public interface MNSConstants extends HttpHeaders {
     public static final String DEFAULT_XML_NAMESPACE = "http://mns.aliyuncs.com/doc/v1";
 
     public static final String QUEUE_PREFIX = "queues/";
-    public static final String TPOIC_PREFIX = "topics/";
+    public static final String TOPIC_PREFIX = "topics/";
 
     public static final String URI_OPEN_SERVICE = "commonbuy/openservice";
 
@@ -114,7 +114,7 @@ public interface MNSConstants extends HttpHeaders {
 
     public static final String PARAM_WAITSECONDS = "waitseconds";
 
-    public static final String SUBSRIPTION = "subscriptions";
+    public static final String SUBSCRIPTION = "subscriptions";
 
     /**
      * https://help.aliyun.com/zh/sdk/developer-reference/ak-security-scheme?#faa5f4905bxkr

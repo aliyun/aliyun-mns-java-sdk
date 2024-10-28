@@ -110,7 +110,7 @@ public class CloudTopic {
         if (!uri.endsWith("/")) {
             uri += "/";
         }
-        uri += MNSConstants.TPOIC_PREFIX + topicName;
+        uri += MNSConstants.TOPIC_PREFIX + topicName;
         this.topicURL = uri;
     }
 
@@ -127,7 +127,7 @@ public class CloudTopic {
         String topicName = null;
         if (topicURL.startsWith(this.endpoint.toString())) {
             topicName = topicURL
-                .substring(this.endpoint.toString().length() + 1 + MNSConstants.TPOIC_PREFIX.length());
+                .substring(this.endpoint.toString().length() + 1 + MNSConstants.TOPIC_PREFIX.length());
         }
 
         // erase start "/"
@@ -197,7 +197,7 @@ public class CloudTopic {
         }
 
         request.setTopicMeta(meta);
-        request.setRequestPath(MNSConstants.TPOIC_PREFIX + topicName);
+        request.setRequestPath(MNSConstants.TOPIC_PREFIX + topicName);
         return action.executeWithCustomHeaders(request, customHeaders);
 
     }
@@ -240,7 +240,7 @@ public class CloudTopic {
         SetTopicAttrAction action = new SetTopicAttrAction(serviceClient, credentials, endpoint);
         SetTopicAttrRequest request = new SetTopicAttrRequest();
         request.setTopicMeta(meta);
-        request.setRequestPath(MNSConstants.TPOIC_PREFIX + meta.getTopicName());
+        request.setRequestPath(MNSConstants.TOPIC_PREFIX + meta.getTopicName());
         action.executeWithCustomHeaders(request, customHeaders);
     }
 
@@ -293,7 +293,7 @@ public class CloudTopic {
         SubscribeRequest request = new SubscribeRequest();
         SubscribeAction action = new SubscribeAction(serviceClient, credentials, endpoint);
         request.setMeta(meta);
-        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSRIPTION + "/" + meta.getSubscriptionName());
+        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSCRIPTION + "/" + meta.getSubscriptionName());
         String url = action.executeWithCustomHeaders(request, customHeaders);
         return url;
     }
@@ -312,7 +312,7 @@ public class CloudTopic {
         SubscribeRequest request = new SubscribeRequest();
         SubscribeAction action = new SubscribeAction(serviceClient, credentials, endpoint);
         request.setMeta(meta);
-        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSRIPTION + "/" + meta.getSubscriptionName());
+        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSCRIPTION + "/" + meta.getSubscriptionName());
         return action.executeWithCustomHeaders(request, callback, customHeaders);
     }
 
@@ -328,7 +328,7 @@ public class CloudTopic {
         SetSubscriptionAttrRequest request = new SetSubscriptionAttrRequest();
         SetSubscriptionAttrAction action = new SetSubscriptionAttrAction(serviceClient, credentials, endpoint);
         request.setMeta(meta);
-        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSRIPTION + "/" + meta.getSubscriptionName());
+        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSCRIPTION + "/" + meta.getSubscriptionName());
         action.executeWithCustomHeaders(request, customHeaders);
     }
 
@@ -346,7 +346,7 @@ public class CloudTopic {
         SetSubscriptionAttrRequest request = new SetSubscriptionAttrRequest();
         SetSubscriptionAttrAction action = new SetSubscriptionAttrAction(serviceClient, credentials, endpoint);
         request.setMeta(meta);
-        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSRIPTION + "/" + meta.getSubscriptionName());
+        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSCRIPTION + "/" + meta.getSubscriptionName());
         return action.executeWithCustomHeaders(request, callback, customHeaders);
     }
 
@@ -358,7 +358,7 @@ public class CloudTopic {
      */
     public SubscriptionMeta getSubscriptionAttr(String subscriptionName) {
         GetSubscriptionAttrRequest request = new GetSubscriptionAttrRequest();
-        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSRIPTION + "/" + subscriptionName);
+        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSCRIPTION + "/" + subscriptionName);
         GetSubscriptionAttrAction action = new GetSubscriptionAttrAction(serviceClient, credentials, endpoint);
         return action.executeWithCustomHeaders(request, customHeaders);
     }
@@ -373,7 +373,7 @@ public class CloudTopic {
     public AsyncResult<SubscriptionMeta> asyncGetSubscriptionAttr(String subscriptionName,
         AsyncCallback<SubscriptionMeta> callback) {
         GetSubscriptionAttrRequest request = new GetSubscriptionAttrRequest();
-        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSRIPTION + "/" + subscriptionName);
+        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSCRIPTION + "/" + subscriptionName);
         GetSubscriptionAttrAction action = new GetSubscriptionAttrAction(serviceClient, credentials, endpoint);
         return action.executeWithCustomHeaders(request, callback, customHeaders);
     }
@@ -385,7 +385,7 @@ public class CloudTopic {
      */
     public void unsubscribe(String subscriptionName) {
         UnsubscribeRequest request = new UnsubscribeRequest();
-        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSRIPTION + "/" + subscriptionName);
+        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSCRIPTION + "/" + subscriptionName);
 
         UnsubscribeAction action = new UnsubscribeAction(serviceClient, credentials, endpoint);
         action.executeWithCustomHeaders(request, customHeaders);
@@ -400,7 +400,7 @@ public class CloudTopic {
      */
     public AsyncResult<Void> asyncUnsubscribe(String subscriptionName, AsyncCallback<Void> callback) {
         UnsubscribeRequest request = new UnsubscribeRequest();
-        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSRIPTION + "/" + subscriptionName);
+        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSCRIPTION + "/" + subscriptionName);
 
         UnsubscribeAction action = new UnsubscribeAction(serviceClient, credentials, endpoint);
         return action.executeWithCustomHeaders(request, callback, customHeaders);
@@ -419,7 +419,7 @@ public class CloudTopic {
         Integer retNumber, boolean withMeta) {
         ListSubscriptionRequest request = new ListSubscriptionRequest();
         ListSubscriptionAction action = new ListSubscriptionAction(serviceClient, credentials, endpoint);
-        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSRIPTION);
+        request.setRequestPath(topicURL + "/" + MNSConstants.SUBSCRIPTION);
         request.setMarker(marker);
         request.setPrefix(prefix);
         request.setMaxRet(retNumber);
