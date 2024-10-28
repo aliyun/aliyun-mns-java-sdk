@@ -406,7 +406,7 @@ public class DefaultMNSClient implements MNSClient {
         ServiceException {
         ListTopicAction action = new ListTopicAction(this.serviceClient, this.credentials, this.endpoint);
         ListTopicRequest request = new ListTopicRequest();
-        request.setRequestPath(MNSConstants.TPOIC_PREFIX.split("/")[0]);
+        request.setRequestPath(MNSConstants.TOPIC_PREFIX.split("/")[0]);
         request.setMarker(marker);
         request.setPrefix(prefix);
         request.setMaxRet(retNumber);
