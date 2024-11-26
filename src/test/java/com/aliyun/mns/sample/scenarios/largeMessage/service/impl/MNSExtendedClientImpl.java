@@ -2,6 +2,7 @@ package com.aliyun.mns.sample.scenarios.largeMessage.service.impl;
 
 import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.CloudTopic;
+import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.model.Message;
 import com.aliyun.mns.model.TopicMessage;
 import com.aliyun.mns.sample.scenarios.largeMessage.service.MNSExtendedClient;
@@ -44,7 +45,7 @@ public class MNSExtendedClientImpl implements MNSExtendedClient {
     }
 
     @Override
-    public Message sendMessage(Message message) {
+    public Message sendMessage(Message message) throws ServiceException {
         Assert.assertNotNull(message);
 
         CloudQueue queue = extendedConfiguration.getMNSQueue();
@@ -65,7 +66,7 @@ public class MNSExtendedClientImpl implements MNSExtendedClient {
     }
 
     @Override
-    public Message receiveMessage(int waitSeconds) {
+    public Message receiveMessage(int waitSeconds) throws ServiceException {
         CloudQueue queue = extendedConfiguration.getMNSQueue();
         Message msg = queue.popMessage(waitSeconds);
         if (msg == null) {
@@ -76,7 +77,7 @@ public class MNSExtendedClientImpl implements MNSExtendedClient {
 
 
     @Override
-    public List<Message> batchReceiveMessage(int batchSize, int waitSeconds) {
+    public List<Message> batchReceiveMessage(int batchSize, int waitSeconds) throws ServiceException {
         CloudQueue queue = extendedConfiguration.getMNSQueue();
         List<Message> messages = queue.batchPopMessage(batchSize,waitSeconds);
 
@@ -88,7 +89,7 @@ public class MNSExtendedClientImpl implements MNSExtendedClient {
     }
 
     @Override
-    public void deleteMessage(String receiptHandle) {
+    public void deleteMessage(String receiptHandle) throws ServiceException {
         extendedConfiguration.getMNSQueue().deleteMessage(receiptHandle);
 
         String ossUrl = this.messageId2OssUrlMap.get(receiptHandle);
@@ -100,7 +101,7 @@ public class MNSExtendedClientImpl implements MNSExtendedClient {
     }
 
     @Override
-    public TopicMessage publishMessage(TopicMessage message) {
+    public TopicMessage publishMessage(TopicMessage message) throws ServiceException {
         Assert.assertNotNull(message);
 
         CloudTopic cloudTopic = extendedConfiguration.getMNSTopic();

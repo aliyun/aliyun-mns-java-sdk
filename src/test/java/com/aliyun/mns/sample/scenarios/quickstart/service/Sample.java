@@ -512,7 +512,7 @@ public class Sample {
     }
 
     // 使用异步接口
-    public void multiThreadHandleMsgs() {
+    public void multiThreadHandleMsgs() throws ServiceException {
         // 创建队列
         CloudQueue queue = client.getQueueRef(QUEUE_NAME1);
         queue.create();
@@ -553,7 +553,7 @@ public class Sample {
     /**
      * topic 相关操作
      */
-    public void topicOper() {
+    public void topicOper() throws ServiceException {
         CloudTopic topic = null;
         CloudTopic topic2 = null;
         try {
@@ -598,7 +598,7 @@ public class Sample {
     /**
      * subscription 相关操作
      */
-    public void subscribeOper() {
+    public void subscribeOper() throws ServiceException {
         CloudTopic topic = null;
         try {
             //创建topic
@@ -648,7 +648,7 @@ public class Sample {
 
     }
 
-    public void publishMsg() {
+    public void publishMsg() throws ServiceException {
         int http_port = 8080;
         HttpEndpointSubscription ep = new HttpEndpointSubscription(http_port);
         CloudTopic topic = null;
@@ -707,7 +707,7 @@ public class Sample {
         }
     }
 
-    public void publishMsgUsingSimplifiedFormat() {
+    public void publishMsgUsingSimplifiedFormat() throws ServiceException {
         int http_port = 8089;
         HttpEndpointSubscription ep = new HttpEndpointSubscription(http_port);
         CloudTopic topic = null;
@@ -769,7 +769,7 @@ public class Sample {
         }
     }
 
-    public void publishMsgWithTag() {
+    public void publishMsgWithTag() throws ServiceException {
         int http_port = 8082;
         HttpEndpointSubscription ep = new HttpEndpointSubscription(http_port);
         CloudTopic topic = null;
@@ -886,8 +886,13 @@ public class Sample {
                 message.setMessageBody("message_body_" + hasSendNum);
 
                 SendAsyncCallback cb = new SendAsyncCallback(this);
-                AsyncResult<Message> asyncPutResult = mQueue.asyncPutMessage(
-                    message, cb);
+                AsyncResult<Message> asyncPutResult = null;
+                try {
+                    asyncPutResult = mQueue.asyncPutMessage(
+                        message, cb);
+                } catch (ServiceException e) {
+                    throw new RuntimeException(e);
+                }
                 if (asyncPutResult == null) {
                     System.out.println("AsyncSendMessage Fail");
                 }
@@ -934,8 +939,13 @@ public class Sample {
             while (receiveMsgNum++ < mNum) {
                 ReceiveDeleteAsyncCallback<Message> cb = new ReceiveDeleteAsyncCallback<Message>(
                     this);
-                AsyncResult<Message> asyncPopMsgResult = mQueue
-                    .asyncPopMessage(cb);
+                AsyncResult<Message> asyncPopMsgResult = null;
+                try {
+                    asyncPopMsgResult = mQueue
+                        .asyncPopMessage(cb);
+                } catch (ServiceException e) {
+                    throw new RuntimeException(e);
+                }
                 if (asyncPopMsgResult == null) {
                     System.out.println("AsyncPopMessage Fail!");
                 }
@@ -955,7 +965,7 @@ public class Sample {
         }
 
         @Override
-        public void onSuccess(T msg) {
+        public void onSuccess(T msg) throws ServiceException {
             if (mStage == MessageStage.ReceiveStage) {
                 mMessage = (Message) msg;
                 System.out.println("Receive Message " + mMessage.getMessageId());
@@ -969,7 +979,7 @@ public class Sample {
         }
 
         @Override
-        public void onFail(Exception ex) {
+        public void onFail(Exception ex) throws ServiceException {
             System.out.println("Operate Message Fail.");
             if (ex instanceof ServiceException
                 && mTask.mQueue.isMessageNotExist((ServiceException) ex)) {
@@ -992,19 +1002,19 @@ public class Sample {
             }
         }
 
-        public void doReceive() {
+        public void doReceive() throws ServiceException {
             mStage = MessageStage.ReceiveStage;
             mTask.mQueue.asyncPopMessage((ReceiveDeleteAsyncCallback<Message>) this);
         }
 
-        public void doDelete() {
+        public void doDelete() throws ServiceException {
             mStage = MessageStage.DeleteStage;
             mTask.mQueue.asyncDeleteMessage(mMessage.getReceiptHandle(),
                 (ReceiveDeleteAsyncCallback<Void>) this);
         }
     }
 
-    public void runQueue() {
+    public void runQueue() throws ServiceException {
         queueOperators();
         messageOperators();
         rawMessageOperators();
@@ -1012,7 +1022,7 @@ public class Sample {
         multiThreadHandleMsgs();
     }
 
-    public void runTopic() {
+    public void runTopic() throws ServiceException {
         topicOper();
         subscribeOper();
         publishMsg();

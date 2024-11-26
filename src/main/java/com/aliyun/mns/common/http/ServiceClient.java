@@ -73,7 +73,7 @@ public abstract class ServiceClient {
     public <T> Future<HttpResponse> sendRequest(RequestMessage request,
         ExecutionContext context,
 
-        HttpCallback<T> callback) {
+        HttpCallback<T> callback) throws ServiceException {
 
         //do not check request state at reactor wrapper class
         //give chances to check and restart reactor later

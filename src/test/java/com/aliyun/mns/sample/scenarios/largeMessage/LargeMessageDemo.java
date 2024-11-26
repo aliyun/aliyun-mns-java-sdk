@@ -4,6 +4,7 @@ import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.CloudTopic;
 import com.aliyun.mns.client.MNSClient;
+import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
 import com.aliyun.mns.sample.scenarios.largeMessage.service.MNSExtendedClient;
@@ -31,7 +32,7 @@ public class LargeMessageDemo {
      */
     private final static Long payloadSizeThreshold = 4L;
 
-    public static void main(String[] args) throws ClientException {
+    public static void main(String[] args) throws ClientException, ServiceException {
         // 从环境变量中获取访问凭证。运行本代码示例之前，请先配置环境变量:https://help.aliyun.com/zh/oss/developer-reference/oss-java-configure-access-credentials?spm=a2c4g.11186623.0.i2#627002f2feie5
         EnvironmentVariableCredentialsProvider credentialsProvider = CredentialsProviderFactory.newEnvironmentVariableCredentialsProvider();
 

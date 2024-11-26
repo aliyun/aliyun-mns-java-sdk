@@ -151,7 +151,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<String> asyncCreate(QueueMeta queueMeta, AsyncCallback<String> callback) throws
-        ClientException {
+        ClientException, ServiceException {
 
         CreateQueueAction action = new CreateQueueAction(serviceClient,
             credentials, endpoint);
@@ -252,7 +252,8 @@ public final class CloudQueue {
      * @return 队列属性
      * @throws ClientException exception
      */
-    public AsyncResult<QueueMeta> asyncGetAttributes(AsyncCallback<QueueMeta> callback) throws ClientException {
+    public AsyncResult<QueueMeta> asyncGetAttributes(AsyncCallback<QueueMeta> callback)
+        throws ClientException, ServiceException {
         GetQueueAttrAction action = new GetQueueAttrAction(serviceClient,
             credentials, endpoint);
         GetQueueAttrRequest request = new GetQueueAttrRequest();
@@ -286,7 +287,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<Void> asyncSetAttributes(QueueMeta queueMeta,
-        AsyncCallback<Void> callback) throws ClientException {
+        AsyncCallback<Void> callback) throws ClientException, ServiceException {
         SetQueueAttrAction action = new SetQueueAttrAction(serviceClient,
             credentials, endpoint);
         SetQueueAttrRequest request = new SetQueueAttrRequest();
@@ -325,7 +326,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<Message> asyncPeekMessage(AsyncCallback<Message> callback)
-        throws ClientException {
+        throws ClientException, ServiceException {
         PeekMessageAction action = new PeekMessageAction(serviceClient,
             credentials, endpoint);
         PeekMessageRequest request = new PeekMessageRequest();
@@ -367,7 +368,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<List<Message>> asyncBatchPeekMessage(int batchSize,
-        AsyncCallback<List<Message>> callback) throws ClientException {
+        AsyncCallback<List<Message>> callback) throws ClientException, ServiceException {
         BatchPeekMessageAction action = new BatchPeekMessageAction(serviceClient,
             credentials, endpoint);
         BatchPeekMessageRequest request = new BatchPeekMessageRequest();
@@ -407,7 +408,7 @@ public final class CloudQueue {
      */
     public AsyncResult<String> asyncChangeMessageVisibilityTimeout(
         String receiptHandle, int visibilityTimeout,
-        AsyncCallback<String> callback) throws ClientException {
+        AsyncCallback<String> callback) throws ClientException, ServiceException {
         ChangeVisibilityTimeoutAction action = new ChangeVisibilityTimeoutAction(
             serviceClient, credentials, endpoint);
         ChangeVisibilityTimeoutRequest request = new ChangeVisibilityTimeoutRequest();
@@ -448,7 +449,7 @@ public final class CloudQueue {
      */
     public AsyncResult<Message> asyncChangeMessageVisibility(
         String receiptHandle, int visibilityTimeout,
-        AsyncCallback<Message> callback) throws ClientException {
+        AsyncCallback<Message> callback) throws ClientException, ServiceException {
         ChangeVisibilityAction action = new ChangeVisibilityAction(
             serviceClient, credentials, endpoint);
         ChangeVisibilityTimeoutRequest request = new ChangeVisibilityTimeoutRequest();
@@ -512,7 +513,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<Message> asyncPopMessage(AsyncCallback<Message> callback)
-        throws ClientException {
+        throws ClientException, ServiceException {
         ReceiveMessageAction action = new ReceiveMessageAction(serviceClient,
             credentials, endpoint);
         ReceiveMessageRequest request = new ReceiveMessageRequest();
@@ -529,7 +530,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<Message> asyncPopMessage(int waitSeconds, AsyncCallback<Message> callback)
-        throws ClientException {
+        throws ClientException, ServiceException {
         ReceiveMessageAction action = new ReceiveMessageAction(serviceClient,
             credentials, endpoint);
         ReceiveMessageRequest request = new ReceiveMessageRequest();
@@ -598,7 +599,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<List<Message>> asyncBatchPopMessage(int batchSize,
-        AsyncCallback<List<Message>> callback) throws ClientException {
+        AsyncCallback<List<Message>> callback) throws ClientException, ServiceException {
         BatchReceiveMessageAction action = new BatchReceiveMessageAction(serviceClient,
             credentials, endpoint);
         BatchReceiveMessageRequest request = new BatchReceiveMessageRequest();
@@ -617,7 +618,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<List<Message>> asyncBatchPopMessage(int batchSize, int waitSeconds,
-        AsyncCallback<List<Message>> callback) throws ClientException {
+        AsyncCallback<List<Message>> callback) throws ClientException, ServiceException {
         BatchReceiveMessageAction action = new BatchReceiveMessageAction(serviceClient,
             credentials, endpoint);
         BatchReceiveMessageRequest request = new BatchReceiveMessageRequest();
@@ -653,7 +654,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<Void> asyncDeleteMessage(String receiptHandle,
-        AsyncCallback<Void> callback) throws ClientException {
+        AsyncCallback<Void> callback) throws ClientException, ServiceException {
         DeleteMessageAction action = new DeleteMessageAction(serviceClient,
             credentials, endpoint);
         DeleteMessageRequest request = new DeleteMessageRequest();
@@ -686,7 +687,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<Void> asyncBatchDeleteMessage(List<String> receiptHandles,
-        AsyncCallback<Void> callback) throws ClientException {
+        AsyncCallback<Void> callback) throws ClientException, ServiceException {
         BatchDeleteMessageAction action = new BatchDeleteMessageAction(serviceClient,
             credentials, endpoint);
         BatchDeleteMessageRequest request = new BatchDeleteMessageRequest();
@@ -724,7 +725,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<Message> asyncPutMessage(Message message,
-        AsyncCallback<Message> callback) throws ClientException {
+        AsyncCallback<Message> callback) throws ClientException, ServiceException {
         SendMessageAction action = new SendMessageAction(serviceClient,
             credentials, endpoint);
         SendMessageRequest request = new SendMessageRequest();
@@ -762,7 +763,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<List<Message>> asyncBatchPutMessage(List<Message> messages,
-        AsyncCallback<List<Message>> callback) throws ClientException {
+        AsyncCallback<List<Message>> callback) throws ClientException, ServiceException {
         BatchSendMessageAction action = new BatchSendMessageAction(serviceClient,
             credentials, endpoint);
         BatchSendMessageRequest request = new BatchSendMessageRequest();

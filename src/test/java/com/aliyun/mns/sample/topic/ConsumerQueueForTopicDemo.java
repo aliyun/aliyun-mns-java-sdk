@@ -81,7 +81,7 @@ public class ConsumerQueueForTopicDemo {
         client.close();
     }
 
-    private static void longPollingBatchReceive(CloudQueue queue) {
+    private static void longPollingBatchReceive(CloudQueue queue) throws ServiceException {
         System.out.println("=============start longPollingBatchReceive=============");
 
         // 一次性拉取 最多 xx 条消息

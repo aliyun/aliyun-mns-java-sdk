@@ -169,7 +169,7 @@ public class DefaultMNSClient implements MNSClient {
     }
 
     public AsyncResult<String> createQueueAsync(QueueMeta queueMeta,
-        AsyncCallback<String> callback) {
+        AsyncCallback<String> callback) throws ServiceException {
         CreateQueueAction action = new CreateQueueAction(serviceClient,
             credentials, endpoint);
         CreateQueueRequest request = new CreateQueueRequest();
@@ -389,7 +389,7 @@ public class DefaultMNSClient implements MNSClient {
     }
 
     @Override
-    public CloudTopic createTopic(TopicMeta meta) {
+    public CloudTopic createTopic(TopicMeta meta) throws ServiceException {
         CloudTopic topic = getTopicRef(meta.getTopicName());
         topic.create(meta);
         return topic;
@@ -435,7 +435,7 @@ public class DefaultMNSClient implements MNSClient {
     }
 
     @Override
-    public OpenServiceResponse openService() {
+    public OpenServiceResponse openService() throws ServiceException {
         OpenServiceAction action = new OpenServiceAction(this.serviceClient, this.credentials, this.endpoint);
         OpenServiceRequest request = new OpenServiceRequest();
         request.setRequestPath(URI_OPEN_SERVICE);

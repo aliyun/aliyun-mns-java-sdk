@@ -74,7 +74,7 @@ public class ReceiveMessageDemo {
         client.close();
     }
 
-    private static void longPollingBatchReceive(CloudQueue queue) {
+    private static void longPollingBatchReceive(CloudQueue queue) throws ServiceException {
         System.out.println("=============start longPollingBatchReceive=============");
 
         // 一次性拉取 最多 xx 条消息
@@ -94,7 +94,7 @@ public class ReceiveMessageDemo {
 
     }
 
-    private static void singleReceive(CloudQueue queue) {
+    private static void singleReceive(CloudQueue queue) throws ServiceException {
         System.out.println("=============start singleReceive=============");
 
         Message popMsg = queue.popMessage();
@@ -103,7 +103,7 @@ public class ReceiveMessageDemo {
         System.out.println("=============end singleReceive=============");
     }
 
-    private static void printMsgAndDelete(CloudQueue queue, Message popMsg) {
+    private static void printMsgAndDelete(CloudQueue queue, Message popMsg) throws ServiceException {
         if (popMsg != null) {
             System.out.println("message handle: " + popMsg.getReceiptHandle());
             System.out.println("message body: " + (IS_BASE64 ? popMsg.getMessageBody() : popMsg.getMessageBodyAsRawString()));

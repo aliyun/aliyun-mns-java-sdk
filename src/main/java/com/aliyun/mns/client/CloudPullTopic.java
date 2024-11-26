@@ -41,7 +41,7 @@ public class CloudPullTopic {
     /*
      * use queues in the queueNameList to subscribe the topic.
      */
-    private void subscribe(Vector<String> queueNameList) {
+    private void subscribe(Vector<String> queueNameList) throws ServiceException {
         for (int i = 0; i < queueNameList.size(); i++) {
             String queueName = queueNameList.get(i);
             String queueEndpoint = this.rawTopic.generateQueueEndpoint(queueName);
@@ -64,7 +64,7 @@ public class CloudPullTopic {
     /*
      * use queues in the queueNameList to subscribe the topic with tagList.
      */
-    private void subscribe(Vector<String> queueNameList, Vector<String> tagList) {
+    private void subscribe(Vector<String> queueNameList, Vector<String> tagList) throws ServiceException {
         for (int i = 0; i < queueNameList.size(); i++) {
             String queueName = queueNameList.get(i);
             String queueEndpoint = this.rawTopic.generateQueueEndpoint(queueName);
@@ -92,7 +92,8 @@ public class CloudPullTopic {
     /*
      * Constructor.
      */
-    public CloudPullTopic(CloudTopic rawTopic, Vector<String> queueNameList, Vector<CloudQueue> queueList) {
+    public CloudPullTopic(CloudTopic rawTopic, Vector<String> queueNameList, Vector<CloudQueue> queueList)
+        throws ServiceException {
         this.rawTopic = rawTopic;
         this.queueNameList = queueNameList;
         this.queueList = queueList;
@@ -105,7 +106,7 @@ public class CloudPullTopic {
      * Constructor with tagList.
      */
     public CloudPullTopic(CloudTopic rawTopic, Vector<String> queueNameList, Vector<CloudQueue> queueList,
-        Vector<String> tagList) {
+        Vector<String> tagList) throws ServiceException {
         this.rawTopic = rawTopic;
         this.queueNameList = queueNameList;
         this.queueList = queueList;
@@ -118,7 +119,7 @@ public class CloudPullTopic {
     /*
      * Publish message to topic.
      */
-    public TopicMessage publishMessage(TopicMessage msg) {
+    public TopicMessage publishMessage(TopicMessage msg) throws ServiceException {
         return this.rawTopic.publishMessage(msg);
     }
 
@@ -132,14 +133,14 @@ public class CloudPullTopic {
     /*
      * delete the raw topic and related queues;
      */
-    public void delete() {
+    public void delete() throws ServiceException {
         this.delete(true);
     }
 
     /*
      * delete the raw topic and delete related queues if need
      */
-    public void delete(boolean needDeleteQueues) {
+    public void delete(boolean needDeleteQueues) throws ServiceException {
         this.rawTopic.delete();
 
         if (needDeleteQueues) {

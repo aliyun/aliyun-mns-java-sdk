@@ -128,7 +128,7 @@ public final class CloudAccount {
         init();
     }
 
-    public MNSClient getMNSClient() throws ServiceException, ClientException {
+    public MNSClient getMNSClient() throws ClientException {
         if (mnsClient == null) {
             synchronized (this) {
                 if (mnsClient == null) {

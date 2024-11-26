@@ -39,7 +39,7 @@ package com.aliyun.mns.common;
  *
  * @author xiaoming.yin
  */
-public class ServiceException extends RuntimeException {
+public class ServiceException extends Exception {
 
     private static final long serialVersionUID = 430933593095358673L;
     protected String errorCode;

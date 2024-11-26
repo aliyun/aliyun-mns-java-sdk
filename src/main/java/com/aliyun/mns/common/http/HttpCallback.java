@@ -22,6 +22,7 @@ package com.aliyun.mns.common.http;
 import com.aliyun.mns.client.AsyncCallback;
 import com.aliyun.mns.client.AsyncResult;
 import com.aliyun.mns.common.ClientException;
+import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.parser.ResultParser;
 import com.aliyun.mns.common.utils.HttpUtil;
 import com.aliyun.mns.common.utils.IOUtils;
@@ -79,7 +80,11 @@ public class HttpCallback<T> implements FutureCallback<HttpResponse> {
         executor.submit(new Runnable() {
             @Override
             public void run() {
-                callback.onSuccess(result);
+                try {
+                    callback.onSuccess(result);
+                } catch (ServiceException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }
@@ -88,7 +93,11 @@ public class HttpCallback<T> implements FutureCallback<HttpResponse> {
         executor.submit(new Runnable() {
             @Override
             public void run() {
-                callback.onFail(ex);
+                try {
+                    callback.onFail(ex);
+                } catch (ServiceException e) {
+                    throw new RuntimeException(e);
+                }
             }
         });
     }

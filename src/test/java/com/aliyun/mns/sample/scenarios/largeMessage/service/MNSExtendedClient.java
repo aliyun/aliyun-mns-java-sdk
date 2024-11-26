@@ -1,5 +1,6 @@
 package com.aliyun.mns.sample.scenarios.largeMessage.service;
 
+import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.model.Message;
 import com.aliyun.mns.model.TopicMessage;
 import java.util.List;
@@ -15,25 +16,25 @@ public interface MNSExtendedClient {
      * @param message
      * @return
      */
-    Message sendMessage(Message message);
+    Message sendMessage(Message message) throws ServiceException;
 
     /**
      * Queue 模型
      * 接受消息, 基于 长轮询实现，样例
      */
-    Message receiveMessage(int waitSeconds);
+    Message receiveMessage(int waitSeconds) throws ServiceException;
 
-    List<Message> batchReceiveMessage(int batchSize,int waitSeconds);
+    List<Message> batchReceiveMessage(int batchSize,int waitSeconds) throws ServiceException;
 
     /**
      * Queue 模型
      * 删除消息
      */
-    void deleteMessage(String receiptHandle);
+    void deleteMessage(String receiptHandle) throws ServiceException;
 
     /**
      * Topic 模型
      * 发送消息
      */
-    TopicMessage publishMessage(TopicMessage msg);
+    TopicMessage publishMessage(TopicMessage msg) throws ServiceException;
 }

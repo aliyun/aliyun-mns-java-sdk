@@ -52,7 +52,7 @@ public class TransactionQueue {
     /*
      * Send the operation log of transaction to operation log queue.
      */
-    private Message sendOpLogMessage(String transHandler) {
+    private Message sendOpLogMessage(String transHandler) throws ServiceException {
         Message message = new Message();
         message.setMessageBody(transHandler);
         message.setDelaySeconds(this.transactionTimeoutInSecond);
@@ -318,7 +318,7 @@ public class TransactionQueue {
      *
      * @param needDeleteOpLogQueue set it tree to delete operation log queue at the same time.
      */
-    public void delete(boolean needDeleteOpLogQueue) {
+    public void delete(boolean needDeleteOpLogQueue) throws ServiceException {
         this.stopCheckThread();
         this.innerQueue.delete();
         if (needDeleteOpLogQueue) {
@@ -329,7 +329,7 @@ public class TransactionQueue {
     /*
      * stop background check thread, and delete transaction queue and operation log queue.
      */
-    public void delete() {
+    public void delete() throws ServiceException {
         this.delete(true);
     }
 
