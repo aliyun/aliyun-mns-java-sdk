@@ -49,29 +49,33 @@ public class ReceiveMessageDemo {
         MNSClient client = account.getMNSClient();
         CloudQueue queue = client.getQueueRef(queueName);
 
-        try {
-            // 基础: 单次拉取
-            singleReceive(queue);
+        while (true) {
+            // 循环执行
+            try {
+                // 基础: 单次拉取
+                singleReceive(queue);
 
-            // 推荐: 使用的 长轮询批量拉取模型
-            longPollingBatchReceive(queue);
-        } catch (ClientException ce) {
-            System.out.println("Something wrong with the network connection between client and MNS service."
-                + "Please check your network and DNS availablity.");
-            ce.printStackTrace();
-        } catch (ServiceException se) {
-            if (se.getErrorCode().equals("QueueNotExist")) {
-                System.out.println("Queue is not exist.Please create queue before use");
-            } else if (se.getErrorCode().equals("TimeExpired")) {
-                System.out.println("The request is time expired. Please check your local machine timeclock");
+                // 推荐: 使用的 长轮询批量拉取模型
+                longPollingBatchReceive(queue);
+            } catch (ClientException ce) {
+                System.out.println("Something wrong with the network connection between client and MNS service."
+                    + "Please check your network and DNS availablity.");
+                // 客户端异常，默认为抖动，触发下次重试
+            } catch (ServiceException se) {
+                if (se.getErrorCode().equals("QueueNotExist")) {
+                    System.out.println("Queue is not exist.Please create queue before use");
+                    return;
+                } else if (se.getErrorCode().equals("TimeExpired")) {
+                    System.out.println("The request is time expired. Please check your local machine timeclock");
+                    return;
+                }
+                // 其他的服务端异常，默认为抖动，触发下次重试
+            } catch (Exception e) {
+                System.out.println("Unknown exception happened!e:"+e.getMessage());
+                // 其他异常，默认为抖动，触发下次重试
             }
-            se.printStackTrace();
-        } catch (Exception e) {
-            System.out.println("Unknown exception happened!");
-            e.printStackTrace();
-        }
 
-        client.close();
+        }
     }
 
     private static void longPollingBatchReceive(CloudQueue queue) throws ServiceException {

@@ -42,7 +42,7 @@ public class ListQueueDemo {
             // List Queue
             String marker = null;
             do {
-                PagingListResult<String> list = client.listQueueURL("cloud-", marker, 1);
+                PagingListResult<String> list = client.listQueueURL("", marker, 1);
 
                 List<String> queues = list.getResult();
                 marker = list.getMarker();
