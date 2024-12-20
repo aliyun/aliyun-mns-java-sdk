@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
 /**
  * Manager class to get localized resources.
  *
- * @author xiaoming.yin
+ * 
  */
 public class ResourceManager {
     private ResourceBundle bundle;

@@ -14,7 +14,7 @@ import org.junit.Test;
 import java.lang.reflect.Method;
 
 /**
- * @author haolong
+ *
  * @date 2024/4/26 10:25
  */
 public class BatchReceiveMessageActionTest {

@@ -25,7 +25,7 @@ package com.aliyun.mns.common.utils;
 /**
  * Contains the common HTTP headers.
  *
- * @author xiaoming.yin
+ * 
  */
 public interface HttpHeaders {
 

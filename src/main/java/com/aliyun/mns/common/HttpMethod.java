@@ -22,7 +22,7 @@ package com.aliyun.mns.common;
 /**
  * 表示HTTP的请求方法。
  *
- * @author xiaoming.yin
+ * 
  */
 public enum HttpMethod {
     /**
