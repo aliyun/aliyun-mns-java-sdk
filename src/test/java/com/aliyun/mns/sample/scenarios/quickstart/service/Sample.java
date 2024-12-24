@@ -259,10 +259,7 @@ public class Sample {
 
             // 删除队列
             queue.delete();
-        } catch (ClientException ex) {
-            // 错误处理
-            ex.printStackTrace();
-        } catch (ServiceException ex) {
+        } catch (Exception ex) {
             // 错误处理
             ex.printStackTrace();
         }
@@ -337,10 +334,7 @@ public class Sample {
 
             // 删除队列
             queue.delete();
-        } catch (ClientException ex) {
-            // 错误处理
-            ex.printStackTrace();
-        } catch (ServiceException ex) {
+        }catch (Exception ex) {
             // 错误处理
             ex.printStackTrace();
         }
@@ -502,10 +496,7 @@ public class Sample {
 
             // 删除队列
             queue.delete();
-        } catch (ClientException ex) {
-            // 错误处理
-            ex.printStackTrace();
-        } catch (ServiceException ex) {
+        } catch (Exception ex) {
             // 错误处理
             ex.printStackTrace();
         }

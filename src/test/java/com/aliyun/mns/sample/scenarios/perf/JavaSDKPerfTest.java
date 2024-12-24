@@ -23,6 +23,7 @@ import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.common.ServiceException;
+import com.aliyun.mns.common.ServiceHandlingRequiredException;
 import com.aliyun.mns.common.http.ClientConfiguration;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.common.utils.ThreadUtil;
@@ -86,7 +87,7 @@ public class JavaSDKPerfTest {
         // 4. Now is the ReceiveMessage
         Function<CloudQueue,Message> receiveFunction = new Function<CloudQueue, Message>() {
             @Override
-            public Message apply(CloudQueue queue) throws ServiceException {
+            public Message apply(CloudQueue queue) throws ServiceException, ServiceHandlingRequiredException {
                 Message message = queue.popMessage();
                 String handle = message == null?null:message.getReceiptHandle();
                 if (StringUtils.isNotBlank(handle)) {
@@ -188,7 +189,7 @@ public class JavaSDKPerfTest {
          * @param t the function argument
          * @return the function result
          */
-        R apply(T t) throws ServiceException;
+        R apply(T t) throws ServiceException, ServiceHandlingRequiredException;
 
     }
 }

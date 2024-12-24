@@ -91,7 +91,7 @@ public class LargeMessageDemo {
 
             client.close();
             ossClient.shutdown();
-        } catch (ServiceException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

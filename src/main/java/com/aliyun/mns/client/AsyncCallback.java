@@ -19,20 +19,18 @@
 
 package com.aliyun.mns.client;
 
-import com.aliyun.mns.common.ServiceException;
-
 public interface AsyncCallback<T> {
     /**
      * Async callback handler at successfully return.
      *
      * @param result result
      */
-    public void onSuccess(T result) throws ServiceException;
+    public void onSuccess(T result);
 
     /**
      * Async callback handler at failed return.
      *
      * @param ex exception
      */
-    public void onFail(Exception ex) throws ServiceException;
+    public void onFail(Exception ex);
 }

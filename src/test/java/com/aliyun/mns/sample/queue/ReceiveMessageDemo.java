@@ -24,6 +24,7 @@ import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
+import com.aliyun.mns.common.ServiceHandlingRequiredException;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
 import java.util.List;
@@ -78,7 +79,7 @@ public class ReceiveMessageDemo {
         }
     }
 
-    private static void longPollingBatchReceive(CloudQueue queue) throws ServiceException {
+    private static void longPollingBatchReceive(CloudQueue queue) throws ServiceHandlingRequiredException {
         System.out.println("=============start longPollingBatchReceive=============");
 
         // 一次性拉取 最多 xx 条消息
@@ -98,7 +99,7 @@ public class ReceiveMessageDemo {
 
     }
 
-    private static void singleReceive(CloudQueue queue) throws ServiceException {
+    private static void singleReceive(CloudQueue queue) throws ServiceHandlingRequiredException {
         System.out.println("=============start singleReceive=============");
 
         Message popMsg = queue.popMessage();
@@ -107,7 +108,7 @@ public class ReceiveMessageDemo {
         System.out.println("=============end singleReceive=============");
     }
 
-    private static void printMsgAndDelete(CloudQueue queue, Message popMsg) throws ServiceException {
+    private static void printMsgAndDelete(CloudQueue queue, Message popMsg) throws ServiceHandlingRequiredException {
         if (popMsg != null) {
             System.out.println("message handle: " + popMsg.getReceiptHandle());
             System.out.println("message body: " + (IS_BASE64 ? popMsg.getMessageBody() : popMsg.getMessageBodyAsRawString()));

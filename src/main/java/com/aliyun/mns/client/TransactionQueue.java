@@ -24,6 +24,7 @@ package com.aliyun.mns.client;
 
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
+import com.aliyun.mns.common.ServiceHandlingRequiredException;
 import com.aliyun.mns.model.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -247,6 +248,8 @@ public class TransactionQueue {
             } else {
                 //assume the message have already been delete (rollback success) if message not exist
             }
+        } catch (ServiceHandlingRequiredException e) {
+            throw new RuntimeException(e);
         }
     }
 
