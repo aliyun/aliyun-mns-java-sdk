@@ -50,6 +50,14 @@ public class ReceiveMessageDemo {
         MNSClient client = account.getMNSClient();
         CloudQueue queue = client.getQueueRef(queueName);
 
+        // 轮询调用 消息获取和处理
+        loopReceive(queue, client);
+
+        // 处理完成后关闭client
+        client.close();
+    }
+
+    private static void loopReceive(CloudQueue queue, MNSClient client) {
         while (true) {
             // 循环执行
             try {
@@ -65,6 +73,7 @@ public class ReceiveMessageDemo {
             } catch (ServiceException se) {
                 if (se.getErrorCode().equals("QueueNotExist")) {
                     System.out.println("Queue is not exist.Please create queue before use");
+                    client.close();
                     return;
                 } else if (se.getErrorCode().equals("TimeExpired")) {
                     System.out.println("The request is time expired. Please check your local machine timeclock");

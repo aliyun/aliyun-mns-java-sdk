@@ -26,6 +26,6 @@ public interface ServiceConstants {
     String RESOURCE_NAME_COMMON = "common";
 
     String ERROR_CODE_MSG_NOT_EXIST = "MessageNotExist";
-    String ERROR_CODE_QUEUE_NOT_EXIST = "MessageNotExist";
+    String ERROR_CODE_QUEUE_NOT_EXIST = "QueueNotExist";
     String ERROR_CODE_TIME_EXPIRED = "TimeExpired";
 }
