@@ -25,6 +25,8 @@ import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
+import com.aliyun.mns.common.ServiceHandlingRequiredException;
+
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
 import com.aliyun.mns.model.QueueMeta;
@@ -39,7 +41,7 @@ import java.util.Vector;
  */
 public class CloudPullTopicDemo {
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, ServiceHandlingRequiredException {
         System.out.println("Start CloudPullTopicDemo");
 
         // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems

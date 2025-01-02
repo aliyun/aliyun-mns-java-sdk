@@ -37,7 +37,7 @@ package com.aliyun.mns.common;
  * 存在错误。异常中包含了细节的信息，特别是错误代码，可以帮助调用者进行处理。
  * </p>
  *
- * @author xiaoming.yin
+ * 
  */
 public class ClientException extends RuntimeException {
 

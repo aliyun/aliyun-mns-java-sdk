@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * Utils for common coding.
  *
- * @author xiaoming.yin
+ * 
  */
 public class CodingUtils {
     private static ResourceManager rm = ResourceManager

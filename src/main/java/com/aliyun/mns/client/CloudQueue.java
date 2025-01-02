@@ -36,8 +36,10 @@ import com.aliyun.mns.client.impl.queue.SetQueueAttrAction;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.MNSConstants;
 import com.aliyun.mns.common.ServiceException;
+import com.aliyun.mns.common.ServiceHandlingRequiredException;
 import com.aliyun.mns.common.auth.ServiceCredentials;
 import com.aliyun.mns.common.http.ServiceClient;
+import com.aliyun.mns.common.utils.ServiceConstants;
 import com.aliyun.mns.model.Message;
 import com.aliyun.mns.model.QueueMeta;
 import com.aliyun.mns.model.request.queue.BatchDeleteMessageRequest;
@@ -151,7 +153,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<String> asyncCreate(QueueMeta queueMeta, AsyncCallback<String> callback) throws
-        ClientException {
+        ClientException, ServiceException {
 
         CreateQueueAction action = new CreateQueueAction(serviceClient,
             credentials, endpoint);
@@ -252,7 +254,8 @@ public final class CloudQueue {
      * @return 队列属性
      * @throws ClientException exception
      */
-    public AsyncResult<QueueMeta> asyncGetAttributes(AsyncCallback<QueueMeta> callback) throws ClientException {
+    public AsyncResult<QueueMeta> asyncGetAttributes(AsyncCallback<QueueMeta> callback)
+        throws ClientException, ServiceException {
         GetQueueAttrAction action = new GetQueueAttrAction(serviceClient,
             credentials, endpoint);
         GetQueueAttrRequest request = new GetQueueAttrRequest();
@@ -286,7 +289,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<Void> asyncSetAttributes(QueueMeta queueMeta,
-        AsyncCallback<Void> callback) throws ClientException {
+        AsyncCallback<Void> callback) throws ClientException, ServiceException {
         SetQueueAttrAction action = new SetQueueAttrAction(serviceClient,
             credentials, endpoint);
         SetQueueAttrRequest request = new SetQueueAttrRequest();
@@ -302,7 +305,7 @@ public final class CloudQueue {
      * @throws ServiceException exception
      * @throws ClientException  exception
      */
-    public Message peekMessage() throws ServiceException, ClientException {
+    public Message peekMessage() throws ServiceException, ClientException, ServiceHandlingRequiredException {
         PeekMessageAction action = new PeekMessageAction(serviceClient,
             credentials, endpoint);
         PeekMessageRequest request = new PeekMessageRequest();
@@ -310,11 +313,17 @@ public final class CloudQueue {
         try {
             return action.executeWithCustomHeaders(request, customHeaders);
         } catch (ServiceException e) {
-            if (!isMessageNotExist(e)) {
-                throw e;
+
+            if (isMessageNotExist(e)){
+                // 没拉到消息，合理
+                return null;
             }
+            if (isServiceHandlingRequired(e)){
+                // 远程服务不可用，需要上游感知并强制捕获异常处理
+                throw new ServiceHandlingRequiredException(e.getMessage(),e,e.getErrorCode(),e.getRequestId(),e.getHostId());
+            }
+            throw e;
         }
-        return null;
     }
 
     /**
@@ -325,7 +334,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<Message> asyncPeekMessage(AsyncCallback<Message> callback)
-        throws ClientException {
+        throws ClientException, ServiceException {
         PeekMessageAction action = new PeekMessageAction(serviceClient,
             credentials, endpoint);
         PeekMessageRequest request = new PeekMessageRequest();
@@ -342,7 +351,7 @@ public final class CloudQueue {
      * @throws ClientException  exception
      */
     public List<Message> batchPeekMessage(int batchSize) throws ServiceException,
-        ClientException {
+        ClientException, ServiceHandlingRequiredException {
         BatchPeekMessageAction action = new BatchPeekMessageAction(
             serviceClient, credentials, endpoint);
         BatchPeekMessageRequest request = new BatchPeekMessageRequest();
@@ -351,11 +360,17 @@ public final class CloudQueue {
         try {
             return action.executeWithCustomHeaders(request, customHeaders);
         } catch (ServiceException e) {
-            if (!isMessageNotExist(e)) {
-                throw e;
+
+            if (isMessageNotExist(e)){
+                // 没拉到消息，合理
+                return null;
             }
+            if (isServiceHandlingRequired(e)){
+                // 远程服务不可用，需要上游感知并强制捕获异常处理
+                throw new ServiceHandlingRequiredException(e.getMessage(),e,e.getErrorCode(),e.getRequestId(),e.getHostId());
+            }
+            throw e;
         }
-        return null;
     }
 
     /**
@@ -367,7 +382,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<List<Message>> asyncBatchPeekMessage(int batchSize,
-        AsyncCallback<List<Message>> callback) throws ClientException {
+        AsyncCallback<List<Message>> callback) throws ClientException, ServiceException {
         BatchPeekMessageAction action = new BatchPeekMessageAction(serviceClient,
             credentials, endpoint);
         BatchPeekMessageRequest request = new BatchPeekMessageRequest();
@@ -407,7 +422,7 @@ public final class CloudQueue {
      */
     public AsyncResult<String> asyncChangeMessageVisibilityTimeout(
         String receiptHandle, int visibilityTimeout,
-        AsyncCallback<String> callback) throws ClientException {
+        AsyncCallback<String> callback) throws ClientException, ServiceException {
         ChangeVisibilityTimeoutAction action = new ChangeVisibilityTimeoutAction(
             serviceClient, credentials, endpoint);
         ChangeVisibilityTimeoutRequest request = new ChangeVisibilityTimeoutRequest();
@@ -448,7 +463,7 @@ public final class CloudQueue {
      */
     public AsyncResult<Message> asyncChangeMessageVisibility(
         String receiptHandle, int visibilityTimeout,
-        AsyncCallback<Message> callback) throws ClientException {
+        AsyncCallback<Message> callback) throws ClientException, ServiceException {
         ChangeVisibilityAction action = new ChangeVisibilityAction(
             serviceClient, credentials, endpoint);
         ChangeVisibilityTimeoutRequest request = new ChangeVisibilityTimeoutRequest();
@@ -465,7 +480,7 @@ public final class CloudQueue {
      * @throws ServiceException exception
      * @throws ClientException  exception
      */
-    public Message popMessage() throws ServiceException, ClientException {
+    public Message popMessage() throws ServiceException, ClientException, ServiceHandlingRequiredException {
         ReceiveMessageAction action = new ReceiveMessageAction(serviceClient,
             credentials, endpoint);
         ReceiveMessageRequest request = new ReceiveMessageRequest();
@@ -473,11 +488,30 @@ public final class CloudQueue {
         try {
             return action.executeWithCustomHeaders(request, customHeaders);
         } catch (ServiceException e) {
-            if (!isMessageNotExist(e)) {
-                throw e;
+            if (isMessageNotExist(e)){
+                // 没拉到消息，合理
+                return null;
             }
+            if (isServiceHandlingRequired(e)){
+                // 远程服务不可用，需要上游感知并强制捕获异常处理
+                throw new ServiceHandlingRequiredException(e.getMessage(),e,e.getErrorCode(),e.getRequestId(),e.getHostId());
+            }
+            throw e;
         }
-        return null;
+    }
+
+    private boolean isServiceHandlingRequired(ServiceException e) {
+        if (e == null){
+            return false;
+        }
+        String errorCode = e.getErrorCode();
+        if (ServiceConstants.ERROR_CODE_QUEUE_NOT_EXIST.equals(errorCode)) {
+            return false;
+        }
+        if (ServiceConstants.ERROR_CODE_TIME_EXPIRED.equals(errorCode)) {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -488,7 +522,8 @@ public final class CloudQueue {
      * @throws ServiceException exception
      * @throws ClientException  exception
      */
-    public Message popMessage(int waitSeconds) throws ServiceException, ClientException {
+    public Message popMessage(int waitSeconds)
+        throws ServiceException, ClientException, ServiceHandlingRequiredException {
         ReceiveMessageAction action = new ReceiveMessageAction(serviceClient,
             credentials, endpoint);
         ReceiveMessageRequest request = new ReceiveMessageRequest();
@@ -497,11 +532,17 @@ public final class CloudQueue {
         try {
             return action.executeWithCustomHeaders(request, customHeaders);
         } catch (ServiceException e) {
-            if (!isMessageNotExist(e)) {
-                throw e;
+
+            if (isMessageNotExist(e)){
+                // 没拉到消息，合理
+                return null;
             }
+            if (isServiceHandlingRequired(e)){
+                // 远程服务不可用，需要上游感知并强制捕获异常处理
+                throw new ServiceHandlingRequiredException(e.getMessage(),e,e.getErrorCode(),e.getRequestId(),e.getHostId());
+            }
+            throw e;
         }
-        return null;
     }
 
     /**
@@ -512,7 +553,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<Message> asyncPopMessage(AsyncCallback<Message> callback)
-        throws ClientException {
+        throws ClientException, ServiceException {
         ReceiveMessageAction action = new ReceiveMessageAction(serviceClient,
             credentials, endpoint);
         ReceiveMessageRequest request = new ReceiveMessageRequest();
@@ -529,7 +570,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<Message> asyncPopMessage(int waitSeconds, AsyncCallback<Message> callback)
-        throws ClientException {
+        throws ClientException, ServiceException {
         ReceiveMessageAction action = new ReceiveMessageAction(serviceClient,
             credentials, endpoint);
         ReceiveMessageRequest request = new ReceiveMessageRequest();
@@ -546,7 +587,8 @@ public final class CloudQueue {
      * @throws ServiceException exception
      * @throws ClientException  exception
      */
-    public List<Message> batchPopMessage(int batchSize) throws ServiceException, ClientException {
+    public List<Message> batchPopMessage(int batchSize)
+        throws ServiceException, ClientException, ServiceHandlingRequiredException {
         BatchReceiveMessageAction action = new BatchReceiveMessageAction(serviceClient,
             credentials, endpoint);
         BatchReceiveMessageRequest request = new BatchReceiveMessageRequest();
@@ -555,11 +597,16 @@ public final class CloudQueue {
         try {
             return action.executeWithCustomHeaders(request, customHeaders);
         } catch (ServiceException e) {
-            if (!isMessageNotExist(e)) {
-                throw e;
+            if (isMessageNotExist(e)){
+                // 没拉到消息，合理
+                return null;
             }
+            if (isServiceHandlingRequired(e)){
+                // 远程服务不可用，需要上游感知并强制捕获异常处理
+                throw new ServiceHandlingRequiredException(e.getMessage(),e,e.getErrorCode(),e.getRequestId(),e.getHostId());
+            }
+            throw e;
         }
-        return null;
     }
 
     /**
@@ -572,7 +619,7 @@ public final class CloudQueue {
      * @throws ClientException  exception
      */
     public List<Message> batchPopMessage(int batchSize, int waitSeconds)
-        throws ServiceException, ClientException {
+        throws ServiceException, ClientException, ServiceHandlingRequiredException {
         BatchReceiveMessageAction action = new BatchReceiveMessageAction(serviceClient,
             credentials, endpoint);
         BatchReceiveMessageRequest request = new BatchReceiveMessageRequest();
@@ -582,11 +629,16 @@ public final class CloudQueue {
         try {
             return action.executeWithCustomHeaders(request, customHeaders);
         } catch (ServiceException e) {
-            if (!isMessageNotExist(e)) {
-                throw e;
+            if (isMessageNotExist(e)){
+                // 没拉到消息，合理
+                return null;
             }
+            if (isServiceHandlingRequired(e)){
+                // 远程服务不可用，需要上游感知并强制捕获异常处理
+                throw new ServiceHandlingRequiredException(e.getMessage(),e,e.getErrorCode(),e.getRequestId(),e.getHostId());
+            }
+            throw e;
         }
-        return null;
     }
 
     /**
@@ -598,7 +650,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<List<Message>> asyncBatchPopMessage(int batchSize,
-        AsyncCallback<List<Message>> callback) throws ClientException {
+        AsyncCallback<List<Message>> callback) throws ClientException, ServiceException {
         BatchReceiveMessageAction action = new BatchReceiveMessageAction(serviceClient,
             credentials, endpoint);
         BatchReceiveMessageRequest request = new BatchReceiveMessageRequest();
@@ -617,7 +669,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<List<Message>> asyncBatchPopMessage(int batchSize, int waitSeconds,
-        AsyncCallback<List<Message>> callback) throws ClientException {
+        AsyncCallback<List<Message>> callback) throws ClientException, ServiceException {
         BatchReceiveMessageAction action = new BatchReceiveMessageAction(serviceClient,
             credentials, endpoint);
         BatchReceiveMessageRequest request = new BatchReceiveMessageRequest();
@@ -635,13 +687,18 @@ public final class CloudQueue {
      * @throws ClientException  exception
      */
     public void deleteMessage(String receiptHandle) throws ServiceException,
-        ClientException {
+        ClientException, ServiceHandlingRequiredException {
         DeleteMessageAction action = new DeleteMessageAction(serviceClient,
             credentials, endpoint);
         DeleteMessageRequest request = new DeleteMessageRequest();
         request.setRequestPath(queueURL);
         request.setReceiptHandle(receiptHandle);
-        action.executeWithCustomHeaders(request, customHeaders);
+        try {
+            action.executeWithCustomHeaders(request, customHeaders);
+        } catch (ServiceException e) {
+            // 远程服务不可用，需要上游感知并强制捕获异常处理
+            throw new ServiceHandlingRequiredException(e.getMessage(),e,e.getErrorCode(),e.getRequestId(),e.getHostId());
+        }
     }
 
     /**
@@ -653,7 +710,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<Void> asyncDeleteMessage(String receiptHandle,
-        AsyncCallback<Void> callback) throws ClientException {
+        AsyncCallback<Void> callback) throws ClientException, ServiceException {
         DeleteMessageAction action = new DeleteMessageAction(serviceClient,
             credentials, endpoint);
         DeleteMessageRequest request = new DeleteMessageRequest();
@@ -670,13 +727,18 @@ public final class CloudQueue {
      * @throws ClientException  exception
      */
     public void batchDeleteMessage(List<String> receiptHandles)
-        throws ServiceException, ClientException {
+        throws ServiceException, ClientException, ServiceHandlingRequiredException {
         BatchDeleteMessageAction action = new BatchDeleteMessageAction(serviceClient,
             credentials, endpoint);
         BatchDeleteMessageRequest request = new BatchDeleteMessageRequest();
         request.setRequestPath(queueURL);
         request.setReceiptHandles(receiptHandles);
-        action.executeWithCustomHeaders(request, customHeaders);
+        try {
+            action.executeWithCustomHeaders(request, customHeaders);
+        } catch (ServiceException e) {
+            // 远程服务不可用，需要上游感知并强制捕获异常处理
+            throw new ServiceHandlingRequiredException(e.getMessage(),e,e.getErrorCode(),e.getRequestId(),e.getHostId());
+        }
     }
 
     /**
@@ -686,7 +748,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<Void> asyncBatchDeleteMessage(List<String> receiptHandles,
-        AsyncCallback<Void> callback) throws ClientException {
+        AsyncCallback<Void> callback) throws ClientException, ServiceException {
         BatchDeleteMessageAction action = new BatchDeleteMessageAction(serviceClient,
             credentials, endpoint);
         BatchDeleteMessageRequest request = new BatchDeleteMessageRequest();
@@ -724,7 +786,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<Message> asyncPutMessage(Message message,
-        AsyncCallback<Message> callback) throws ClientException {
+        AsyncCallback<Message> callback) throws ClientException, ServiceException {
         SendMessageAction action = new SendMessageAction(serviceClient,
             credentials, endpoint);
         SendMessageRequest request = new SendMessageRequest();
@@ -762,7 +824,7 @@ public final class CloudQueue {
      * @throws ClientException exception
      */
     public AsyncResult<List<Message>> asyncBatchPutMessage(List<Message> messages,
-        AsyncCallback<List<Message>> callback) throws ClientException {
+        AsyncCallback<List<Message>> callback) throws ClientException, ServiceException {
         BatchSendMessageAction action = new BatchSendMessageAction(serviceClient,
             credentials, endpoint);
         BatchSendMessageRequest request = new BatchSendMessageRequest();
@@ -776,7 +838,7 @@ public final class CloudQueue {
     }
 
     public boolean isMessageNotExist(ServiceException e) {
-        return "MessageNotExist".equals(e.getErrorCode());
+        return ServiceConstants.ERROR_CODE_MSG_NOT_EXIST.equalsIgnoreCase(e.getErrorCode());
     }
 
     /**

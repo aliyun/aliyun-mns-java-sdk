@@ -24,6 +24,7 @@ import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
+import com.aliyun.mns.common.ServiceHandlingRequiredException;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
 import java.util.List;
@@ -49,32 +50,46 @@ public class ReceiveMessageDemo {
         MNSClient client = account.getMNSClient();
         CloudQueue queue = client.getQueueRef(queueName);
 
-        try {
-            // 基础: 单次拉取
-            singleReceive(queue);
+        // 轮询调用 消息获取和处理
+        loopReceive(queue, client);
 
-            // 推荐: 使用的 长轮询批量拉取模型
-            longPollingBatchReceive(queue);
-        } catch (ClientException ce) {
-            System.out.println("Something wrong with the network connection between client and MNS service."
-                + "Please check your network and DNS availablity.");
-            ce.printStackTrace();
-        } catch (ServiceException se) {
-            if (se.getErrorCode().equals("QueueNotExist")) {
-                System.out.println("Queue is not exist.Please create queue before use");
-            } else if (se.getErrorCode().equals("TimeExpired")) {
-                System.out.println("The request is time expired. Please check your local machine timeclock");
-            }
-            se.printStackTrace();
-        } catch (Exception e) {
-            System.out.println("Unknown exception happened!");
-            e.printStackTrace();
-        }
-
+        // 处理完成后关闭client
         client.close();
     }
 
-    private static void longPollingBatchReceive(CloudQueue queue) {
+    private static void loopReceive(CloudQueue queue, MNSClient client) {
+        while (true) {
+            // 循环执行
+            try {
+                // 基础: 单次拉取
+                singleReceive(queue);
+
+                // 推荐: 使用的 长轮询批量拉取模型
+                longPollingBatchReceive(queue);
+            } catch (ClientException ce) {
+                System.out.println("Something wrong with the network connection between client and MNS service."
+                    + "Please check your network and DNS availablity.");
+                // 客户端异常，默认为抖动，触发下次重试
+            } catch (ServiceException se) {
+                if (se.getErrorCode().equals("QueueNotExist")) {
+                    System.out.println("Queue is not exist.Please create queue before use");
+                    client.close();
+                    return;
+                } else if (se.getErrorCode().equals("TimeExpired")) {
+                    System.out.println("The request is time expired. Please check your local machine timeclock");
+                    return;
+                }
+                // 其他的服务端异常，默认为抖动，触发下次重试
+            } catch (Exception e) {
+                System.out.println("Unknown exception happened!e:"+e.getMessage());
+                // 其他异常，默认为抖动，触发下次重试
+            }
+
+        }
+    }
+
+    private static void longPollingBatchReceive(CloudQueue queue) throws ServiceHandlingRequiredException {
+
         System.out.println("=============start longPollingBatchReceive=============");
 
         // 一次性拉取 最多 xx 条消息
@@ -94,7 +109,7 @@ public class ReceiveMessageDemo {
 
     }
 
-    private static void singleReceive(CloudQueue queue) {
+    private static void singleReceive(CloudQueue queue) throws ServiceHandlingRequiredException {
         System.out.println("=============start singleReceive=============");
 
         Message popMsg = queue.popMessage();
@@ -103,7 +118,7 @@ public class ReceiveMessageDemo {
         System.out.println("=============end singleReceive=============");
     }
 
-    private static void printMsgAndDelete(CloudQueue queue, Message popMsg) {
+    private static void printMsgAndDelete(CloudQueue queue, Message popMsg) throws ServiceHandlingRequiredException {
         if (popMsg != null) {
             System.out.println("message handle: " + popMsg.getReceiptHandle());
             System.out.println("message body: " + (IS_BASE64 ? popMsg.getMessageBody() : popMsg.getMessageBodyAsRawString()));

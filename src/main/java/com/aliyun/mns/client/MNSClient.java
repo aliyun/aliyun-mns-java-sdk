@@ -221,7 +221,7 @@ public interface MNSClient {
      * @param meta CloudTpoic的meta数据
      * @return CloudTpoic对象
      */
-    public CloudTopic createTopic(TopicMeta meta);
+    public CloudTopic createTopic(TopicMeta meta) throws ServiceException;
 
     /**
      * @param prefix    topic name前缀
@@ -250,5 +250,5 @@ public interface MNSClient {
      *
      * @return response
      */
-    public OpenServiceResponse openService();
+    public OpenServiceResponse openService() throws ServiceException;
 }

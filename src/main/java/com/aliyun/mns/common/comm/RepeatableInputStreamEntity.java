@@ -74,7 +74,6 @@ public class RepeatableInputStreamEntity extends BasicHttpEntity {
      * The default entity org.apache.http.entity.InputStreamEntity will close input stream after wirteTo was called.
      * To avoid this, we custom a entity that will not close stream automatically.
      *
-     * @author chao.wangchaowc
      */
     public static class NoAutoClosedInputStreamEntity extends AbstractHttpEntity {
         private final static int BUFFER_SIZE = 2048;

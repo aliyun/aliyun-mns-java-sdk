@@ -29,7 +29,7 @@ import java.util.SimpleTimeZone;
 /**
  * Util class for Date.
  *
- * @author xiaoming.yin
+ * 
  */
 public class DateUtil {
     // RFC 822 Date Format

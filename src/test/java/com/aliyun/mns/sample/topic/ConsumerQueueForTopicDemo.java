@@ -24,6 +24,8 @@ import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
+
+import com.aliyun.mns.common.ServiceHandlingRequiredException;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
 import java.io.StringReader;
@@ -62,6 +64,10 @@ public class ConsumerQueueForTopicDemo {
 
         try {
             longPollingBatchReceive(queue);
+        } catch (ServiceHandlingRequiredException ce) {
+            System.out.println("you should process this exception.");
+            ce.printStackTrace();
+
         } catch (ClientException ce) {
             System.out.println("Something wrong with the network connection between client and MNS service."
                 + "Please check your network and DNS availablity.");
@@ -81,7 +87,8 @@ public class ConsumerQueueForTopicDemo {
         client.close();
     }
 
-    private static void longPollingBatchReceive(CloudQueue queue) {
+    private static void longPollingBatchReceive(CloudQueue queue)
+        throws ServiceException, ServiceHandlingRequiredException {
         System.out.println("=============start longPollingBatchReceive=============");
 
         // 一次性拉取 最多 xx 条消息

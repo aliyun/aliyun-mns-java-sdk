@@ -21,27 +21,12 @@ package com.aliyun.mns.common;
 
 /**
  * <p>
- * 表示阿里云服务返回的错误消息。
- * </p>
- * <p>
- * {@link ServiceException}用于处理阿里云服务返回的错误消息。比如，用于身份验证的Access ID不存在，
- * 则会抛出{@link ServiceException}（严格上讲，会是该类的一个继承类。比如，OTSClient会抛出OTSException）。
- * 异常中包含了错误代码，用于让调用者进行特定的处理。
- * </p>
- * <p>
- * {@link ClientException}表示的则是在向阿里云服务发送请求时出现的错误，以及客户端无法处理返回结果。
- * 例如，在发送请求时网络连接不可用，则会抛出{@link ClientException}的异常。
- * </p>
- * <p>
- * 通常来讲，调用者只需要处理{@link ServiceException}。因为该异常表明请求被服务处理，但处理的结果表明
- * 存在错误。异常中包含了细节的信息，特别是错误代码，可以帮助调用者进行处理。
+ * 表示阿里云服务返回的错误消息。此类型要求用户强制进行异常捕获和处理，避免预期外风险
  * </p>
  *
- * 
  */
-public class ServiceException extends RuntimeException {
+public class ServiceHandlingRequiredException extends Exception {
 
-    private static final long serialVersionUID = 430933593095358673L;
     protected String errorCode;
     private String requestId;
     private String hostId;
@@ -49,21 +34,20 @@ public class ServiceException extends RuntimeException {
     /**
      * 构造新实例。
      */
-    public ServiceException() {
+    public ServiceHandlingRequiredException() {
         super();
         this.errorCode = "";
     }
 
+
     /**
      * 用给定的异常信息构造新实例。
-     *
-     * @param message   error message
-     * @param requestId request id
      */
-    public ServiceException(String message, String requestId) {
+    public ServiceHandlingRequiredException(String message, String errorCode,String requestId,String hostId) {
         super(message);
+        this.errorCode = errorCode;
         this.requestId = requestId;
-        this.errorCode = "";
+        this.hostId = hostId;
     }
 
     /**
@@ -71,7 +55,7 @@ public class ServiceException extends RuntimeException {
      *
      * @param cause 异常原因。
      */
-    public ServiceException(Throwable cause) {
+    public ServiceHandlingRequiredException(Throwable cause) {
         super(cause);
         this.errorCode = "";
     }
@@ -79,13 +63,9 @@ public class ServiceException extends RuntimeException {
     /**
      * 用给定的异常信息构造新实例。
      *
-     * @param message   error message
-     * @param requestId request id
-     * @param cause     cause
      */
-    public ServiceException(String message, String requestId, Throwable cause) {
+    public ServiceHandlingRequiredException(String message, Throwable cause) {
         super(message, cause);
-        this.requestId = requestId;
         this.errorCode = "";
     }
 
@@ -98,13 +78,14 @@ public class ServiceException extends RuntimeException {
      * @param requestId Request ID。
      * @param hostId    Host ID。
      */
-    public ServiceException(String message, Throwable cause,
-        String errorCode, String requestId, String hostId) {
-        this(message, requestId, cause);
+    public ServiceHandlingRequiredException(String message, Throwable cause,
+                                            String errorCode, String requestId, String hostId) {
+        this(message, cause);
 
         if (errorCode != null) {
             this.errorCode = errorCode;
         }
+        this.requestId = requestId;
         this.hostId = hostId;
     }
 
@@ -139,6 +120,7 @@ public class ServiceException extends RuntimeException {
     public String toString() {
         return "[Error Code]:" + errorCode + ", "
             + "[Message]:" + getMessage() + ", "
+            + "[host]:" + getHostId() + ", "
             + "[RequestId]: " + getRequestId();
     }
 }

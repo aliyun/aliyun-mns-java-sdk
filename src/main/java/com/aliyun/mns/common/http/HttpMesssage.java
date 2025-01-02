@@ -27,7 +27,7 @@ import java.util.Map;
 /**
  * The base class for message of HTTP request and response.
  *
- * @author xiaoming.yin
+ * 
  */
 public abstract class HttpMesssage {
 

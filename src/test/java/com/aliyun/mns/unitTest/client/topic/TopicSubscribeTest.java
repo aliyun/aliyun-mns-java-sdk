@@ -11,6 +11,8 @@ import com.aliyun.mns.client.impl.topic.CreateTopicAction;
 import com.aliyun.mns.client.impl.topic.SetSubscriptionAttrAction;
 import com.aliyun.mns.client.impl.topic.SubscribeAction;
 import com.aliyun.mns.common.MNSConstants;
+import com.aliyun.mns.common.ServiceException;
+
 import com.aliyun.mns.model.QueueMeta;
 import com.aliyun.mns.model.SubscriptionMeta;
 import com.aliyun.mns.model.TopicMeta;
@@ -85,7 +87,7 @@ public class TopicSubscribeTest {
     }
 
     @Test
-    public void testSubscribeNameIsNull() {
+    public void testSubscribeNameIsNull() throws ServiceException {
         // create topic and queue
         createTopicAndQueue(mnsClient);
         // create subscription
@@ -107,7 +109,7 @@ public class TopicSubscribeTest {
     }
 
     @Test
-    public void testAsyncSubscribeNameIsNull() {
+    public void testAsyncSubscribeNameIsNull() throws ServiceException {
         final AsyncCallback<String> callback = null;
         // create topic and queue
         createTopicAndQueue(mnsClient);
@@ -161,7 +163,7 @@ public class TopicSubscribeTest {
     }
 
     @Test
-    public void testSubscriptionAttrNameIsNull() {
+    public void testSubscriptionAttrNameIsNull() throws ServiceException {
 
         // create topic and queue
         createTopicAndQueue(mnsClient);
@@ -180,7 +182,7 @@ public class TopicSubscribeTest {
     }
 
     @Test
-    public void testAsyncSetSubscriptionAttrNameIsNull() {
+    public void testAsyncSetSubscriptionAttrNameIsNull() throws ServiceException {
         final AsyncCallback<Void> callback = null;
         // create topic and queue
         createTopicAndQueue(mnsClient);
@@ -230,7 +232,7 @@ public class TopicSubscribeTest {
         verify(setSubscriptionAttrAction, times(0)).executeWithCustomHeaders(any(SetSubscriptionAttrRequest.class), (AsyncCallback) isNull(), ArgumentMatchers.<Map<String, String>>isNull());
     }
     @Test
-    public void testSubscribe() {
+    public void testSubscribe() throws ServiceException {
         // create topic and queue
         createTopicAndQueue(mnsClient);
         // create subscription
@@ -260,7 +262,7 @@ public class TopicSubscribeTest {
         return mnsClient;
     }
 
-    private void createTopicAndQueue(MNSClient mnsClient) {
+    private void createTopicAndQueue(MNSClient mnsClient) throws ServiceException {
         QueueMeta queueMeta = new QueueMeta();
         queueMeta.setQueueName(queueName);
         queueMeta.setPollingWaitSeconds(15);

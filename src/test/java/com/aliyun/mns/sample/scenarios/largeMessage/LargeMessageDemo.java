@@ -4,6 +4,7 @@ import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.CloudTopic;
 import com.aliyun.mns.client.MNSClient;
+import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
 import com.aliyun.mns.sample.scenarios.largeMessage.service.MNSExtendedClient;
@@ -33,7 +34,9 @@ public class LargeMessageDemo {
 
     public static void main(String[] args) throws ClientException {
         // 从环境变量中获取访问凭证。运行本代码示例之前，请先配置环境变量:https://help.aliyun.com/zh/oss/developer-reference/oss-java-configure-access-credentials?spm=a2c4g.11186623.0.i2#627002f2feie5
+
         EnvironmentVariableCredentialsProvider credentialsProvider = CredentialsProviderFactory.newEnvironmentVariableCredentialsProvider();
+
 
         // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(OSS_ENDPOINT, credentialsProvider);
@@ -45,9 +48,17 @@ public class LargeMessageDemo {
         CloudQueue queue = client.getQueueRef(MNS_QUEUE_NAME);
         CloudTopic cloudTopic = client.getTopicRef(MNS_TOPIC_NAME);
 
-        //reCreate
-        ReCreateUtil.reCreateQueue(client,MNS_QUEUE_NAME);
-        ReCreateUtil.reCreateTopic(client,MNS_TOPIC_NAME);
+        //reCreate, 服务端异常时重试
+        boolean reCreateSuccess = false;
+        while (!reCreateSuccess){
+            try {
+                ReCreateUtil.reCreateQueue(client, MNS_QUEUE_NAME);
+                ReCreateUtil.reCreateTopic(client, MNS_TOPIC_NAME);
+                reCreateSuccess = true;
+            } catch (ServiceException e) {
+                reCreateSuccess = false;
+            }
+        }
 
         // 配置 超大队列属性
         MNSExtendedConfiguration configuration = new MNSExtendedConfiguration()
@@ -58,28 +69,32 @@ public class LargeMessageDemo {
 
         MNSExtendedClient mnsExtendedClient = new MNSExtendedClientImpl(configuration);
 
-        // 执行常规发送
-        Message normalMessage = new Message();
-        normalMessage.setMessageBodyAsRawString("1");
-        mnsExtendedClient.sendMessage(normalMessage);
-        Message message = mnsExtendedClient.receiveMessage(10);
-        System.out.println("[normal]ReceiveMsg:"+message.getMessageBodyAsRawString());
-        mnsExtendedClient.deleteMessage(message.getReceiptHandle());
+        try {
+            // 执行常规发送
+            Message normalMessage = new Message();
+            normalMessage.setMessageBodyAsRawString("1");
+            mnsExtendedClient.sendMessage(normalMessage);
+            Message message = mnsExtendedClient.receiveMessage(10);
+            System.out.println("[normal]ReceiveMsg:"+message.getMessageBodyAsRawString());
+            mnsExtendedClient.deleteMessage(message.getReceiptHandle());
 
-        // 大文件发送:Queue 模型
-        String largeMsgBody = "largeMessage";
-        Assert.assertTrue(largeMsgBody.getBytes().length > payloadSizeThreshold);
+            // 大文件发送:Queue 模型
+            String largeMsgBody = "largeMessage";
+            Assert.assertTrue(largeMsgBody.getBytes().length > payloadSizeThreshold);
 
-        Message largeMessage = new Message();
-        largeMessage.setMessageBodyAsRawString(largeMsgBody);
+            Message largeMessage = new Message();
+            largeMessage.setMessageBodyAsRawString(largeMsgBody);
 
-        mnsExtendedClient.sendMessage(largeMessage);
-        Message receiveMessage = mnsExtendedClient.receiveMessage(10);
-        System.out.println("[large]ReceiveMsg:"+receiveMessage.getMessageBodyAsRawString());
-        mnsExtendedClient.deleteMessage(receiveMessage.getReceiptHandle());
+            mnsExtendedClient.sendMessage(largeMessage);
+            Message receiveMessage = mnsExtendedClient.receiveMessage(10);
+            System.out.println("[large]ReceiveMsg:"+receiveMessage.getMessageBodyAsRawString());
+            mnsExtendedClient.deleteMessage(receiveMessage.getReceiptHandle());
 
+            client.close();
+            ossClient.shutdown();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
-        client.close();
-        ossClient.shutdown();
     }
 }

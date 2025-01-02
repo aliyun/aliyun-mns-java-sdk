@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The client that accesses Aliyun services.
  *
- * @author xiaoming.yin
+ * 
  */
 public abstract class ServiceClient {
 
@@ -73,7 +73,7 @@ public abstract class ServiceClient {
     public <T> Future<HttpResponse> sendRequest(RequestMessage request,
         ExecutionContext context,
 
-        HttpCallback<T> callback) {
+        HttpCallback<T> callback) throws ServiceException {
 
         //do not check request state at reactor wrapper class
         //give chances to check and restart reactor later
@@ -305,7 +305,7 @@ public abstract class ServiceClient {
      * HttpRequestBase, and it is easy for testing to verify the built data such
      * as URL, content.
      *
-     * @author xiaoming.yin
+     * 
      */
     public static class Request extends HttpMesssage {
         private String uri;
