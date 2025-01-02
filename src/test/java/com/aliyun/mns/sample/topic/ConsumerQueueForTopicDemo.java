@@ -24,6 +24,7 @@ import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
+
 import com.aliyun.mns.common.ServiceHandlingRequiredException;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
@@ -66,6 +67,7 @@ public class ConsumerQueueForTopicDemo {
         } catch (ServiceHandlingRequiredException ce) {
             System.out.println("you should process this exception.");
             ce.printStackTrace();
+
         } catch (ClientException ce) {
             System.out.println("Something wrong with the network connection between client and MNS service."
                 + "Please check your network and DNS availablity.");

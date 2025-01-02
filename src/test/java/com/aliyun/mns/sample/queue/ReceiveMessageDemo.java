@@ -89,6 +89,7 @@ public class ReceiveMessageDemo {
     }
 
     private static void longPollingBatchReceive(CloudQueue queue) throws ServiceHandlingRequiredException {
+
         System.out.println("=============start longPollingBatchReceive=============");
 
         // 一次性拉取 最多 xx 条消息

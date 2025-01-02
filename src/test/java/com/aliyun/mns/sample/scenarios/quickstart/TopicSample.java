@@ -20,11 +20,13 @@
 package com.aliyun.mns.sample.scenarios.quickstart;
 
 import com.aliyun.mns.common.ServiceException;
+
 import com.aliyun.mns.sample.scenarios.quickstart.service.Sample;
 
 public class TopicSample {
 
     public static void main(String[] args) throws ServiceException {
+
         Sample sample = new Sample();
         sample.runTopic();
         sample.clear();

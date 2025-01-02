@@ -34,8 +34,9 @@ public class LargeMessageDemo {
 
     public static void main(String[] args) throws ClientException {
         // 从环境变量中获取访问凭证。运行本代码示例之前，请先配置环境变量:https://help.aliyun.com/zh/oss/developer-reference/oss-java-configure-access-credentials?spm=a2c4g.11186623.0.i2#627002f2feie5
-        EnvironmentVariableCredentialsProvider credentialsProvider
-            = CredentialsProviderFactory.newEnvironmentVariableCredentialsProvider();
+
+        EnvironmentVariableCredentialsProvider credentialsProvider = CredentialsProviderFactory.newEnvironmentVariableCredentialsProvider();
+
 
         // 创建OSSClient实例。
         OSS ossClient = new OSSClientBuilder().build(OSS_ENDPOINT, credentialsProvider);
@@ -94,5 +95,6 @@ public class LargeMessageDemo {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+
     }
 }

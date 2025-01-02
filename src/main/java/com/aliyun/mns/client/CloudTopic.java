@@ -306,6 +306,7 @@ public class CloudTopic {
      * @param callback, user callback object
      * @return AsyncResult, you can wait result by AsyncResult if you want to do this
      */
+
     public AsyncResult<String> asyncSubscribe(SubscriptionMeta meta, AsyncCallback<String> callback)
         throws ServiceException {
         if(StringUtils.isEmpty(meta.getSubscriptionName())){

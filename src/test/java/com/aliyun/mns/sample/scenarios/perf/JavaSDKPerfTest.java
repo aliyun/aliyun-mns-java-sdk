@@ -24,6 +24,7 @@ import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.ServiceHandlingRequiredException;
+
 import com.aliyun.mns.common.http.ClientConfiguration;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.common.utils.ThreadUtil;
@@ -58,7 +59,6 @@ public class JavaSDKPerfTest {
      * 测试持续时间（秒）
      */
     private static long durationTime;
-
 
     public static void main(String[] args) throws InterruptedException, ServiceException {
         if (!parseConf()) {
