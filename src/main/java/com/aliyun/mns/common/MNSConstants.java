@@ -122,12 +122,6 @@ public interface MNSConstants extends HttpHeaders {
     public static final String ALIYUN_AK_ENV_KEY = "ALIBABA_CLOUD_ACCESS_KEY_ID";
     public static final String ALIYUN_SK_ENV_KEY = "ALIBABA_CLOUD_ACCESS_KEY_SECRET";
 
-    /**
-     * https://help.aliyun.com/zh/sdk/developer-reference/ak-security-scheme?#faa5f4905bxkr
-     */
-    public static final String ALIYUN_AK_ENV_KEY = "ALIBABA_CLOUD_ACCESS_KEY_ID";
-    public static final String ALIYUN_SK_ENV_KEY = "ALIBABA_CLOUD_ACCESS_KEY_SECRET";
-
     public static final Long MAX_MESSAGE_SIZE = 65536L;
     public static final Long DEFAULT_MESSAGE_RETENTION_PERIOD = 86400L;
     public static final Long MAX_MESSAGE_RETENTION_PERIOD = 86400L;
