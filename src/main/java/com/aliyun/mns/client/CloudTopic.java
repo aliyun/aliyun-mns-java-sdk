@@ -31,6 +31,7 @@ import com.aliyun.mns.client.impl.topic.SubscribeAction;
 import com.aliyun.mns.client.impl.topic.UnsubscribeAction;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.MNSConstants;
+import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.auth.ServiceCredentials;
 import com.aliyun.mns.common.http.ServiceClient;
 import com.aliyun.mns.model.AttributesValidationResult;
@@ -131,12 +132,12 @@ public class CloudTopic {
         }
 
         // erase start "/"
-        while (topicName != null && topicName.trim().length() > 0
+        while (topicName != null && !topicName.trim().isEmpty()
             && topicName.startsWith("/")) {
             topicName = topicName.substring(1);
         }
 
-        if (topicName == null || topicName.trim().length() == 0) {
+        if (topicName == null || topicName.trim().isEmpty()) {
             logger.warn("topic name is null or empty");
             throw new NullPointerException("Topic Name can not be null.");
         }
@@ -158,7 +159,7 @@ public class CloudTopic {
      *
      * @return topic url
      */
-    public String create() {
+    public String create() throws ServiceException {
         String topicName = this.getTopicName();
         TopicMeta meta = new TopicMeta();
         meta.setTopicName(topicName);
@@ -172,7 +173,7 @@ public class CloudTopic {
      * @param meta, topic meta data
      * @return topic url
      */
-    public String create(TopicMeta meta) {
+    public String create(TopicMeta meta) throws ServiceException {
         CreateTopicAction action = new CreateTopicAction(serviceClient, credentials, endpoint);
         CreateTopicRequest request = new CreateTopicRequest();
         request.setRequestPath(this.topicURL);
@@ -184,7 +185,7 @@ public class CloudTopic {
             logger.debug("topic meta is null, we use default meta");
         }
 
-        if (meta.getTopicName() == null || meta.getTopicName().trim().length() == 0) {
+        if (meta.getTopicName() == null || meta.getTopicName().trim().isEmpty()) {
             meta.setTopicName(topicName);
             meta.setTopicURL(this.topicURL);
             logger.debug("topic name in meta is null or empty, we get it from topic url");
@@ -209,7 +210,7 @@ public class CloudTopic {
      * @param callback, user callback object
      * @return AsyncResult, you can wait result by AsyncResult if you want to do this
      */
-    public AsyncResult<Void> asyncSetAttribute(TopicMeta meta, AsyncCallback<Void> callback) {
+    public AsyncResult<Void> asyncSetAttribute(TopicMeta meta, AsyncCallback<Void> callback) throws ServiceException {
         SetTopicAttrAction action = new SetTopicAttrAction(serviceClient, credentials, endpoint);
         SetTopicAttrRequest request = new SetTopicAttrRequest();
         request.setTopicMeta(meta);
@@ -222,7 +223,7 @@ public class CloudTopic {
      *
      * @return topic meta data
      */
-    public TopicMeta getAttribute() {
+    public TopicMeta getAttribute() throws ServiceException {
         GetTopicAttrAction action = new GetTopicAttrAction(serviceClient, credentials, endpoint);
         GetTopicAttrRequest request = new GetTopicAttrRequest();
         request.setRequestPath(topicURL);
@@ -236,7 +237,7 @@ public class CloudTopic {
      *
      * @param meta, topic meta data
      */
-    public void setAttribute(TopicMeta meta) {
+    public void setAttribute(TopicMeta meta) throws ServiceException {
         SetTopicAttrAction action = new SetTopicAttrAction(serviceClient, credentials, endpoint);
         SetTopicAttrRequest request = new SetTopicAttrRequest();
         request.setTopicMeta(meta);
@@ -250,7 +251,7 @@ public class CloudTopic {
      * @param callback, user callback object
      * @return AsyncResult, you can wait result by AsyncResult if you want to do this
      */
-    public AsyncResult<TopicMeta> asyncGetAttribute(AsyncCallback<TopicMeta> callback) {
+    public AsyncResult<TopicMeta> asyncGetAttribute(AsyncCallback<TopicMeta> callback) throws ServiceException {
         GetTopicAttrAction action = new GetTopicAttrAction(serviceClient, credentials, endpoint);
         GetTopicAttrRequest request = new GetTopicAttrRequest();
         request.setRequestPath(topicURL);
@@ -260,7 +261,7 @@ public class CloudTopic {
     /**
      * delete topic
      */
-    public void delete() {
+    public void delete() throws ServiceException {
         DeleteTopicAction action = new DeleteTopicAction(serviceClient, credentials, endpoint);
         DeleteTopicRequest request = new DeleteTopicRequest();
         request.setRequestPath(topicURL);
@@ -273,7 +274,7 @@ public class CloudTopic {
      * @param callback, user callback object
      * @return AsyncResult, you can wait result by AsyncResult if you want to do this
      */
-    public AsyncResult<Void> asyncDelete(AsyncCallback<Void> callback) {
+    public AsyncResult<Void> asyncDelete(AsyncCallback<Void> callback) throws ServiceException {
         DeleteTopicAction action = new DeleteTopicAction(serviceClient, credentials, endpoint);
         DeleteTopicRequest request = new DeleteTopicRequest();
         request.setRequestPath(topicURL);
@@ -286,7 +287,7 @@ public class CloudTopic {
      * @param meta, SubscriptionMeta data
      * @return, subscription url
      */
-    public String subscribe(SubscriptionMeta meta) {
+    public String subscribe(SubscriptionMeta meta) throws ServiceException {
         if(StringUtils.isEmpty(meta.getSubscriptionName())){
             throw new NullPointerException("subscriptionName can not be empty.");
         }
@@ -305,7 +306,8 @@ public class CloudTopic {
      * @param callback, user callback object
      * @return AsyncResult, you can wait result by AsyncResult if you want to do this
      */
-    public AsyncResult<String> asyncSubscribe(SubscriptionMeta meta, AsyncCallback<String> callback) {
+    public AsyncResult<String> asyncSubscribe(SubscriptionMeta meta, AsyncCallback<String> callback)
+        throws ServiceException {
         if(StringUtils.isEmpty(meta.getSubscriptionName())){
             throw new NullPointerException("subscriptionName can not be empty.");
         }
@@ -321,7 +323,7 @@ public class CloudTopic {
      *
      * @param meta, SubscriptionMeta data
      */
-    public void setSubscriptionAttr(SubscriptionMeta meta) {
+    public void setSubscriptionAttr(SubscriptionMeta meta) throws ServiceException {
         if(StringUtils.isEmpty(meta.getSubscriptionName())){
             throw new NullPointerException("subscriptionName can not be empty.");
         }
@@ -339,7 +341,8 @@ public class CloudTopic {
      * @param callback, user callback object
      * @return AsyncResult, you can wait result by AsyncResult if you want to do this
      */
-    public AsyncResult<Void> asyncSetSubscriptionAttr(SubscriptionMeta meta, AsyncCallback<Void> callback) {
+    public AsyncResult<Void> asyncSetSubscriptionAttr(SubscriptionMeta meta, AsyncCallback<Void> callback)
+        throws ServiceException {
         if(StringUtils.isEmpty(meta.getSubscriptionName())){
             throw new NullPointerException("subscriptionName can not be empty.");
         }
@@ -356,7 +359,7 @@ public class CloudTopic {
      * @param subscriptionName, subscription name
      * @return SubscriptionMeta data
      */
-    public SubscriptionMeta getSubscriptionAttr(String subscriptionName) {
+    public SubscriptionMeta getSubscriptionAttr(String subscriptionName) throws ServiceException {
         GetSubscriptionAttrRequest request = new GetSubscriptionAttrRequest();
         request.setRequestPath(topicURL + "/" + MNSConstants.SUBSCRIPTION + "/" + subscriptionName);
         GetSubscriptionAttrAction action = new GetSubscriptionAttrAction(serviceClient, credentials, endpoint);
@@ -371,7 +374,7 @@ public class CloudTopic {
      * @return AsyncResult, you can wait result by AsyncResult if you want to do this
      */
     public AsyncResult<SubscriptionMeta> asyncGetSubscriptionAttr(String subscriptionName,
-        AsyncCallback<SubscriptionMeta> callback) {
+        AsyncCallback<SubscriptionMeta> callback) throws ServiceException {
         GetSubscriptionAttrRequest request = new GetSubscriptionAttrRequest();
         request.setRequestPath(topicURL + "/" + MNSConstants.SUBSCRIPTION + "/" + subscriptionName);
         GetSubscriptionAttrAction action = new GetSubscriptionAttrAction(serviceClient, credentials, endpoint);
@@ -383,7 +386,7 @@ public class CloudTopic {
      *
      * @param subscriptionName, subscription name
      */
-    public void unsubscribe(String subscriptionName) {
+    public void unsubscribe(String subscriptionName) throws ServiceException {
         UnsubscribeRequest request = new UnsubscribeRequest();
         request.setRequestPath(topicURL + "/" + MNSConstants.SUBSCRIPTION + "/" + subscriptionName);
 
@@ -398,7 +401,8 @@ public class CloudTopic {
      * @param callback,         user callback object
      * @return AsyncResult, you can wait result by AsyncResult if you want to do this
      */
-    public AsyncResult<Void> asyncUnsubscribe(String subscriptionName, AsyncCallback<Void> callback) {
+    public AsyncResult<Void> asyncUnsubscribe(String subscriptionName, AsyncCallback<Void> callback)
+        throws ServiceException {
         UnsubscribeRequest request = new UnsubscribeRequest();
         request.setRequestPath(topicURL + "/" + MNSConstants.SUBSCRIPTION + "/" + subscriptionName);
 
@@ -416,7 +420,7 @@ public class CloudTopic {
      * @return SubscriptionMeta list
      */
     private PagingListResult<SubscriptionMeta> listSubscriptions(String prefix, String marker,
-        Integer retNumber, boolean withMeta) {
+        Integer retNumber, boolean withMeta) throws ServiceException {
         ListSubscriptionRequest request = new ListSubscriptionRequest();
         ListSubscriptionAction action = new ListSubscriptionAction(serviceClient, credentials, endpoint);
         request.setRequestPath(topicURL + "/" + MNSConstants.SUBSCRIPTION);
@@ -435,7 +439,8 @@ public class CloudTopic {
      * @param retNumber, return number
      * @return SubscriptionMeta list
      */
-    public PagingListResult<SubscriptionMeta> listSubscriptions(String prefix, String marker, Integer retNumber) {
+    public PagingListResult<SubscriptionMeta> listSubscriptions(String prefix, String marker, Integer retNumber)
+        throws ServiceException {
         return listSubscriptions(prefix, marker, retNumber, true);
     }
 
@@ -447,7 +452,8 @@ public class CloudTopic {
      * @param retNumber, return number
      * @return subscription url list
      */
-    public PagingListResult<String> listSubscriptionUrls(String prefix, String marker, Integer retNumber) {
+    public PagingListResult<String> listSubscriptionUrls(String prefix, String marker, Integer retNumber)
+        throws ServiceException {
         PagingListResult<SubscriptionMeta> list = listSubscriptions(prefix, marker, retNumber, false);
         PagingListResult<String> result = null;
         if (list != null && list.getResult() != null) {
@@ -541,7 +547,7 @@ public class CloudTopic {
      *             如果接收端包含了邮箱,请使用publishMessage(RawTopicMessage, MessageAttributes)
      * @return message
      */
-    public TopicMessage publishMessage(TopicMessage msg) {
+    public TopicMessage publishMessage(TopicMessage msg) throws ServiceException {
         PublishMessageRequest request = new PublishMessageRequest();
         request.setMessage(msg);
         PublishMessageAction action = new PublishMessageAction(serviceClient, credentials, endpoint);
@@ -558,7 +564,8 @@ public class CloudTopic {
      * @param messageAttributes 如果希望被推送到邮箱,那么attributes需要包含发送邮件所必须的几个属性
      * @return message
      */
-    public TopicMessage publishMessage(RawTopicMessage msg, MessageAttributes messageAttributes) {
+    public TopicMessage publishMessage(RawTopicMessage msg, MessageAttributes messageAttributes)
+        throws ServiceException {
         PublishMessageAction action = new PublishMessageAction(serviceClient, credentials, endpoint);
 
         AttributesValidationResult result = messageAttributes.validate();
@@ -585,7 +592,8 @@ public class CloudTopic {
      * @param callback, user callback object
      * @return AsyncResult, you can wait result by AsyncResult if you want to do this
      */
-    public AsyncResult<TopicMessage> asyncPublishMessage(TopicMessage msg, AsyncCallback<TopicMessage> callback) {
+    public AsyncResult<TopicMessage> asyncPublishMessage(TopicMessage msg, AsyncCallback<TopicMessage> callback)
+        throws ServiceException {
         PublishMessageRequest request = new PublishMessageRequest();
         request.setMessage(msg);
         PublishMessageAction action = new PublishMessageAction(serviceClient, credentials, endpoint);

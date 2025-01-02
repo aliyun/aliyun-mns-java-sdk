@@ -24,6 +24,7 @@ package com.aliyun.mns.client;
 
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
+import com.aliyun.mns.common.ServiceHandlingRequiredException;
 import com.aliyun.mns.model.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,7 @@ public class TransactionQueue {
     /*
      * Send the operation log of transaction to operation log queue.
      */
-    private Message sendOpLogMessage(String transHandler) {
+    private Message sendOpLogMessage(String transHandler) throws ServiceException {
         Message message = new Message();
         message.setMessageBody(transHandler);
         message.setDelaySeconds(this.transactionTimeoutInSecond);
@@ -247,6 +248,8 @@ public class TransactionQueue {
             } else {
                 //assume the message have already been delete (rollback success) if message not exist
             }
+        } catch (ServiceHandlingRequiredException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -318,7 +321,7 @@ public class TransactionQueue {
      *
      * @param needDeleteOpLogQueue set it tree to delete operation log queue at the same time.
      */
-    public void delete(boolean needDeleteOpLogQueue) {
+    public void delete(boolean needDeleteOpLogQueue) throws ServiceException {
         this.stopCheckThread();
         this.innerQueue.delete();
         if (needDeleteOpLogQueue) {
@@ -329,7 +332,7 @@ public class TransactionQueue {
     /*
      * stop background check thread, and delete transaction queue and operation log queue.
      */
-    public void delete() {
+    public void delete() throws ServiceException {
         this.delete(true);
     }
 

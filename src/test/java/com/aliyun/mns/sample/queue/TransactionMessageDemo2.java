@@ -22,6 +22,7 @@ package com.aliyun.mns.sample.queue;
 import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.client.TransactionQueue;
+import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
 import com.aliyun.mns.model.QueueMeta;
@@ -37,7 +38,7 @@ public class TransactionMessageDemo2 {
         return true;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ServiceException {
         System.out.println("Start TransactionMessageDemo");
         String transQueueName = "transQueueName";
         // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
