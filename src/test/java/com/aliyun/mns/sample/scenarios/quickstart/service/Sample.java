@@ -160,8 +160,8 @@ public class Sample {
             CloudQueue queue = client.getQueueRef(QUEUE_NAME1);
             QueueMeta queueMeta = queue.getAttributes();
             System.out.println(queueMeta.getDelaySeconds());
-            System.out.println(queueMeta.getActiveMessages());
-            System.out.println(queueMeta.getDelaySeconds());
+            System.out.println(queueMeta.getPollingWaitSeconds());
+            System.out.println(queueMeta.getMaxMessageSize());
         } catch (ClientException ex) {
             // 错误处理
             ex.printStackTrace();
@@ -497,7 +497,6 @@ public class Sample {
             // 删除队列
             queue.delete();
         } catch (Exception ex) {
-
             // 错误处理
             ex.printStackTrace();
         }

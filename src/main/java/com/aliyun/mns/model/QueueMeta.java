@@ -32,8 +32,11 @@ public class QueueMeta {
     protected Date lastModifyTime = null;
     protected Integer pollingWaitSeconds = null;
 
+    @Deprecated
     protected Long activeMessages = null;
+    @Deprecated
     protected Long inactiveMessages = null;
+    @Deprecated
     protected Long delayMessages = null;
     protected String queueURL = null;
     protected boolean loggingEnabled;
@@ -195,10 +198,12 @@ public class QueueMeta {
      *
      * @return message num
      */
+    @Deprecated
     public Long getActiveMessages() {
         return activeMessages;
     }
 
+    @Deprecated
     public void setActiveMessages(Long activeMessages) {
         this.activeMessages = activeMessages;
     }
@@ -208,10 +213,12 @@ public class QueueMeta {
      *
      * @return message num
      */
+    @Deprecated
     public Long getInactiveMessages() {
         return inactiveMessages;
     }
 
+    @Deprecated
     public void setInactiveMessages(Long inactiveMessages) {
         this.inactiveMessages = inactiveMessages;
     }
@@ -221,10 +228,12 @@ public class QueueMeta {
      *
      * @return message num
      */
+    @Deprecated
     public Long getDelayMessages() {
         return delayMessages;
     }
 
+    @Deprecated
     public void setDelayMessages(Long delayMessages) {
         this.delayMessages = delayMessages;
     }
