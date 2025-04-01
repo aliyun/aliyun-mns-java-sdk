@@ -39,7 +39,7 @@ public class ClientConfiguration implements Cloneable {
     private String proxyWorkstation;
     private int maxConnections = 4000;
     private int maxConnectionsPerRoute = 4000;
-    private int socketTimeout = 33 * 1000;
+    private int socketTimeout = 40 * 1000;
     private int connectionTimeout = 30 * 1000;
     private boolean soKeepAlive = true;
     private int ioReactorThreadCount = Runtime.getRuntime().availableProcessors();
