@@ -63,7 +63,15 @@ public interface MNSConstants extends HttpHeaders {
     public static final String POLLING_WAITSECONDS_TAG = "PollingWaitSeconds";
     public static final String MESSAGE_COUNT_TAG = "MessageCount";
     public static final String LOGGING_BUCKET_TAG = "LoggingBucket";
+    public static final String TRACE_ENABLED_TAG = "TraceEnabled";
     public static final String LOGGING_ENABLED_TAG = "LoggingEnabled";
+    public static final String USER_PROPERTIES_TAG = "UserProperties";
+    public static final String MESSAGE_PROPERTY_TAG = "PropertyValue";
+    public static final String SYSTEM_PROPERTIES_TAG = "SystemProperties";
+    public static final String MESSAGE_SYSTEM_PROPERTY_TAG = "SystemPropertyValue";
+    public static final String PROPERTY_VALUE_TAG = "Value";
+    public static final String PROPERTY_NAME_TAG = "Name";
+    public static final String PROPERTY_TYPE_TAG = "Type";
 
     public static final String QUEUE_URL_TAG = "QueueURL";
     public static final String NEXT_MARKER_TAG = "NextMarker";

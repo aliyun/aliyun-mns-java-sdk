@@ -55,6 +55,8 @@ public class TopicMessageDeserializer extends XMLDeserializer<TopicMessage> {
             case STRING:
                 message = new RawTopicMessage();
                 break;
+            default:
+                throw new ClientException("Unknown message type: " + messageType, null);
         }
 
         String messageId = safeGetElementContent(root, MESSAGE_ID_TAG, null);

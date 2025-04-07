@@ -26,11 +26,21 @@ public class AccountAttributes implements Serializable {
 
     private String loggingBucket;
 
+    private Integer traceEnabled;
+
     public String getLoggingBucket() {
         return loggingBucket;
     }
 
     public void setLoggingBucket(String loggingBucket) {
         this.loggingBucket = loggingBucket;
+    }
+
+    public Integer getTraceEnabled() {
+        return traceEnabled;
+    }
+
+    public void setTraceEnabled(Integer traceEnabled) {
+        this.traceEnabled = traceEnabled;
     }
 }

@@ -30,6 +30,7 @@ import org.w3c.dom.Element;
 import static com.aliyun.mns.common.MNSConstants.ACCOUNT_TAG;
 import static com.aliyun.mns.common.MNSConstants.DEFAULT_XML_NAMESPACE;
 import static com.aliyun.mns.common.MNSConstants.LOGGING_BUCKET_TAG;
+import static com.aliyun.mns.common.MNSConstants.TRACE_ENABLED_TAG;
 
 public class AccountAttributesSerializer extends XMLSerializer<AccountAttributes> {
 
@@ -43,6 +44,11 @@ public class AccountAttributesSerializer extends XMLSerializer<AccountAttributes
 
         Element node = safeCreateContentElement(doc, LOGGING_BUCKET_TAG,
             obj.getLoggingBucket(), null);
+        if (node != null) {
+            root.appendChild(node);
+        }
+        node = safeCreateContentElement(doc, TRACE_ENABLED_TAG,
+            obj.getTraceEnabled(), null);
         if (node != null) {
             root.appendChild(node);
         }

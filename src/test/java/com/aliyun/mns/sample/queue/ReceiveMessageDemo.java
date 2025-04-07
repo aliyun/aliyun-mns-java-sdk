@@ -27,7 +27,11 @@ import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.ServiceHandlingRequiredException;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
+import com.aliyun.mns.model.MessagePropertyValue;
+import com.aliyun.mns.model.MessageSystemPropertyValue;
+
 import java.util.List;
+import java.util.Map;
 
 /**
  * 1. 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
@@ -123,6 +127,22 @@ public class ReceiveMessageDemo {
             System.out.println("message body: " + (IS_BASE64 ? popMsg.getMessageBody() : popMsg.getMessageBodyAsRawString()));
             System.out.println("message id: " + popMsg.getMessageId());
             System.out.println("message dequeue count:" + popMsg.getDequeueCount());
+            Map<String, MessagePropertyValue> properties = popMsg.getUserProperties();
+            if (properties != null) {
+                for (Map.Entry<String, MessagePropertyValue> entry : properties.entrySet()) {
+                    System.out.println(
+                        "message property key: " + entry.getKey() + " value: " + entry.getValue().getStringValueByType()
+                            + " type: " + entry.getValue().getDataType());
+                }
+            }
+            Map<String, MessageSystemPropertyValue> systemProperties = popMsg.getSystemProperties();
+            if (systemProperties != null) {
+                for (Map.Entry<String, MessageSystemPropertyValue> entry : systemProperties.entrySet()) {
+                    System.out.println(
+                        "message system property key: " + entry.getKey() + " value: " + entry.getValue()
+                            .getStringValueByType() + " type: " + entry.getValue().getDataTypeString());
+                }
+            }
             //<<to add your special logic.>>
 
             //remember to  delete message when consume message successfully.
