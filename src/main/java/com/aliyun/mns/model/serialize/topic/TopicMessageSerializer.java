@@ -19,6 +19,9 @@
 
 package com.aliyun.mns.model.serialize.topic;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import com.aliyun.mns.common.utils.BooleanSerializer;
 import com.aliyun.mns.model.MessageAttributes;
 import com.aliyun.mns.model.PushAttributes;
@@ -29,8 +32,6 @@ import com.aliyun.mns.model.serialize.XmlUtil;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -39,10 +40,14 @@ import static com.aliyun.mns.common.MNSConstants.DEFAULT_XML_NAMESPACE;
 import static com.aliyun.mns.common.MNSConstants.DIRECT_MAIL_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_ATTRIBUTES_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_BODY_TAG;
+import static com.aliyun.mns.common.MNSConstants.MESSAGE_PROPERTY_TAG;
+import static com.aliyun.mns.common.MNSConstants.MESSAGE_SYSTEM_PROPERTY_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_TAG_TAG;
 import static com.aliyun.mns.common.MNSConstants.PUSH_TAG;
 import static com.aliyun.mns.common.MNSConstants.SMS_TAG;
+import static com.aliyun.mns.common.MNSConstants.SYSTEM_PROPERTIES_TAG;
+import static com.aliyun.mns.common.MNSConstants.USER_PROPERTIES_TAG;
 import static com.aliyun.mns.common.MNSConstants.WEBSOCKET_TAG;
 
 public class TopicMessageSerializer extends XMLSerializer<PublishMessageRequest> {
@@ -86,46 +91,63 @@ public class TopicMessageSerializer extends XMLSerializer<PublishMessageRequest>
             root.appendChild(attributesNode);
 
             if (messageAttributes.getMailAttributes() != null) {
-                node = safeCreateContentElement(doc, DIRECT_MAIL_TAG, messageAttributes.getMailAttributes().toJson(getGson()), null);
+                node = safeCreateContentElement(doc, DIRECT_MAIL_TAG,
+                    messageAttributes.getMailAttributes().toJson(getGson()), null);
                 if (node != null) {
                     attributesNode.appendChild(node);
                 }
             }
 
             if (messageAttributes.getDayuAttributes() != null) {
-                node = safeCreateContentElement(doc, DAYU_TAG, messageAttributes.getDayuAttributes().toJson(getGson()), null);
+                node = safeCreateContentElement(doc, DAYU_TAG, messageAttributes.getDayuAttributes().toJson(getGson()),
+                    null);
                 if (node != null) {
                     attributesNode.appendChild(node);
                 }
             }
 
             if (messageAttributes.getSmsAttributes() != null) {
-                node = safeCreateContentElement(doc, SMS_TAG, messageAttributes.getSmsAttributes().toJson(getGson()), null);
+                node = safeCreateContentElement(doc, SMS_TAG, messageAttributes.getSmsAttributes().toJson(getGson()),
+                    null);
                 if (node != null) {
                     attributesNode.appendChild(node);
                 }
             }
 
             if (messageAttributes.getBatchSmsAttributes() != null) {
-                node = safeCreateContentElement(doc, SMS_TAG, messageAttributes.getBatchSmsAttributes().toJson(getGson()), null);
+                node = safeCreateContentElement(doc, SMS_TAG,
+                    messageAttributes.getBatchSmsAttributes().toJson(getGson()), null);
                 if (node != null) {
                     attributesNode.appendChild(node);
                 }
             }
 
             if (messageAttributes.getWebSocketAttributes() != null) {
-                node = safeCreateContentElement(doc, WEBSOCKET_TAG, messageAttributes.getWebSocketAttributes().toJson(getGson()), null);
+                node = safeCreateContentElement(doc, WEBSOCKET_TAG,
+                    messageAttributes.getWebSocketAttributes().toJson(getGson()), null);
                 if (node != null) {
                     attributesNode.appendChild(node);
                 }
             }
 
             if (messageAttributes.getPushAttributes() != null) {
-                node = safeCreateContentElement(doc, PUSH_TAG, messageAttributes.getPushAttributes().toJson(getGson()), null);
+                node = safeCreateContentElement(doc, PUSH_TAG, messageAttributes.getPushAttributes().toJson(getGson()),
+                    null);
                 if (node != null) {
                     attributesNode.appendChild(node);
                 }
             }
+        }
+
+        node = safeCreatePropertiesNode(doc, msg.getUserProperties(), USER_PROPERTIES_TAG, MESSAGE_PROPERTY_TAG);
+        if (node != null) {
+            root.appendChild(node);
+        }
+
+        node = safeCreatePropertiesNode(doc, msg.getSystemProperties(), SYSTEM_PROPERTIES_TAG,
+            MESSAGE_SYSTEM_PROPERTY_TAG);
+        if (node != null) {
+            root.appendChild(node);
         }
 
         String xml = XmlUtil.xmlNodeToString(doc, encoding);

@@ -19,6 +19,9 @@
 
 package com.aliyun.mns.sample.queue;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
@@ -26,12 +29,15 @@ import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
+import com.aliyun.mns.model.MessagePropertyValue;
 
 /**
- * 1. 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
+ * 1. 遵循阿里云规范，env 设置
+ * ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment
+ * -variable-on-linux-macos-and-windows-systems
  * 2. ${"user.home"}/.aliyun-mns.properties 文件配置如下：
- *           mns.endpoint=http://xxxxxxx
- *           mns.msgBodyBase64Switch=true/false
+ * mns.endpoint=http://xxxxxxx
+ * mns.msgBodyBase64Switch=true/false
  */
 public class SendMessageDemo {
 
@@ -40,8 +46,8 @@ public class SendMessageDemo {
      */
     private static final String QUEUE_NAME = "cloud-queue-demo";
 
-    private static final Boolean IS_BASE64 = Boolean.valueOf(ServiceSettings.getMNSPropertyValue("msgBodyBase64Switch","false"));
-
+    private static final Boolean IS_BASE64 = Boolean.valueOf(
+        ServiceSettings.getMNSPropertyValue("msgBodyBase64Switch", "false"));
 
     public static void main(String[] args) {
         // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
@@ -57,10 +63,15 @@ public class SendMessageDemo {
                 if (IS_BASE64) {
                     // base 64 编码
                     message.setMessageBody(messageValue);
-                }else {
+                } else {
                     // 不进行任何编码
                     message.setMessageBodyAsRawString(messageValue);
                 }
+
+                Map<String, MessagePropertyValue> userProperties = new HashMap<String, MessagePropertyValue>();
+                userProperties.put("key1", new MessagePropertyValue("value1"));
+                userProperties.put("key2", new MessagePropertyValue(1));
+                message.setUserProperties(userProperties);
 
                 Message putMsg = queue.putMessage(message);
                 System.out.println("Send message id is: " + putMsg.getMessageId());

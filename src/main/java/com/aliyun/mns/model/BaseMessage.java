@@ -21,6 +21,9 @@ package com.aliyun.mns.model;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.aliyun.mns.common.MNSConstants.DEFAULT_CHARSET;
 
@@ -30,12 +33,16 @@ public abstract class BaseMessage {
     private String messageId;
     private String messageBodyMD5;
     private byte[] messageBodyBytes;
+    private Map<String, MessagePropertyValue> userProperties;
+    private Map<String, MessageSystemPropertyValue> systemProperties;
 
     public BaseMessage() {
         this.requestId = null;
         this.messageId = null;
         this.messageBodyMD5 = null;
         this.messageBodyBytes = null;
+        this.userProperties = new ConcurrentHashMap<String, MessagePropertyValue>();
+        this.systemProperties = new ConcurrentHashMap<String, MessageSystemPropertyValue>();
     }
 
     public String getRequestId() {
@@ -73,6 +80,15 @@ public abstract class BaseMessage {
     }
 
     /**
+     * 获取消息体，二进制类型，该方法用于子类
+     *
+     * @return messageBody
+     */
+    protected byte[] getMessageBodyBytes() {
+        return messageBodyBytes;
+    }
+
+    /**
      * 设置消息体
      *
      * @param messageBodyBytes message body bytes
@@ -80,15 +96,6 @@ public abstract class BaseMessage {
 
     protected void setMessageBodyBytes(byte[] messageBodyBytes) {
         this.messageBodyBytes = messageBodyBytes;
-    }
-
-    /**
-     * 获取消息体，二进制类型，该方法用于子类
-     *
-     * @return messageBody
-     */
-    protected byte[] getMessageBodyBytes() {
-        return messageBodyBytes;
     }
 
     /**
@@ -126,6 +133,7 @@ public abstract class BaseMessage {
 
     /**
      * 获取消息体，文本类型，获取的文本是否为原始消息，由子类方法决定
+     *
      * @return message body
      */
     public abstract String getMessageBody();
@@ -144,20 +152,48 @@ public abstract class BaseMessage {
      */
     public abstract void setMessageBody(byte[] messageBody);
 
+    public Map<String, MessagePropertyValue> getUserProperties() {
+        return userProperties;
+    }
+
+    public void setUserProperties(Map<String, MessagePropertyValue> userProperties) {
+        this.userProperties = userProperties;
+    }
+
+    public MessageSystemPropertyValue getSystemProperty(MessageSystemPropertyName key) {
+        if (key == null) {
+            return null;
+        }
+        return systemProperties.get(key.getValue());
+    }
+
+    public void putSystemProperty(MessageSystemPropertyName keyName, MessageSystemPropertyValue value) {
+        systemProperties.put(keyName.getValue(), value);
+    }
+
+    public Map<String, MessageSystemPropertyValue> getSystemProperties() {
+        return systemProperties;
+    }
+
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         if (messageId != null) {
-            sb.append("MessageID:" + this.messageId + ",");
+            sb.append("MessageID:").append(this.messageId).append(",");
         }
 
         if (messageBodyMD5 != null) {
-            sb.append("MessageMD5:" + this.messageBodyMD5 + ",");
+            sb.append("MessageMD5:").append(this.messageBodyMD5).append(",");
         }
 
         if (requestId != null) {
-            sb.append("RequestID:" + this.requestId + ",");
+            sb.append("RequestID:").append(this.requestId).append(",");
+        }
+        if (userProperties != null) {
+            for (Map.Entry<String, MessagePropertyValue> entry : userProperties.entrySet()) {
+                sb.append("Property.").append(entry.getKey()).append(":").append(entry.getValue()).append(",");
+            }
         }
         return sb.toString();
     }

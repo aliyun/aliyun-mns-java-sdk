@@ -19,21 +19,18 @@
 
 package com.aliyun.mns.model.serialize.queue;
 
-import com.aliyun.mns.model.Message;
-import com.aliyun.mns.model.serialize.XMLSerializer;
-import com.aliyun.mns.model.serialize.XmlUtil;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.List;
+
+import com.aliyun.mns.model.Message;
+import com.aliyun.mns.model.serialize.XMLSerializer;
+import com.aliyun.mns.model.serialize.XmlUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import static com.aliyun.mns.common.MNSConstants.DEFAULT_XML_NAMESPACE;
-import static com.aliyun.mns.common.MNSConstants.DELAY_SECONDS_TAG;
-import static com.aliyun.mns.common.MNSConstants.MESSAGE_BODY_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_LIST_TAG;
-import static com.aliyun.mns.common.MNSConstants.MESSAGE_TAG;
-import static com.aliyun.mns.common.MNSConstants.PRIORITY_TAG;
 
 public class MessageListSerializer extends XMLSerializer<List<Message>> {
 
@@ -47,28 +44,8 @@ public class MessageListSerializer extends XMLSerializer<List<Message>> {
 
         if (msgs != null) {
             for (Message msg : msgs) {
-                Element root = doc.createElement(MESSAGE_TAG);
+                Element root = serializeMessage(doc, msg);
                 messages.appendChild(root);
-
-                Element node = safeCreateContentElement(doc, MESSAGE_BODY_TAG,
-                    msg.getOriginalMessageBody(), "");
-
-                if (node != null) {
-                    root.appendChild(node);
-                }
-
-                node = safeCreateContentElement(doc, DELAY_SECONDS_TAG,
-                    msg.getDelaySeconds(), null);
-                if (node != null) {
-                    root.appendChild(node);
-                }
-
-                node = safeCreateContentElement(doc, PRIORITY_TAG,
-                    msg.getPriority(), null);
-                if (node != null) {
-                    root.appendChild(node);
-                }
-
             }
         }
         String xml = XmlUtil.xmlNodeToString(doc, encoding);

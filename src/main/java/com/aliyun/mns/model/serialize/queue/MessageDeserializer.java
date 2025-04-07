@@ -19,11 +19,12 @@
 
 package com.aliyun.mns.model.serialize.queue;
 
+import java.io.InputStream;
+import java.util.Date;
+
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.model.Message;
 import com.aliyun.mns.model.serialize.XMLDeserializer;
-import java.io.InputStream;
-import java.util.Date;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -61,12 +62,12 @@ public class MessageDeserializer extends XMLDeserializer<Message> {
 
         String messageBody = safeGetElementContent(root, MESSAGE_BODY_TAG, null);
         if (messageBody != null) {
-//			try {
+            // try {
             message.setMessageBody(messageBody, Message.MessageBodyType.RAW_STRING);
-//			} catch (UnsupportedEncodingException e) {
-//				throw new RuntimeException("Not support enconding:"
-//						+ DEFAULT_CHARSET);
-//			}
+            // } catch (UnsupportedEncodingException e) {
+            // throw new RuntimeException("Not support enconding:"
+            // + DEFAULT_CHARSET);
+            // }
         }
 
         String messageBodyMD5 = safeGetElementContent(root,
@@ -77,9 +78,9 @@ public class MessageDeserializer extends XMLDeserializer<Message> {
             null);
         message.setReceiptHandle(receiptHandle);
 
-        String enqueTime = safeGetElementContent(root, ENQUEUE_TIME_TAG, null);
-        if (enqueTime != null) {
-            message.setEnqueueTime(new Date(Long.parseLong(enqueTime)));
+        String enqueueTime = safeGetElementContent(root, ENQUEUE_TIME_TAG, null);
+        if (enqueueTime != null) {
+            message.setEnqueueTime(new Date(Long.parseLong(enqueueTime)));
         }
 
         String nextVisibleTime = safeGetElementContent(root,
@@ -101,10 +102,17 @@ public class MessageDeserializer extends XMLDeserializer<Message> {
             message.setDequeueCount(Integer.parseInt(dequeueCount));
         }
 
-        String priority = safeGetElementContent(root, PRIORITY_TAG, null);
+        String priority = safeGetElementContent(root, PRIORITY_TAG,
+            null);
         if (priority != null) {
             message.setPriority(Integer.parseInt(priority));
         }
+
+        // 解析 userProperties
+        safeAddPropertiesToMessage(root, message);
+
+        // 解析 systemProperties
+        safeAddSystemPropertiesToMessage(root, message);
 
         return message;
     }

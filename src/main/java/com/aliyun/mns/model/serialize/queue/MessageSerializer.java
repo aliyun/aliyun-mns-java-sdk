@@ -19,19 +19,14 @@
 
 package com.aliyun.mns.model.serialize.queue;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import com.aliyun.mns.model.Message;
 import com.aliyun.mns.model.serialize.XMLSerializer;
 import com.aliyun.mns.model.serialize.XmlUtil;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import static com.aliyun.mns.common.MNSConstants.DEFAULT_XML_NAMESPACE;
-import static com.aliyun.mns.common.MNSConstants.DELAY_SECONDS_TAG;
-import static com.aliyun.mns.common.MNSConstants.MESSAGE_BODY_TAG;
-import static com.aliyun.mns.common.MNSConstants.MESSAGE_TAG;
-import static com.aliyun.mns.common.MNSConstants.PRIORITY_TAG;
 
 public class MessageSerializer extends XMLSerializer<Message> {
 
@@ -43,27 +38,8 @@ public class MessageSerializer extends XMLSerializer<Message> {
     public InputStream serialize(Message msg, String encoding) throws Exception {
         Document doc = getDocumentBuilder().newDocument();
 
-        Element root = doc.createElementNS(DEFAULT_XML_NAMESPACE, MESSAGE_TAG);
+        Element root = serializeMessage(doc, msg);
         doc.appendChild(root);
-
-        Element node = safeCreateContentElement(doc, MESSAGE_BODY_TAG,
-            msg.getOriginalMessageBody(), "");
-
-        if (node != null) {
-            root.appendChild(node);
-        }
-
-        node = safeCreateContentElement(doc, DELAY_SECONDS_TAG,
-            msg.getDelaySeconds(), null);
-        if (node != null) {
-            root.appendChild(node);
-        }
-
-        node = safeCreateContentElement(doc, PRIORITY_TAG,
-            msg.getPriority(), null);
-        if (node != null) {
-            root.appendChild(node);
-        }
 
         String xml = XmlUtil.xmlNodeToString(doc, encoding);
 

@@ -1,10 +1,14 @@
 package com.aliyun.mns.sample.topic;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudTopic;
 import com.aliyun.mns.client.MNSClient;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Base64TopicMessage;
+import com.aliyun.mns.model.MessagePropertyValue;
 import com.aliyun.mns.model.RawTopicMessage;
 import com.aliyun.mns.model.TopicMessage;
 
@@ -37,6 +41,12 @@ public class PublishMessageDemo {
         TopicMessage msg = IS_BASE64 ? new Base64TopicMessage() : new RawTopicMessage();
         try {
             msg.setMessageBody(message);
+
+            Map<String, MessagePropertyValue> userProperties = new HashMap<String, MessagePropertyValue>();
+            userProperties.put("key1", new MessagePropertyValue("value1"));
+            userProperties.put("key2", new MessagePropertyValue(1));
+            msg.setUserProperties(userProperties);
+
             // 可选。设置该条发布消息的filterTag
             // 设置后，消息服务MNS在推送消息时会根据标签进行过滤，仅推送消息标签与订阅中指定的过滤标签匹配的消息到指定队列上。
             //msg.setMessageTag("filterTag");

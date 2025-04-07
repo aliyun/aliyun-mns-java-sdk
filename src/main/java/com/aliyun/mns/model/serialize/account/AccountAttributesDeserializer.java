@@ -26,6 +26,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import static com.aliyun.mns.common.MNSConstants.LOGGING_BUCKET_TAG;
+import static com.aliyun.mns.common.MNSConstants.TRACE_ENABLED_TAG;
 
 public class AccountAttributesDeserializer extends XMLDeserializer<AccountAttributes> {
 
@@ -39,6 +40,10 @@ public class AccountAttributesDeserializer extends XMLDeserializer<AccountAttrib
 
         String loggingBucket = safeGetElementContent(root, LOGGING_BUCKET_TAG, null);
         accountAttributes.setLoggingBucket(loggingBucket);
+        String traceEnabled = safeGetElementContent(root, TRACE_ENABLED_TAG, null);
+        if (traceEnabled != null) {
+            accountAttributes.setTraceEnabled(Integer.parseInt(traceEnabled));
+        }
         return accountAttributes;
     }
 }
