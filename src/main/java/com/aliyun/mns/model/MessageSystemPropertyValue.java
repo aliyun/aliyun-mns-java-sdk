@@ -2,7 +2,6 @@ package com.aliyun.mns.model;
 
 /**
  * @author haolong
- * @date 2025/2/24 16:54
  */
 public class MessageSystemPropertyValue implements AbstractMessagePropertyValue {
     private SystemPropertyType dataType;

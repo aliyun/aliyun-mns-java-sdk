@@ -9,8 +9,6 @@ import static com.aliyun.mns.common.MNSConstants.DEFAULT_CHARSET;
 
 /**
  * @author haolong
- * @date 2025/2/17 16:34
- * @desc 消息属性值
  */
 public class MessagePropertyValue implements AbstractMessagePropertyValue {
     private PropertyType dataType;

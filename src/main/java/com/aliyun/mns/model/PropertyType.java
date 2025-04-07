@@ -2,8 +2,6 @@ package com.aliyun.mns.model;
 
 /**
  * @author haolong
- * @date 2025/2/17 16:34
- * @desc 属性值类型
  */
 public enum PropertyType {
     /**

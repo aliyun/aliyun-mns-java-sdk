@@ -2,7 +2,6 @@ package com.aliyun.mns.model;
 
 /**
  * @author haolong
- * @date 2025/2/24 17:04
  */
 public enum MessageSystemPropertyName {
     /**
