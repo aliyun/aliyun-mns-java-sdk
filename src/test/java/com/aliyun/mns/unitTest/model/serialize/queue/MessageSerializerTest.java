@@ -135,4 +135,61 @@ public class MessageSerializerTest {
         Assert.assertFalse(xml.contains("<SystemProperties>"));
     }
 
+    @Test
+    public void serialize_DLQMessageTypeSystemProperty_ShouldSerializeCorrectly() throws Exception {
+        Message msg = new Message();
+        msg.setMessageBodyAsRawString("Hello, World!");
+
+        msg.putSystemProperty(MessageSystemPropertyName.DLQ_MESSAGE_TYPE, new MessageSystemPropertyValue(
+            SystemPropertyType.STRING, "test-type"));
+
+        InputStream inputStream = serializer.serialize(msg, "UTF-8");
+        String xml = convertStreamToString(inputStream, "UTF-8");
+
+        Assert.assertTrue(xml.contains("<MessageBody>Hello, World!</MessageBody>"));
+        Assert.assertTrue(xml.contains("<SystemProperties>"));
+        Assert.assertTrue(xml.contains("<SystemPropertyValue>"));
+        Assert.assertTrue(xml.contains("<Name>" + MessageSystemPropertyName.DLQ_MESSAGE_TYPE.getValue() + "</Name>"));
+        Assert.assertTrue(xml.contains("<Value>test-type</Value>"));
+        Assert.assertTrue(xml.contains("<Type>STRING</Type>"));
+    }
+
+    @Test
+    public void serialize_DLQSourceARNSystemProperty_ShouldSerializeCorrectly() throws Exception {
+        Message msg = new Message();
+        msg.setMessageBodyAsRawString("Hello, World!");
+
+        msg.putSystemProperty(MessageSystemPropertyName.DLQ_SOURCE_ARN, new MessageSystemPropertyValue(
+            SystemPropertyType.STRING, "arn:test:source"));
+
+        InputStream inputStream = serializer.serialize(msg, "UTF-8");
+        String xml = convertStreamToString(inputStream, "UTF-8");
+
+        Assert.assertTrue(xml.contains("<MessageBody>Hello, World!</MessageBody>"));
+        Assert.assertTrue(xml.contains("<SystemProperties>"));
+        Assert.assertTrue(xml.contains("<SystemPropertyValue>"));
+        Assert.assertTrue(xml.contains("<Name>" + MessageSystemPropertyName.DLQ_SOURCE_ARN.getValue() + "</Name>"));
+        Assert.assertTrue(xml.contains("<Value>arn:test:source</Value>"));
+        Assert.assertTrue(xml.contains("<Type>STRING</Type>"));
+    }
+
+    @Test
+    public void serialize_DLQOriginMessageIDSystemProperty_ShouldSerializeCorrectly() throws Exception {
+        Message msg = new Message();
+        msg.setMessageBodyAsRawString("Hello, World!");
+
+        msg.putSystemProperty(MessageSystemPropertyName.DLQ_ORIGIN_MESSAGE_ID, new MessageSystemPropertyValue(
+            SystemPropertyType.STRING, "origin-msg-123"));
+
+        InputStream inputStream = serializer.serialize(msg, "UTF-8");
+        String xml = convertStreamToString(inputStream, "UTF-8");
+
+        Assert.assertTrue(xml.contains("<MessageBody>Hello, World!</MessageBody>"));
+        Assert.assertTrue(xml.contains("<SystemProperties>"));
+        Assert.assertTrue(xml.contains("<SystemPropertyValue>"));
+        Assert.assertTrue(xml.contains("<Name>" + MessageSystemPropertyName.DLQ_ORIGIN_MESSAGE_ID.getValue() + "</Name>"));
+        Assert.assertTrue(xml.contains("<Value>origin-msg-123</Value>"));
+        Assert.assertTrue(xml.contains("<Type>STRING</Type>"));
+    }
+
 }
