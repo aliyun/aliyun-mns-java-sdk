@@ -15,7 +15,19 @@ public enum MessageSystemPropertyName {
     /**
      * baggage
      */
-    BAGGAGE("baggage");
+    BAGGAGE("baggage"),
+    /**
+     * DLQ message type
+     */
+    DLQ_MESSAGE_TYPE("DLQMessageType"),
+    /**
+     * DLQ source ARN
+     */
+    DLQ_SOURCE_ARN("DLQSourceArn"),
+    /**
+     * DLQ origin message ID
+     */
+    DLQ_ORIGIN_MESSAGE_ID("DLQOriginMessageId");
 
     private String value;
 
