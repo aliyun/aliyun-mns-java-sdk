@@ -156,4 +156,46 @@ public class MessageDeserializerTest {
         Assert.assertTrue(systemProperties.isEmpty());
     }
 
+    @Test
+    public void deserialize_WithDLQMessageTypeSystemProperty_ParsesSystemProperties() throws Exception {
+        String xml
+            = "<Message><MessageId>12345</MessageId><SystemProperties><SystemPropertyValue><Name>DLQMessageType</Name"
+            + "><Value>test-type</Value><Type>STRING</Type></SystemPropertyValue></SystemProperties></Message>";
+        InputStream stream = new ByteArrayInputStream(xml.getBytes());
+        Message message = deserializer.deserialize(stream);
+
+        Map<String, MessageSystemPropertyValue> systemProperties = message.getSystemProperties();
+        Assert.assertNotNull(systemProperties);
+        Assert.assertEquals("test-type",
+            systemProperties.get(MessageSystemPropertyName.DLQ_MESSAGE_TYPE.getValue()).getStringValueByType());
+    }
+
+    @Test
+    public void deserialize_WithDLQSourceARNSystemProperty_ParsesSystemProperties() throws Exception {
+        String xml
+            = "<Message><MessageId>12345</MessageId><SystemProperties><SystemPropertyValue><Name>DLQSourceArn</Name"
+            + "><Value>arn:test:source</Value><Type>STRING</Type></SystemPropertyValue></SystemProperties></Message>";
+        InputStream stream = new ByteArrayInputStream(xml.getBytes());
+        Message message = deserializer.deserialize(stream);
+
+        Map<String, MessageSystemPropertyValue> systemProperties = message.getSystemProperties();
+        Assert.assertNotNull(systemProperties);
+        Assert.assertEquals("arn:test:source",
+            systemProperties.get(MessageSystemPropertyName.DLQ_SOURCE_ARN.getValue()).getStringValueByType());
+    }
+
+    @Test
+    public void deserialize_WithDLQOriginMessageIDSystemProperty_ParsesSystemProperties() throws Exception {
+        String xml
+            = "<Message><MessageId>12345</MessageId><SystemProperties><SystemPropertyValue><Name>DLQOriginMessageId</Name"
+            + "><Value>origin-msg-123</Value><Type>STRING</Type></SystemPropertyValue></SystemProperties></Message>";
+        InputStream stream = new ByteArrayInputStream(xml.getBytes());
+        Message message = deserializer.deserialize(stream);
+
+        Map<String, MessageSystemPropertyValue> systemProperties = message.getSystemProperties();
+        Assert.assertNotNull(systemProperties);
+        Assert.assertEquals("origin-msg-123",
+            systemProperties.get(MessageSystemPropertyName.DLQ_ORIGIN_MESSAGE_ID.getValue()).getStringValueByType());
+    }
+
 }
