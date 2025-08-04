@@ -19,6 +19,14 @@
 
 package com.aliyun.mns.model;
 
+import com.google.gson.Gson;
+
 public interface BaseAttributes {
-    public AttributesValidationResult validate();
+
+    AttributesValidationResult validate();
+
+    default String toJson(Gson gson) {
+        return gson.toJson(this);
+    }
+
 }

@@ -34,6 +34,10 @@ import com.aliyun.mns.model.request.queue.BatchSendMessageRequest;
 import com.aliyun.mns.model.serialize.queue.ErrorMessageListDeserializer;
 import com.aliyun.mns.model.serialize.queue.MessageListDeserializer;
 import com.aliyun.mns.model.serialize.queue.MessageListSerializer;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.List;
@@ -93,17 +97,38 @@ public class BatchSendMessageAction extends
 
     @Override
     protected ResultParser<Exception> buildExceptionParser() {
-        return new ResultParser<Exception>() {
-            @Override
-            public Exception parse(ResponseMessage response)
-                throws ResultParseException {
-                ErrorMessageListDeserializer deserializer = new ErrorMessageListDeserializer();
-                try {
-                    return deserializer.deserialize(response.getContent());
-                } catch (Exception e) {
-                    return new ExceptionResultParser(getUserRequestId()).parse(response); //TODO right?
-                }
+        return response -> {
+            ErrorMessageListDeserializer deserializer = new ErrorMessageListDeserializer();
+
+            // 第一步：读取原始 InputStream 并缓存为 byte[]
+            byte[] contentBytes;
+            try (InputStream originalStream = response.getContent()) {
+                contentBytes = readStreamToByteArray(originalStream);
+            } catch (IOException e) {
+                throw new ResultParseException("Failed to read response content", e);
+            }
+
+            try (InputStream is = new ByteArrayInputStream(contentBytes)){
+                return deserializer.deserialize(is);
+            } catch (Exception e) {
+                // 上述解析失败，二次使用原文件内容
+                response.setContent(new ByteArrayInputStream(contentBytes));
+                return new ExceptionResultParser(getUserRequestId()).parse(response);
             }
         };
+    }
+
+
+
+    // 工具方法：将 InputStream 读取为 byte[]
+    private byte[] readStreamToByteArray(InputStream is) throws IOException {
+        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        // 8KB 缓冲区，适合大多数 IO 场景
+        byte[] data = new byte[8192];
+        int nRead;
+        while ((nRead = is.read(data, 0, data.length)) != -1) {
+            buffer.write(data, 0, nRead);
+        }
+        return buffer.toByteArray();
     }
 }

@@ -37,19 +37,17 @@ public class MessageListSerializer extends XMLSerializer<List<Message>> {
     @Override
     public InputStream serialize(List<Message> msgs, String encoding) throws Exception {
         Document doc = getDocumentBuilder().newDocument();
-
         Element messages = doc.createElementNS(DEFAULT_XML_NAMESPACE, MESSAGE_LIST_TAG);
-
         doc.appendChild(messages);
-
         if (msgs != null) {
             for (Message msg : msgs) {
                 Element root = serializeMessage(doc, msg);
                 messages.appendChild(root);
             }
         }
-        String xml = XmlUtil.xmlNodeToString(doc, encoding);
 
+        String xml = XmlUtil.xmlNodeToString(doc, encoding);
         return new ByteArrayInputStream(xml.getBytes(encoding));
     }
+
 }

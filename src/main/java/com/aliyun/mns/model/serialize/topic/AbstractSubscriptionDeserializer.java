@@ -109,9 +109,10 @@ public abstract class AbstractSubscriptionDeserializer<T> extends XMLDeserialize
             meta.setFilterTag(filterTag);
         }
 
-        String subsriptionURL = safeGetElementContent(root, SUBSCRIPTION_URL_TAG, null);
-        meta.setSubscriptionURL(subsriptionURL);
-
+        String subscriptionURL = safeGetElementContent(root, SUBSCRIPTION_URL_TAG, null);
+        if (subscriptionURL != null) {
+            meta.setSubscriptionURL(subscriptionURL);
+        }
         return meta;
     }
 

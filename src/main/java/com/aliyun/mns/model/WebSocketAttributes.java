@@ -20,7 +20,6 @@
 package com.aliyun.mns.model;
 
 import com.aliyun.mns.common.MNSConstants;
-import com.google.gson.Gson;
 
 public class WebSocketAttributes implements BaseAttributes {
     private Integer importanceLevel;
@@ -38,10 +37,6 @@ public class WebSocketAttributes implements BaseAttributes {
 
         result.setSuccess(true);
         return result;
-    }
-
-    public String toJson(Gson gson) {
-        return gson.toJson(this);
     }
 
     public Integer getImportanceLevel() {

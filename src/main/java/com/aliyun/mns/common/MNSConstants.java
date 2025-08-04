@@ -22,121 +22,125 @@ package com.aliyun.mns.common;
 import com.aliyun.mns.common.utils.HttpHeaders;
 
 public interface MNSConstants extends HttpHeaders {
-    public static final String LOCATION = "Location";
-    public static final String LOCATION_MESSAGES = "messages";
+    String LOCATION = "Location";
+    String LOCATION_MESSAGES = "messages";
 
-    public static final String X_HEADER_MNS_API_VERSION = "x-mns-version";
-    public static final String X_HEADER_MNS_API_VERSION_VALUE = "2015-06-06";
+    String X_HEADER_MNS_API_VERSION = "x-mns-version";
+    String X_HEADER_MNS_API_VERSION_VALUE = "2015-06-06";
 
-    public static final String X_HEADER_MNS_PREFIX = "x-mns-";
-    public static final String X_HEADER_MNS_QUEUE_PREFIX = "x-mns-prefix";
-    public static final String X_HEADER_MNS_MARKER = "x-mns-marker";
-    public static final String X_HEADER_MNS_RET_NUMBERS = "x-mns-ret-number";
-    public static final String X_HEADER_MNS_WITH_META = "x-mns-with-meta";
-    public static final String X_HEADER_MNS_REQUEST_ID = "x-mns-request-id";
+    String X_HEADER_MNS_PREFIX = "x-mns-";
+    String X_HEADER_MNS_QUEUE_PREFIX = "x-mns-prefix";
+    String X_HEADER_MNS_MARKER = "x-mns-marker";
+    String X_HEADER_MNS_RET_NUMBERS = "x-mns-ret-number";
+    String X_HEADER_MNS_WITH_META = "x-mns-with-meta";
+    String X_HEADER_MNS_REQUEST_ID = "x-mns-request-id";
 
-    public static final String DEFAULT_CHARSET = "UTF-8";
-    public static final String DEFAULT_CONTENT_TYPE = "text/xml;charset=UTF-8";
+    String DEFAULT_CHARSET = "UTF-8";
+    String DEFAULT_CONTENT_TYPE = "text/xml;charset=UTF-8";
 
-    public static final String DEFAULT_XML_NAMESPACE = "http://mns.aliyuncs.com/doc/v1";
+    String DEFAULT_XML_NAMESPACE = "http://mns.aliyuncs.com/doc/v1";
 
-    public static final String QUEUE_PREFIX = "queues/";
-    public static final String TOPIC_PREFIX = "topics/";
+    String QUEUE_PREFIX = "queues/";
+    String TOPIC_PREFIX = "topics/";
 
-    public static final String URI_OPEN_SERVICE = "commonbuy/openservice";
+    String URI_OPEN_SERVICE = "commonbuy/openservice";
 
-    public static final String ACCOUNT_TAG = "Account";
-    public static final String QUEUE_TAG = "Queue";
-    public static final String TOPIC_TAG = "Topic";
-    public static final String QUEUE_NAME_TAG = "QueueName";
-    public static final String TOPIC_NAME_TAG = "TopicName";
-    public static final String SUBSCRIPTION_TAG = "Subscription";
-    public static final String DELAY_SECONDS_TAG = "DelaySeconds";
-    public static final String MAX_MESSAGE_SIZE_TAG = "MaximumMessageSize";
-    public static final String MESSAGE_RETENTION_PERIOD_TAG = "MessageRetentionPeriod";
-    public static final String VISIBILITY_TIMEOUT = "VisibilityTimeout";
-    public static final String ACTIVE_MESSAGES_TAG = "ActiveMessages";
-    public static final String INACTIVE_MESSAGES_TAG = "InactiveMessages";
-    public static final String DELAY_MESSAGES_TAG = "DelayMessages";
-    public static final String LASTMODIFYTIME_TAG = "LastModifyTime";
-    public static final String CREATE_TIME_TAG = "CreateTime";
-    public static final String POLLING_WAITSECONDS_TAG = "PollingWaitSeconds";
-    public static final String MESSAGE_COUNT_TAG = "MessageCount";
-    public static final String LOGGING_BUCKET_TAG = "LoggingBucket";
-    public static final String TRACE_ENABLED_TAG = "TraceEnabled";
-    public static final String LOGGING_ENABLED_TAG = "LoggingEnabled";
-    public static final String USER_PROPERTIES_TAG = "UserProperties";
-    public static final String MESSAGE_PROPERTY_TAG = "PropertyValue";
-    public static final String SYSTEM_PROPERTIES_TAG = "SystemProperties";
-    public static final String MESSAGE_SYSTEM_PROPERTY_TAG = "SystemPropertyValue";
-    public static final String PROPERTY_VALUE_TAG = "Value";
-    public static final String PROPERTY_NAME_TAG = "Name";
-    public static final String PROPERTY_TYPE_TAG = "Type";
+    String ACCOUNT_TAG = "Account";
+    String QUEUE_TAG = "Queue";
+    String TOPIC_TAG = "Topic";
+    String QUEUE_NAME_TAG = "QueueName";
+    String TOPIC_NAME_TAG = "TopicName";
+    String SUBSCRIPTION_TAG = "Subscription";
+    String DELAY_SECONDS_TAG = "DelaySeconds";
+    String MAX_MESSAGE_SIZE_TAG = "MaximumMessageSize";
+    String MESSAGE_RETENTION_PERIOD_TAG = "MessageRetentionPeriod";
+    String VISIBILITY_TIMEOUT = "VisibilityTimeout";
+    String ACTIVE_MESSAGES_TAG = "ActiveMessages";
+    String INACTIVE_MESSAGES_TAG = "InactiveMessages";
+    String DELAY_MESSAGES_TAG = "DelayMessages";
+    String LASTMODIFYTIME_TAG = "LastModifyTime";
+    String CREATE_TIME_TAG = "CreateTime";
+    String POLLING_WAITSECONDS_TAG = "PollingWaitSeconds";
+    String MESSAGE_COUNT_TAG = "MessageCount";
+    String LOGGING_BUCKET_TAG = "LoggingBucket";
+    String TRACE_ENABLED_TAG = "TraceEnabled";
+    String LOGGING_ENABLED_TAG = "LoggingEnabled";
+    String USER_PROPERTIES_TAG = "UserProperties";
+    String MESSAGE_PROPERTY_TAG = "PropertyValue";
+    String SYSTEM_PROPERTIES_TAG = "SystemProperties";
+    String MESSAGE_SYSTEM_PROPERTY_TAG = "SystemPropertyValue";
+    String PROPERTY_VALUE_TAG = "Value";
+    String PROPERTY_NAME_TAG = "Name";
+    String PROPERTY_TYPE_TAG = "Type";
 
-    public static final String QUEUE_URL_TAG = "QueueURL";
-    public static final String NEXT_MARKER_TAG = "NextMarker";
-    public static final String TOPIC_URL_TAG = "TopicURL";
+    String QUEUE_URL_TAG = "QueueURL";
+    String NEXT_MARKER_TAG = "NextMarker";
+    String TOPIC_URL_TAG = "TopicURL";
 
-    public static final String MESSAGE_LIST_TAG = "Messages";
-    public static final String MESSAGE_TAG = "Message";
-    public static final String PRIORITY_TAG = "Priority";
-    public static final String MESSAGE_ID_TAG = "MessageId";
+    String MESSAGE_LIST_TAG = "Messages";
+    String MESSAGE_TAG = "Message";
+    String PRIORITY_TAG = "Priority";
+    String MESSAGE_ID_TAG = "MessageId";
+    String MESSAGE_GROUP_ID_TAG = "MessageGroupId";
 
-    public static final String ENDPOINT_TAG = "Endpoint";
-    public static final String NOTIFY_STRATEGY_TAG = "NotifyStrategy";
-    public static final String SUBSCRIPTION_NAME_TAG = "SubscriptionName";
-    public static final String TOPIC_OWNER_TAG = "TopicOwner";
-    public static final String SUBSCRIPTION_STATUS = "State";
-    public static final String NOTIFY_CONTENT_FORMAT_TAG = "NotifyContentFormat";
-    public static final String SUBSCRIPTION_URL_TAG = "SubscriptionURL";
-    public static final String FILTER_TAG_TAG = "FilterTag";
+    String ENDPOINT_TAG = "Endpoint";
+    String NOTIFY_STRATEGY_TAG = "NotifyStrategy";
+    String SUBSCRIPTION_NAME_TAG = "SubscriptionName";
+    String TOPIC_OWNER_TAG = "TopicOwner";
+    String SUBSCRIPTION_STATUS = "State";
+    String NOTIFY_CONTENT_FORMAT_TAG = "NotifyContentFormat";
+    String SUBSCRIPTION_URL_TAG = "SubscriptionURL";
+    String FILTER_TAG_TAG = "FilterTag";
 
-    public static final String RECEIPT_HANDLE_LIST_TAG = "ReceiptHandles";
-    public static final String RECEIPT_HANDLE_TAG = "ReceiptHandle";
-    public static final String MESSAGE_BODY_TAG = "MessageBody";
-    public static final String MESSAGE_BODY_MD5_TAG = "MessageBodyMD5";
-    public static final String ENQUEUE_TIME_TAG = "EnqueueTime";
-    public static final String NEXT_VISIBLE_TIME_TAG = "NextVisibleTime";
-    public static final String FIRST_DEQUEUE_TIME_TAG = "FirstDequeueTime";
-    public static final String DEQUEUE_COUNT_TAG = "DequeueCount";
-    public static final String MESSAGE_ATTRIBUTES_TAG = "MessageAttributes";
-    public static final String DIRECT_MAIL_TAG = "DirectMail";
-    public static final String MESSAGE_TAG_TAG = "MessageTag";
-    public static final String DAYU_TAG = "Dayu";
-    public static final String SMS_TAG = "DirectSMS";
-    public static final String WEBSOCKET_TAG = "WebSocket";
-    public static final String PUSH_TAG = "Push";
+    String RECEIPT_HANDLE_LIST_TAG = "ReceiptHandles";
+    String RECEIPT_HANDLE_TAG = "ReceiptHandle";
+    String MESSAGE_BODY_TAG = "MessageBody";
+    String MESSAGE_BODY_MD5_TAG = "MessageBodyMD5";
+    String ENQUEUE_TIME_TAG = "EnqueueTime";
+    String NEXT_VISIBLE_TIME_TAG = "NextVisibleTime";
+    String FIRST_DEQUEUE_TIME_TAG = "FirstDequeueTime";
+    String DEQUEUE_COUNT_TAG = "DequeueCount";
+    String MESSAGE_ATTRIBUTES_TAG = "MessageAttributes";
 
-    public static final String ERROR_LIST_TAG = "Errors";
-    public static final String ERROR_TAG = "Error";
-    public static final String ERROR_CODE_TAG = "Code";
-    public static final String ERROR_MESSAGE_TAG = "Message";
-    public static final String ERROR_REQUEST_ID_TAG = "RequestId";
-    public static final String ERROR_HOST_ID_TAG = "HostId";
-    public static final String MESSAGE_ERRORCODE_TAG = "ErrorCode";
-    public static final String MESSAGE_ERRORMESSAGE_TAG = "ErrorMessage";
+    String DIRECT_MAIL_TAG = "DirectMail";
+    String MESSAGE_TAG_TAG = "MessageTag";
+    String DAYU_TAG = "Dayu";
+    String SMS_TAG = "DirectSMS";
+    String DYSMS_TAG = "DYSMS";
+    String DM_TAG = "DM";
+    String WEBSOCKET_TAG = "WebSocket";
+    String PUSH_TAG = "Push";
 
-    public static final String OPEN_SERVICE_ORDER_TAG = "OrderId";
+    String ERROR_LIST_TAG = "Errors";
+    String ERROR_TAG = "Error";
+    String ERROR_CODE_TAG = "Code";
+    String ERROR_MESSAGE_TAG = "Message";
+    String ERROR_REQUEST_ID_TAG = "RequestId";
+    String ERROR_HOST_ID_TAG = "HostId";
+    String MESSAGE_ERRORCODE_TAG = "ErrorCode";
+    String MESSAGE_ERRORMESSAGE_TAG = "ErrorMessage";
 
-    public static final String ACCOUNT_ID_TAG = "AccountId";
+    String OPEN_SERVICE_ORDER_TAG = "OrderId";
 
-    public static final String PARAM_WAITSECONDS = "waitseconds";
+    String ACCOUNT_ID_TAG = "AccountId";
 
-    public static final String SUBSCRIPTION = "subscriptions";
+    String PARAM_WAITSECONDS = "waitseconds";
+
+    String SUBSCRIPTION = "subscriptions";
 
     /**
      * https://help.aliyun.com/zh/sdk/developer-reference/ak-security-scheme?#faa5f4905bxkr
      */
-    public static final String ALIYUN_AK_ENV_KEY = "ALIBABA_CLOUD_ACCESS_KEY_ID";
-    public static final String ALIYUN_SK_ENV_KEY = "ALIBABA_CLOUD_ACCESS_KEY_SECRET";
+    String ALIYUN_AK_ENV_KEY = "ALIBABA_CLOUD_ACCESS_KEY_ID";
+    String ALIYUN_SK_ENV_KEY = "ALIBABA_CLOUD_ACCESS_KEY_SECRET";
 
-    public static final Long MAX_MESSAGE_SIZE = 65536L;
-    public static final Long DEFAULT_MESSAGE_RETENTION_PERIOD = 86400L;
-    public static final Long MAX_MESSAGE_RETENTION_PERIOD = 86400L;
-    public static final Long MIN_MESSAGE_RETENTION_PERIOD = 60L;
+    Long MAX_MESSAGE_SIZE = 65536L;
+    Long DEFAULT_MESSAGE_RETENTION_PERIOD = 86400L;
+    Long MAX_MESSAGE_RETENTION_PERIOD = 86400L;
+    Long MIN_MESSAGE_RETENTION_PERIOD = 60L;
 
-    public static final String DEFAULT_NOTIFY_CONTENT_TYPE = "XML";
+    String DEFAULT_NOTIFY_CONTENT_TYPE = "XML";
 
-    public static final int MIN_IMPORTANCE = 1;
-    public static final int MAX_IMPORTANCE = 16;
+    int MIN_IMPORTANCE = 1;
+    int MAX_IMPORTANCE = 16;
 }

@@ -19,8 +19,31 @@
 
 package com.aliyun.mns.model.serialize;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 public interface Serializer<T> {
+
+    default String getRootTag() {
+        return "";
+    }
+
+    default Map<String, Getter<T, Object>> buildGetterMap() {
+        return new HashMap<>();
+    }
+
+    default void extraSerializationLogic(T obj, Document doc, Element root) {}
+
     InputStream serialize(T obj, String encoding) throws Exception;
+
+
+    @FunctionalInterface
+    interface Getter<T, Object> {
+        Object get(T t);
+    }
+
 }

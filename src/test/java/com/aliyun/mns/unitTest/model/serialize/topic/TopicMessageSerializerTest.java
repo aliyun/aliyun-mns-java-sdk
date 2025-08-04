@@ -5,6 +5,10 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.aliyun.mns.model.AttributesValidationResult;
+import com.aliyun.mns.model.DmAttributes;
+import com.aliyun.mns.model.DysmsAttributes;
+import com.aliyun.mns.model.MessageAttributes;
 import com.aliyun.mns.model.MessagePropertyValue;
 import com.aliyun.mns.model.MessageSystemPropertyName;
 import com.aliyun.mns.model.MessageSystemPropertyValue;
@@ -24,20 +28,21 @@ import static com.aliyun.mns.common.MNSConstants.DEFAULT_CHARSET;
 public class TopicMessageSerializerTest {
 
     private TopicMessageSerializer serializer;
+    private static final String ENCODING_CHARSET = "UTF-8";
 
     @Before
     public void setUp() {
         serializer = new TopicMessageSerializer();
     }
 
-    private String convertStreamToString(InputStream inputStream, String encoding) throws Exception {
+    private String convertStreamToString(InputStream inputStream) throws Exception {
         ByteArrayOutputStream result = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int length;
         while ((length = inputStream.read(buffer)) != -1) {
             result.write(buffer, 0, length);
         }
-        return result.toString(encoding);
+        return result.toString(ENCODING_CHARSET);
     }
 
     @Test
@@ -46,19 +51,19 @@ public class TopicMessageSerializerTest {
         msg.setMessageBody("Hello, World!");
         msg.setMessageTag("tag1");
 
-        Map<String, MessagePropertyValue> userProperties = new HashMap<String, MessagePropertyValue>();
+        Map<String, MessagePropertyValue> userProperties = new HashMap<>();
         userProperties.put("key1", new MessagePropertyValue(PropertyType.STRING, "value1"));
         userProperties.put("key2", new MessagePropertyValue(PropertyType.BINARY, "value2"));
         msg.setUserProperties(userProperties);
 
-        msg.putSystemProperty(MessageSystemPropertyName.TRACE_PARENT, new MessageSystemPropertyValue(
-            SystemPropertyType.STRING, "sysValue1"));
+        msg.putSystemProperty(MessageSystemPropertyName.TRACE_PARENT,
+                new MessageSystemPropertyValue(SystemPropertyType.STRING, "sysValue1"));
 
         PublishMessageRequest request = new PublishMessageRequest();
         request.setMessage(msg);
 
-        InputStream inputStream = serializer.serialize(request, "UTF-8");
-        String xml = convertStreamToString(inputStream, "UTF-8");
+        InputStream inputStream = serializer.serialize(request, ENCODING_CHARSET);
+        String xml = convertStreamToString(inputStream);
 
         Assert.assertTrue(xml.contains("<MessageBody>Hello, World!</MessageBody>"));
         Assert.assertTrue(xml.contains("<MessageTag>tag1</MessageTag>"));
@@ -69,7 +74,7 @@ public class TopicMessageSerializerTest {
         Assert.assertTrue(xml.contains("<Type>STRING</Type>"));
         Assert.assertTrue(xml.contains("<Name>key2</Name>"));
         Assert.assertTrue(xml.contains(
-            String.format("<Value>%s</Value>", new String(Base64.encodeBase64("value2".getBytes(DEFAULT_CHARSET))))));
+                String.format("<Value>%s</Value>", new String(Base64.encodeBase64("value2".getBytes(DEFAULT_CHARSET))))));
 
         Assert.assertTrue(xml.contains("<SystemProperties>"));
         Assert.assertTrue(xml.contains("<SystemPropertyValue>"));
@@ -86,8 +91,8 @@ public class TopicMessageSerializerTest {
         PublishMessageRequest request = new PublishMessageRequest();
         request.setMessage(msg);
 
-        InputStream inputStream = serializer.serialize(request, "UTF-8");
-        String xml = convertStreamToString(inputStream, "UTF-8");
+        InputStream inputStream = serializer.serialize(request, ENCODING_CHARSET);
+        String xml = convertStreamToString(inputStream);
 
         Assert.assertTrue(xml.contains("<MessageBody/>"));
         Assert.assertFalse(xml.contains("<UserProperties>"));
@@ -98,13 +103,13 @@ public class TopicMessageSerializerTest {
     public void serialize_MessageWithEmptyUserProperties_ShouldSerializeCorrectly() throws Exception {
         TopicMessage msg = new RawTopicMessage();
         msg.setMessageBody("Hello, World!");
-        msg.setUserProperties(new HashMap<String, MessagePropertyValue>());
+        msg.setUserProperties(new HashMap<>());
 
         PublishMessageRequest request = new PublishMessageRequest();
         request.setMessage(msg);
 
-        InputStream inputStream = serializer.serialize(request, "UTF-8");
-        String xml = convertStreamToString(inputStream, "UTF-8");
+        InputStream inputStream = serializer.serialize(request, ENCODING_CHARSET);
+        String xml = convertStreamToString(inputStream);
 
         Assert.assertTrue(xml.contains("<MessageBody>Hello, World!</MessageBody>"));
         Assert.assertFalse(xml.contains("<UserProperties>"));
@@ -118,11 +123,64 @@ public class TopicMessageSerializerTest {
         PublishMessageRequest request = new PublishMessageRequest();
         request.setMessage(msg);
 
-        InputStream inputStream = serializer.serialize(request, "UTF-8");
-        String xml = convertStreamToString(inputStream, "UTF-8");
+        InputStream inputStream = serializer.serialize(request, ENCODING_CHARSET);
+        String xml = convertStreamToString(inputStream);
 
         Assert.assertTrue(xml.contains("<MessageBody>Hello, World!</MessageBody>"));
         Assert.assertFalse(xml.contains("<SystemProperties>"));
+    }
+
+    @Test
+    public void serialize_MessageWithMessageGroupId_ShouldSerializeCorrectly() throws Exception {
+        TopicMessage msg = new RawTopicMessage();
+        msg.setMessageBody("Hello, World!");
+        msg.setMessageTag("tag1");
+        msg.setMessageGroupId("test-topic-group-id");
+
+        PublishMessageRequest request = new PublishMessageRequest();
+        request.setMessage(msg);
+
+        InputStream inputStream = serializer.serialize(request, ENCODING_CHARSET);
+        String xml = convertStreamToString(inputStream);
+
+        Assert.assertTrue(xml.contains("<MessageBody>Hello, World!</MessageBody>"));
+        Assert.assertTrue(xml.contains("<MessageTag>tag1</MessageTag>"));
+        Assert.assertTrue(xml.contains("<MessageGroupId>test-topic-group-id</MessageGroupId>"));
+    }
+
+    @Test
+    public void serialize_MessageWithAttributes_ShouldSerializeCorrectly() throws Exception {
+        PublishMessageRequest request = new PublishMessageRequest();
+        TopicMessage msg = new RawTopicMessage();
+        msg.setMessageBody("Hello, World!");
+        msg.setMessageTag("tag1");
+        request.setMessage(msg);
+
+        MessageAttributes attributes = new MessageAttributes();
+        DmAttributes dmAttributes = new DmAttributes();
+        dmAttributes.setMailAddress("test@example.com");
+        dmAttributes.setSubject("test");
+        dmAttributes.setIsHtml(true);
+        attributes.setDmAttributes(dmAttributes);
+        request.setMessageAttributes(attributes);
+
+        InputStream inputStream = serializer.serialize(request, ENCODING_CHARSET);
+        String xml = convertStreamToString(inputStream);
+        Assert.assertTrue(xml.contains("<MessageAttributes><DM>"));
+        Assert.assertTrue(xml.contains("\"MailAddress\":\"test@example.com\""));
+        Assert.assertTrue(xml.contains("\"Subject\":\"test\""));
+        Assert.assertTrue(xml.contains("\"IsHtml\":1"));
+    }
+
+    @Test
+    public void serialize_InvalidDysmsAttributes_ShouldValidateFail() {
+        MessageAttributes attributes = new MessageAttributes();
+        DysmsAttributes dysmsAttributes = new DysmsAttributes();
+        dysmsAttributes.setPhoneNumber("abcdefg");
+        attributes.setDysmsAttributes(dysmsAttributes);
+
+        AttributesValidationResult result = attributes.validate();
+        Assert.assertFalse(result.isSuccess());
     }
 
 }
