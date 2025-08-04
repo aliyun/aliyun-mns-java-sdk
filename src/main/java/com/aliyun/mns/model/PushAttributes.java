@@ -19,7 +19,6 @@
 
 package com.aliyun.mns.model;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
@@ -40,10 +39,6 @@ public class PushAttributes implements BaseAttributes {
     private String body;
 
     private Map<String, String> params = new HashMap<String, String>();
-
-    public String toJson(Gson gson) {
-        return gson.toJson(this);
-    }
 
     public enum PushTarget {
         DEVICE, ACCOUNT, ALIAS, TAG, ALL;

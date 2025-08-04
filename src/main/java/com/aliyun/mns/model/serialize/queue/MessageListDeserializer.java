@@ -35,6 +35,7 @@ import static com.aliyun.mns.common.MNSConstants.ENQUEUE_TIME_TAG;
 import static com.aliyun.mns.common.MNSConstants.FIRST_DEQUEUE_TIME_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_BODY_MD5_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_BODY_TAG;
+import static com.aliyun.mns.common.MNSConstants.MESSAGE_GROUP_ID_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_ID_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_TAG;
 import static com.aliyun.mns.common.MNSConstants.NEXT_VISIBLE_TIME_TAG;
@@ -131,6 +132,12 @@ public class MessageListDeserializer extends XMLDeserializer<List<Message>> {
 
         // 解析 systemProperties
         safeAddSystemPropertiesToMessage(root, message);
+
+        String messageGroupId = safeGetElementContent(root,
+            MESSAGE_GROUP_ID_TAG, null);
+        if (messageGroupId != null) {
+            message.setMessageGroupId(messageGroupId);
+        }
 
         return message;
     }

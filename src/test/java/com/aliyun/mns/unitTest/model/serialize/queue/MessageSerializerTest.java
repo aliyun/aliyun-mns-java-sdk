@@ -192,4 +192,17 @@ public class MessageSerializerTest {
         Assert.assertTrue(xml.contains("<Type>STRING</Type>"));
     }
 
+    @Test
+    public void serialize_MessageWithMessageGroupId_ShouldSerializeCorrectly() throws Exception {
+        Message msg = new Message();
+        msg.setMessageBodyAsRawString("Hello, World!");
+        msg.setMessageGroupId("test-group-id");
+
+        InputStream inputStream = serializer.serialize(msg, "UTF-8");
+        String xml = convertStreamToString(inputStream, "UTF-8");
+
+        Assert.assertTrue(xml.contains("<MessageBody>Hello, World!</MessageBody>"));
+        Assert.assertTrue(xml.contains("<MessageGroupId>test-group-id</MessageGroupId>"));
+    }
+
 }

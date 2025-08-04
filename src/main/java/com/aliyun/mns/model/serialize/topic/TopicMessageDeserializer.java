@@ -29,6 +29,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_BODY_MD5_TAG;
+import static com.aliyun.mns.common.MNSConstants.MESSAGE_GROUP_ID_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_ID_TAG;
 
 public class TopicMessageDeserializer extends XMLDeserializer<TopicMessage> {
@@ -65,6 +66,11 @@ public class TopicMessageDeserializer extends XMLDeserializer<TopicMessage> {
         String messageBodyMD5 = safeGetElementContent(root,
             MESSAGE_BODY_MD5_TAG, null);
         message.setMessageBodyMD5(messageBodyMD5);
+
+        String messageGroupId = safeGetElementContent(root, MESSAGE_GROUP_ID_TAG, null);
+        if (messageGroupId != null) {
+            message.setMessageGroupId(messageGroupId);
+        }
 
         return message;
     }

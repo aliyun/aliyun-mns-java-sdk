@@ -19,8 +19,10 @@
 
 package com.aliyun.mns.model;
 
-import com.google.gson.Gson;
-
+/**
+ * This class is no longer recommended for use，please use {@link DmAttributes}
+ */
+@Deprecated
 public class MailAttributes implements BaseAttributes {
     /*
      * 参数定义请参照 https://help.aliyun.com/document_detail/directmail/api-reference/sendmail-related/SingleSendMail.html
@@ -49,10 +51,6 @@ public class MailAttributes implements BaseAttributes {
 
         result.setSuccess(true);
         return result;
-    }
-
-    public String toJson(Gson gson) {
-        return gson.toJson(this);
     }
 
     public String getAccountName() {

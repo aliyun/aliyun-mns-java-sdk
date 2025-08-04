@@ -23,6 +23,10 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is no longer recommended for use，please use {@link DysmsAttributes}
+ */
+@Deprecated
 public class BatchSmsAttributes implements BaseAttributes {
     private String FreeSignName; // SMS Sign
     private String TemplateCode; // SMS TemplateCode
@@ -45,6 +49,7 @@ public class BatchSmsAttributes implements BaseAttributes {
         return result;
     }
 
+    @Override
     public String toJson(Gson gson) {
         SmsParams = gson.toJson(SmsReceivers);
         return gson.toJson(this);

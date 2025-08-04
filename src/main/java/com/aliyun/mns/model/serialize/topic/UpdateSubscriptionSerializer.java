@@ -21,35 +21,27 @@ package com.aliyun.mns.model.serialize.topic;
 
 import com.aliyun.mns.model.SubscriptionMeta;
 import com.aliyun.mns.model.serialize.XMLSerializer;
-import com.aliyun.mns.model.serialize.XmlUtil;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 
-import static com.aliyun.mns.common.MNSConstants.DEFAULT_XML_NAMESPACE;
+import java.util.HashMap;
+import java.util.Map;
+
 import static com.aliyun.mns.common.MNSConstants.FILTER_TAG_TAG;
 import static com.aliyun.mns.common.MNSConstants.NOTIFY_STRATEGY_TAG;
 import static com.aliyun.mns.common.MNSConstants.SUBSCRIPTION_TAG;
 
 public class UpdateSubscriptionSerializer extends XMLSerializer<SubscriptionMeta> {
 
-    public InputStream serialize(SubscriptionMeta obj, String encoding) throws Exception {
-        Document doc = getDocumentBuilder().newDocument();
-        Element root = doc.createElementNS(DEFAULT_XML_NAMESPACE, SUBSCRIPTION_TAG);
-        doc.appendChild(root);
-
-        Element node = safeCreateContentElement(doc, NOTIFY_STRATEGY_TAG, obj.getNotifyStrategy(), null);
-        if (node != null) {
-            root.appendChild(node);
-        }
-
-        node = safeCreateContentElement(doc, FILTER_TAG_TAG, obj.getFilterTag(), null);
-        if (node != null) {
-            root.appendChild(node);
-        }
-
-        String xml = XmlUtil.xmlNodeToString(doc, encoding);
-        return new ByteArrayInputStream(xml.getBytes(encoding));
+    @Override
+    public String getRootTag() {
+        return SUBSCRIPTION_TAG;
     }
+
+    @Override
+    public Map<String, Getter<SubscriptionMeta, Object>> buildGetterMap() {
+        return new HashMap<String, Getter<SubscriptionMeta, Object>>() {{
+            put(NOTIFY_STRATEGY_TAG, SubscriptionMeta::getNotifyStrategy);
+            put(FILTER_TAG_TAG, SubscriptionMeta::getFilterTag);
+        }};
+    }
+
 }

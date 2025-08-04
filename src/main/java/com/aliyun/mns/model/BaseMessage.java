@@ -35,6 +35,7 @@ public abstract class BaseMessage {
     private byte[] messageBodyBytes;
     private Map<String, MessagePropertyValue> userProperties;
     private Map<String, MessageSystemPropertyValue> systemProperties;
+    private String MessageGroupId;
 
     public BaseMessage() {
         this.requestId = null;
@@ -173,6 +174,14 @@ public abstract class BaseMessage {
 
     public Map<String, MessageSystemPropertyValue> getSystemProperties() {
         return systemProperties;
+    }
+
+    public String getMessageGroupId() {
+        return MessageGroupId;
+    }
+
+    public void setMessageGroupId(String messageGroupId) {
+        MessageGroupId = messageGroupId;
     }
 
     @Override

@@ -21,39 +21,27 @@ package com.aliyun.mns.model.serialize.account;
 
 import com.aliyun.mns.model.AccountAttributes;
 import com.aliyun.mns.model.serialize.XMLSerializer;
-import com.aliyun.mns.model.serialize.XmlUtil;
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.aliyun.mns.common.MNSConstants.ACCOUNT_TAG;
-import static com.aliyun.mns.common.MNSConstants.DEFAULT_XML_NAMESPACE;
 import static com.aliyun.mns.common.MNSConstants.LOGGING_BUCKET_TAG;
 import static com.aliyun.mns.common.MNSConstants.TRACE_ENABLED_TAG;
 
 public class AccountAttributesSerializer extends XMLSerializer<AccountAttributes> {
 
     @Override
-    public InputStream serialize(AccountAttributes obj, String encoding)
-        throws Exception {
-        Document doc = getDocumentBuilder().newDocument();
-
-        Element root = doc.createElementNS(DEFAULT_XML_NAMESPACE, ACCOUNT_TAG);
-        doc.appendChild(root);
-
-        Element node = safeCreateContentElement(doc, LOGGING_BUCKET_TAG,
-            obj.getLoggingBucket(), null);
-        if (node != null) {
-            root.appendChild(node);
-        }
-        node = safeCreateContentElement(doc, TRACE_ENABLED_TAG,
-            obj.getTraceEnabled(), null);
-        if (node != null) {
-            root.appendChild(node);
-        }
-
-        String xml = XmlUtil.xmlNodeToString(doc, encoding);
-        return new ByteArrayInputStream(xml.getBytes(encoding));
+    public String getRootTag() {
+        return ACCOUNT_TAG;
     }
+
+    @Override
+    public Map<String, Getter<AccountAttributes, Object>> buildGetterMap() {
+        return new HashMap<String, Getter<AccountAttributes, Object>>() {{
+            put(LOGGING_BUCKET_TAG, AccountAttributes::getLoggingBucket);
+            put(TRACE_ENABLED_TAG, AccountAttributes::getTraceEnabled);
+        }};
+    }
+
 }

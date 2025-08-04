@@ -19,8 +19,6 @@
 
 package com.aliyun.mns.model.serialize;
 
-import java.util.Map;
-
 import com.aliyun.mns.model.AbstractMessagePropertyValue;
 import com.aliyun.mns.model.Message;
 import com.aliyun.mns.model.MessagePropertyValue;
@@ -29,9 +27,14 @@ import org.apache.commons.codec.binary.Base64;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.Map;
+
 import static com.aliyun.mns.common.MNSConstants.DEFAULT_XML_NAMESPACE;
 import static com.aliyun.mns.common.MNSConstants.DELAY_SECONDS_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_BODY_TAG;
+import static com.aliyun.mns.common.MNSConstants.MESSAGE_GROUP_ID_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_PROPERTY_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_SYSTEM_PROPERTY_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_TAG;
@@ -44,8 +47,42 @@ import static com.aliyun.mns.common.MNSConstants.USER_PROPERTIES_TAG;
 
 public abstract class XMLSerializer<T> extends BaseXMLSerializer<T> implements Serializer<T> {
 
+    private final String rootTag;
+    private final Map<String, Getter<T, Object>> getterMap;
+
+    public XMLSerializer() {
+        this.rootTag = getRootTag();
+        this.getterMap = buildGetterMap();
+    }
+
+    @Override
+    public InputStream serialize(T obj, String encoding) throws Exception {
+        Document doc = getDocumentBuilder().newDocument();
+        Element root = doc.createElementNS(DEFAULT_XML_NAMESPACE, this.rootTag);
+        doc.appendChild(root);
+        for (Map.Entry<String, Getter<T, Object>> entry : getterMap.entrySet()) {
+            String tag = entry.getKey();
+            Getter<T, Object> getter = entry.getValue();
+            Element node = safeCreateContentElement(doc, tag, getter.get(obj), null);
+            if (node != null) {
+                root.appendChild(node);
+            }
+        }
+
+        extraSerializationLogic(obj, doc, root);
+        String xml = XmlUtil.xmlNodeToString(doc, encoding);
+        return new ByteArrayInputStream(xml.getBytes(encoding));
+    }
+
+    public void appendContentElement(Document doc, Element parent, String tagName, Object value) {
+        Element node = safeCreateContentElement(doc, tagName, value, null);
+        if (node != null) {
+            parent.appendChild(node);
+        }
+    }
+
     public Element safeCreateContentElement(Document doc, String tagName,
-        Object value, String defaultValue) {
+                                            Object value, String defaultValue) {
         if (value == null && defaultValue == null) {
             return null;
         }
@@ -88,6 +125,12 @@ public abstract class XMLSerializer<T> extends BaseXMLSerializer<T> implements S
 
         node = safeCreatePropertiesNode(doc, msg.getSystemProperties(), SYSTEM_PROPERTIES_TAG,
             MESSAGE_SYSTEM_PROPERTY_TAG);
+        if (node != null) {
+            root.appendChild(node);
+        }
+
+        node = safeCreateContentElement(doc, MESSAGE_GROUP_ID_TAG,
+            msg.getMessageGroupId(), null);
         if (node != null) {
             root.appendChild(node);
         }

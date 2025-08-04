@@ -19,46 +19,34 @@
 
 package com.aliyun.mns.model;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class MessageAttributes implements BaseAttributes {
+
     private MailAttributes mailAttributes;
     private DayuAttributes dayuAttributes;
     private SmsAttributes smsAttributes;
     private WebSocketAttributes webSocketAttributes;
     private BatchSmsAttributes batchSmsAttributes;
     private PushAttributes pushAttributes;
+    private DysmsAttributes dysmsAttributes;
+    private DmAttributes dmAttributes;
 
     @Override
     public AttributesValidationResult validate() {
-        AttributesValidationResult result;
-        if (mailAttributes != null) {
-            result = mailAttributes.validate();
-            if (!result.isSuccess()) {
-                return result;
+        List<BaseAttributes> attributesList = Arrays.asList(mailAttributes,
+                dayuAttributes, smsAttributes, pushAttributes, dysmsAttributes, dmAttributes);
+        AttributesValidationResult result = new AttributesValidationResult();
+        for (BaseAttributes attributes : attributesList) {
+            if (attributes != null) {
+                result = attributes.validate();
+                if (!result.isSuccess()) {
+                    return result;
+                }
             }
         }
 
-        if (dayuAttributes != null) {
-            result = dayuAttributes.validate();
-            if (!result.isSuccess()) {
-                return result;
-            }
-        }
-
-        if (smsAttributes != null) {
-            result = smsAttributes.validate();
-            if (!result.isSuccess()) {
-                return result;
-            }
-        }
-
-        if (pushAttributes != null) {
-            result = pushAttributes.validate();
-            if (!result.isSuccess()) {
-                return result;
-            }
-        }
-
-        result = new AttributesValidationResult();
         result.setSuccess(true);
         return result;
     }
@@ -110,4 +98,21 @@ public class MessageAttributes implements BaseAttributes {
     public void setPushAttributes(PushAttributes pushAttributes) {
         this.pushAttributes = pushAttributes;
     }
+
+    public DysmsAttributes getDysmsAttributes() {
+        return dysmsAttributes;
+    }
+
+    public void setDysmsAttributes(DysmsAttributes dysmsAttributes) {
+        this.dysmsAttributes = dysmsAttributes;
+    }
+
+    public DmAttributes getDmAttributes() {
+        return dmAttributes;
+    }
+
+    public void setDmAttributes(DmAttributes dmAttributes) {
+        this.dmAttributes = dmAttributes;
+    }
+
 }

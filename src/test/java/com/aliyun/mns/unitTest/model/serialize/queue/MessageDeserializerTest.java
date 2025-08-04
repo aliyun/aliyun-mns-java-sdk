@@ -198,4 +198,51 @@ public class MessageDeserializerTest {
             systemProperties.get(MessageSystemPropertyName.DLQ_ORIGIN_MESSAGE_ID.getValue()).getStringValueByType());
     }
 
+    @Test
+    public void deserialize_WithMessageGroupId_ParsesMessageGroupId() throws Exception {
+        String xml = "<Message>"
+            + "<MessageId>12345</MessageId>"
+            + "<MessageBody>Test Message</MessageBody>"
+            + "<MessageGroupId>test-group-id</MessageGroupId>"
+            + "</Message>";
+
+        InputStream stream = new ByteArrayInputStream(xml.getBytes());
+        Message message = deserializer.deserialize(stream);
+
+        Assert.assertEquals("12345", message.getMessageId());
+        Assert.assertEquals("Test Message", message.getMessageBodyAsRawString());
+        Assert.assertEquals("test-group-id", message.getMessageGroupId());
+    }
+
+    @Test
+    public void deserialize_WithEmptyMessageGroupId_ParsesCorrectly() throws Exception {
+        String xml = "<Message>"
+            + "<MessageId>12345</MessageId>"
+            + "<MessageBody>Test Message</MessageBody>"
+            + "<MessageGroupId></MessageGroupId>"
+            + "</Message>";
+
+        InputStream stream = new ByteArrayInputStream(xml.getBytes());
+        Message message = deserializer.deserialize(stream);
+
+        Assert.assertEquals("12345", message.getMessageId());
+        Assert.assertEquals("Test Message", message.getMessageBodyAsRawString());
+        Assert.assertEquals("", message.getMessageGroupId());
+    }
+
+    @Test
+    public void deserialize_WithoutMessageGroupId_ReturnsNull() throws Exception {
+        String xml = "<Message>"
+            + "<MessageId>12345</MessageId>"
+            + "<MessageBody>Test Message</MessageBody>"
+            + "</Message>";
+
+        InputStream stream = new ByteArrayInputStream(xml.getBytes());
+        Message message = deserializer.deserialize(stream);
+
+        Assert.assertEquals("12345", message.getMessageId());
+        Assert.assertEquals("Test Message", message.getMessageBodyAsRawString());
+        Assert.assertNull(message.getMessageGroupId());
+    }
+
 }

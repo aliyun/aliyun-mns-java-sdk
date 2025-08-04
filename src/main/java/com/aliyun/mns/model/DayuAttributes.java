@@ -23,6 +23,10 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class is no longer recommended for use
+ */
+@Deprecated
 public class DayuAttributes implements BaseAttributes {
     private String FreeSignName; // 阿里大鱼控制台里的短信签名
     private String TemplateCode; // 阿里大鱼控制台里的短信模板ID
@@ -36,6 +40,7 @@ public class DayuAttributes implements BaseAttributes {
         return result;
     }
 
+    @Override
     public String toJson(Gson gson) {
         SmsParams = gson.toJson(SmsParamsMap);
         return gson.toJson(this);
