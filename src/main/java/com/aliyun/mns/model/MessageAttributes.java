@@ -24,19 +24,12 @@ import java.util.List;
 
 public class MessageAttributes implements BaseAttributes {
 
-    private MailAttributes mailAttributes;
-    private DayuAttributes dayuAttributes;
-    private SmsAttributes smsAttributes;
-    private WebSocketAttributes webSocketAttributes;
-    private BatchSmsAttributes batchSmsAttributes;
-    private PushAttributes pushAttributes;
     private DysmsAttributes dysmsAttributes;
     private DmAttributes dmAttributes;
 
     @Override
     public AttributesValidationResult validate() {
-        List<BaseAttributes> attributesList = Arrays.asList(mailAttributes,
-                dayuAttributes, smsAttributes, pushAttributes, dysmsAttributes, dmAttributes);
+        List<BaseAttributes> attributesList = Arrays.asList(dysmsAttributes, dmAttributes);
         AttributesValidationResult result = new AttributesValidationResult();
         for (BaseAttributes attributes : attributesList) {
             if (attributes != null) {
@@ -49,54 +42,6 @@ public class MessageAttributes implements BaseAttributes {
 
         result.setSuccess(true);
         return result;
-    }
-
-    public MailAttributes getMailAttributes() {
-        return mailAttributes;
-    }
-
-    public void setMailAttributes(MailAttributes mailAttributes) {
-        this.mailAttributes = mailAttributes;
-    }
-
-    public DayuAttributes getDayuAttributes() {
-        return dayuAttributes;
-    }
-
-    public void setDayuAttributes(DayuAttributes dayuAttributes) {
-        this.dayuAttributes = dayuAttributes;
-    }
-
-    public SmsAttributes getSmsAttributes() {
-        return smsAttributes;
-    }
-
-    public void setSmsAttributes(SmsAttributes smsAttributes) {
-        this.smsAttributes = smsAttributes;
-    }
-
-    public WebSocketAttributes getWebSocketAttributes() {
-        return webSocketAttributes;
-    }
-
-    public void setWebSocketAttributes(WebSocketAttributes webSocketAttributes) {
-        this.webSocketAttributes = webSocketAttributes;
-    }
-
-    public BatchSmsAttributes getBatchSmsAttributes() {
-        return batchSmsAttributes;
-    }
-
-    public void setBatchSmsAttributes(BatchSmsAttributes batchSmsAttributes) {
-        this.batchSmsAttributes = batchSmsAttributes;
-    }
-
-    public PushAttributes getPushAttributes() {
-        return pushAttributes;
-    }
-
-    public void setPushAttributes(PushAttributes pushAttributes) {
-        this.pushAttributes = pushAttributes;
     }
 
     public DysmsAttributes getDysmsAttributes() {

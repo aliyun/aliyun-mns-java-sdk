@@ -24,7 +24,6 @@ import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.HttpMethod;
 import com.aliyun.mns.common.auth.ServiceCredentials;
 import com.aliyun.mns.common.http.RequestMessage;
-import com.aliyun.mns.common.http.ResponseMessage;
 import com.aliyun.mns.common.http.ServiceClient;
 import com.aliyun.mns.common.parser.ResultParseException;
 import com.aliyun.mns.common.parser.ResultParser;
@@ -35,7 +34,7 @@ import java.net.URI;
 import java.util.List;
 
 import static com.aliyun.mns.common.MNSConstants.LOCATION_MESSAGES;
-import static com.aliyun.mns.common.MNSConstants.PARAM_WAITSECONDS;
+import static com.aliyun.mns.common.MNSConstants.PARAM_WAIT_SECONDS;
 import static com.aliyun.mns.common.MNSConstants.X_HEADER_MNS_REQUEST_ID;
 
 public class BatchReceiveMessageAction extends
@@ -54,7 +53,7 @@ public class BatchReceiveMessageAction extends
         String uri = reqObject.getRequestPath() + "/" + LOCATION_MESSAGES
             + "?numOfMessages=" + reqObject.getBatchSize();
         if (reqObject.getWaitSeconds() != null && reqObject.getWaitSeconds() >= 0) {
-            uri += "&" + PARAM_WAITSECONDS + "=" + reqObject.getWaitSeconds();
+            uri += "&" + PARAM_WAIT_SECONDS + "=" + reqObject.getWaitSeconds();
         }
 
         requestMessage.setResourcePath(uri);
@@ -63,19 +62,17 @@ public class BatchReceiveMessageAction extends
 
     @Override
     protected ResultParser<List<Message>> buildResultParser() {
-        return new ResultParser<List<Message>>() {
-            public List<Message> parse(ResponseMessage response) throws ResultParseException {
-                MessageListDeserializer deserializer = new MessageListDeserializer();
-                try {
-                    List<Message> msgs = deserializer.deserialize(response.getContent());
-                    for (Message msg : msgs) {
-                        msg.setRequestId(response.getHeader(X_HEADER_MNS_REQUEST_ID));
-                    }
-                    return msgs;
-                } catch (Exception e) {
-                    throw new ResultParseException("Unmarshal error,cause by:"
-                        + e.getMessage(), e);
+        return response -> {
+            MessageListDeserializer deserializer = new MessageListDeserializer();
+            try {
+                List<Message> msgs = deserializer.deserialize(response.getContent());
+                for (Message msg : msgs) {
+                    msg.setRequestId(response.getHeader(X_HEADER_MNS_REQUEST_ID));
                 }
+                return msgs;
+            } catch (Exception e) {
+                throw new ResultParseException("Unmarshal error,cause by:"
+                    + e.getMessage(), e);
             }
         };
     }

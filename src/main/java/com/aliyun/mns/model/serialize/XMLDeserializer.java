@@ -39,8 +39,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import static com.aliyun.mns.common.MNSConstants.DEFAULT_CHARSET;
-import static com.aliyun.mns.common.MNSConstants.MESSAGE_ERRORCODE_TAG;
-import static com.aliyun.mns.common.MNSConstants.MESSAGE_ERRORMESSAGE_TAG;
+import static com.aliyun.mns.common.MNSConstants.MESSAGE_ERROR_CODE_TAG;
+import static com.aliyun.mns.common.MNSConstants.MESSAGE_ERROR_MESSAGE_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_PROPERTY_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_SYSTEM_PROPERTY_TAG;
 import static com.aliyun.mns.common.MNSConstants.PROPERTY_NAME_TAG;
@@ -80,7 +80,7 @@ public abstract class XMLDeserializer<T> extends BaseXMLSerializer<T> implements
 
     protected List<Element> safeGetElements(Element parent, String tagName) {
         NodeList nodeList = parent.getElementsByTagName(tagName);
-        List<Element> elements = new ArrayList<Element>();
+        List<Element> elements = new ArrayList<>();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             if (node.getNodeType() == Node.ELEMENT_NODE) {
@@ -92,12 +92,12 @@ public abstract class XMLDeserializer<T> extends BaseXMLSerializer<T> implements
 
     protected ErrorMessageResult parseErrorMessageResult(Element root) {
         ErrorMessageResult result = new ErrorMessageResult();
-        String errorCode = safeGetElementContent(root, MESSAGE_ERRORCODE_TAG,
+        String errorCode = safeGetElementContent(root, MESSAGE_ERROR_CODE_TAG,
             null);
         result.setErrorCode(errorCode);
 
         String errorMessage = safeGetElementContent(root,
-            MESSAGE_ERRORMESSAGE_TAG, null);
+                MESSAGE_ERROR_MESSAGE_TAG, null);
         result.setErrorMessage(errorMessage);
         return result;
     }
@@ -107,7 +107,7 @@ public abstract class XMLDeserializer<T> extends BaseXMLSerializer<T> implements
         if (userPropertiesElement != null) {
             Map<String, MessagePropertyValue> userProperties = message.getUserProperties();
             if (userProperties == null) {
-                userProperties = new HashMap<String, MessagePropertyValue>();
+                userProperties = new HashMap<>();
                 message.setUserProperties(userProperties);
             }
 

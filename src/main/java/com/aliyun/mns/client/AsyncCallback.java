@@ -25,12 +25,12 @@ public interface AsyncCallback<T> {
      *
      * @param result result
      */
-    public void onSuccess(T result);
+    void onSuccess(T result);
 
     /**
      * Async callback handler at failed return.
      *
      * @param ex exception
      */
-    public void onFail(Exception ex);
+    void onFail(Exception ex);
 }

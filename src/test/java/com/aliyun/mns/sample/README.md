@@ -19,7 +19,10 @@ The basic steps are:
 3. Fill the file with your Access Key ID, Secret Access Key, Account Id and Account Endpoint (
    Example: http://AccountId.mns.cn-hangzhou.aliyuncs.com) :
 
-> mns.accountendpoint=
+```properties
+mns.region=
+mns.accountendpoint=
+```
 
 3. Save the file.
 4. Run:

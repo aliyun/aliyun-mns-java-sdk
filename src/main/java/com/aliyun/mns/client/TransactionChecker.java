@@ -29,5 +29,5 @@ public interface TransactionChecker {
     /*
      * check if the transaction related to the message is success.
      */
-    public boolean checkTransactionStatus(Message message);
+    boolean checkTransactionStatus(Message message);
 }

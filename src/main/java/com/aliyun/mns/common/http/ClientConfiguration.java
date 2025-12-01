@@ -19,8 +19,11 @@
 
 package com.aliyun.mns.common.http;
 
+import com.aliyun.mns.common.auth.SignVersion;
 import com.aliyun.mns.common.utils.VersionInfoUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+
+import java.util.Objects;
 
 /**
  * 访问阿里云服务的客户端配置。
@@ -46,6 +49,7 @@ public class ClientConfiguration implements Cloneable {
     private boolean generateRequestId = false;
 
     private boolean exceptContinue = true;
+    protected SignVersion signatureVersion;
 
     @Override
     protected Object clone() throws CloneNotSupportedException {
@@ -68,6 +72,7 @@ public class ClientConfiguration implements Cloneable {
         hcb.append(proxyPassword);
         hcb.append(proxyDomain);
         hcb.append(proxyWorkstation);
+        hcb.append(signatureVersion);
         return hcb.build();
     }
 
@@ -87,7 +92,8 @@ public class ClientConfiguration implements Cloneable {
                 && proxyWorkstation == null ? conf.proxyWorkstation == null : proxyWorkstation.equals(conf.proxyWorkstation)
                 && soKeepAlive == conf.soKeepAlive
                 && exceptContinue == conf.exceptContinue
-                && generateRequestId == conf.generateRequestId;
+                && generateRequestId == conf.generateRequestId
+                && (Objects.equals(signatureVersion, conf.signatureVersion));
         }
         return super.equals(obj);
     }
@@ -347,5 +353,13 @@ public class ClientConfiguration implements Cloneable {
 
     public void setIoReactorThreadCount(int ioReactorThreadCount) {
         this.ioReactorThreadCount = ioReactorThreadCount;
+    }
+
+    public SignVersion getSignatureVersion() {
+        return signatureVersion;
+    }
+
+    public void setSignatureVersion(SignVersion signatureVersion) {
+        this.signatureVersion = signatureVersion;
     }
 }

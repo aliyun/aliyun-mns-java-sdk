@@ -29,22 +29,22 @@ package com.aliyun.mns.common.utils;
  */
 public interface HttpHeaders {
 
-    public static final String AUTHORIZATION = "Authorization";
-    public static final String CACHE_CONTROL = "Cache-Control";
-    public static final String CONTENT_DISPOSITION = "Content-Disposition";
-    public static final String CONTENT_ENCODING = "Content-Encoding";
-    public static final String CONTENT_LENGTH = "Content-Length";
-    public static final String CONTENT_MD5 = "Content-MD5";
-    public static final String CONTENT_TYPE = "Content-Type";
-    public static final String DATE = "Date";
-    public static final String ETAG = "ETag";
-    public static final String EXPIRES = "Expires";
-    public static final String HOST = "Host";
-    public static final String LAST_MODIFIED = "Last-Modified";
-    public static final String RANGE = "Range";
-    public static final String LOCATION = "Location";
-    public static final String USER_AGENT = "User-Agent";
-    public static final String SECURITY_TOKEN = "security-token";
-    public static final String MNS_USER_REQUEST_ID = "x-mns-user-request-id";
+    String AUTHORIZATION = "Authorization";
+    String CACHE_CONTROL = "Cache-Control";
+    String CONTENT_DISPOSITION = "Content-Disposition";
+    String CONTENT_ENCODING = "Content-Encoding";
+    String CONTENT_LENGTH = "Content-Length";
+    String CONTENT_MD5 = "Content-MD5";
+    String CONTENT_TYPE = "Content-Type";
+    String DATE = "Date";
+    String ETAG = "ETag";
+    String EXPIRES = "Expires";
+    String HOST = "Host";
+    String LAST_MODIFIED = "Last-Modified";
+    String RANGE = "Range";
+    String LOCATION = "Location";
+    String USER_AGENT = "User-Agent";
+    String SECURITY_TOKEN = "security-token";
+    String MNS_USER_REQUEST_ID = "x-mns-user-request-id";
 
 }

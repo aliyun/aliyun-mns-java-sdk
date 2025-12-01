@@ -19,12 +19,20 @@
 
 package com.aliyun.mns.common.utils;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import static com.aliyun.mns.common.MNSConstants.DEFAULT_CHARSET;
+
 public class HttpUtil {
+    private static final String[] ENCODED_CHARACTERS_WITH_SLASHES = new String[]{"+", "*", "%7E", "%2F"};
+    private static final String[] ENCODED_CHARACTERS_WITH_SLASHES_REPLACEMENTS = new String[]{"%20", "%2A", "~", "/"};
+    private static final String[] ENCODED_CHARACTERS_WITHOUT_SLASHES = new String[]{"+", "*", "%7E"};
+    private static final String[] ENCODED_CHARACTERS_WITHOUT_SLASHES_REPLACEMENTS = new String[]{"%20", "%2A", "~"};
 
     private static final String ISO_8859_1_CHARSET = "iso-8859-1";
     private static final String JAVA_CHARSET = "utf-8";
@@ -43,6 +51,21 @@ public class HttpUtil {
         return value != null ? URLEncoder.encode(value, charset)
             .replace("+", "%20").replace("*", "%2A").replace("%7E", "~")
             : null;
+    }
+
+    public static String urlEncode(String value, boolean ignoreSlashes) {
+        if (value == null) {
+            return "";
+        }
+        try {
+            String encoded = URLEncoder.encode(value, DEFAULT_CHARSET);
+            if (!ignoreSlashes) {
+                return StringUtils.replaceEach(encoded, ENCODED_CHARACTERS_WITHOUT_SLASHES, ENCODED_CHARACTERS_WITHOUT_SLASHES_REPLACEMENTS);
+            }
+            return StringUtils.replaceEach(encoded, ENCODED_CHARACTERS_WITH_SLASHES, ENCODED_CHARACTERS_WITH_SLASHES_REPLACEMENTS);
+        } catch (UnsupportedEncodingException e) {
+            throw new IllegalArgumentException(CodingUtils.getResourceManager().getString("FailedToEncodeUri"), e);
+        }
     }
 
     /**

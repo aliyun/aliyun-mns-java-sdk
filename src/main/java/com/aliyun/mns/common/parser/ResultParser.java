@@ -22,7 +22,7 @@ package com.aliyun.mns.common.parser;
 import com.aliyun.mns.common.http.ResponseMessage;
 
 /**
- * Used to convert an result stream to a java object.
+ * Used to convert a result stream to a java object.
  */
 public interface ResultParser<T> {
 
@@ -33,5 +33,5 @@ public interface ResultParser<T> {
      * @return the java Type T object that the result stands for.
      * @throws ResultParseException failed to parse the result.
      */
-    public T parse(ResponseMessage response) throws ResultParseException;
+    T parse(ResponseMessage response) throws ResultParseException;
 }

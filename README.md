@@ -18,4 +18,8 @@ Aliyun MNS Console: [https://mns.console.aliyun.com/](https://mns.console.aliyun
 
 1. 遵循阿里云规范，env 设置 ak、sk
 > 详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
-2. {"user.home"}/.aliyun-mns.properties 文件配置 基本值，例如 `mns.endpoint`
+2. {"user.home"}/.aliyun-mns.properties 文件配置 基本值，样例：
+```properties
+mns.region=cn-hangzhou
+mns.accountendpoint=http://123.mns.cn-hangzhou.aliyuncs.com
+```

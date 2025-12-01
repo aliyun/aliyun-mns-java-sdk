@@ -24,14 +24,15 @@ import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.comm.ExecutionContext;
 import com.aliyun.mns.common.comm.RetryStrategy;
 import com.aliyun.mns.common.http.HttpFactory.IdleConnectionMonitor;
-import java.io.IOException;
-import java.util.concurrent.Future;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.conn.PoolingNHttpClientConnectionManager;
 import org.apache.http.nio.client.HttpAsyncClient;
+
+import java.io.IOException;
+import java.util.concurrent.Future;
 
 /**
  * The default implementation of <code>ServiceClient</code>.

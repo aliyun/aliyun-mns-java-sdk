@@ -28,6 +28,9 @@ public class ServiceClientFactory {
     private static final Map<ClientConfiguration, ServiceClient> serviceClientMap = new HashMap<ClientConfiguration, ServiceClient>();
 
     public static ServiceClient createServiceClient(ClientConfiguration config) {
+        if (config == null) {
+            config = new ClientConfiguration();
+        }
         synchronized (serviceClientMap) {
             ServiceClient serviceClient = serviceClientMap.get(config);
             if (serviceClient == null) {

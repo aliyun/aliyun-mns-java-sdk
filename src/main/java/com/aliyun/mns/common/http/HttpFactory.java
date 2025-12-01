@@ -57,6 +57,8 @@ import org.apache.http.impl.nio.reactor.DefaultConnectingIOReactor;
 import org.apache.http.impl.nio.reactor.IOReactorConfig;
 import org.apache.http.nio.conn.NHttpClientConnectionManager;
 import org.apache.http.nio.reactor.IOReactorException;
+import org.apache.http.conn.DnsResolver;
+import org.apache.http.impl.conn.SystemDefaultDnsResolver;
 import org.apache.http.nio.reactor.IOReactorExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -29,11 +29,11 @@ import static com.aliyun.mns.common.MNSConstants.CREATE_TIME_TAG;
 import static com.aliyun.mns.common.MNSConstants.DELAY_MESSAGES_TAG;
 import static com.aliyun.mns.common.MNSConstants.DELAY_SECONDS_TAG;
 import static com.aliyun.mns.common.MNSConstants.INACTIVE_MESSAGES_TAG;
-import static com.aliyun.mns.common.MNSConstants.LASTMODIFYTIME_TAG;
+import static com.aliyun.mns.common.MNSConstants.LAST_MODIFY_TIME_TAG;
 import static com.aliyun.mns.common.MNSConstants.LOGGING_ENABLED_TAG;
 import static com.aliyun.mns.common.MNSConstants.MAX_MESSAGE_SIZE_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_RETENTION_PERIOD_TAG;
-import static com.aliyun.mns.common.MNSConstants.POLLING_WAITSECONDS_TAG;
+import static com.aliyun.mns.common.MNSConstants.POLLING_WAIT_SECONDS_TAG;
 import static com.aliyun.mns.common.MNSConstants.QUEUE_NAME_TAG;
 import static com.aliyun.mns.common.MNSConstants.QUEUE_URL_TAG;
 import static com.aliyun.mns.common.MNSConstants.VISIBILITY_TIMEOUT;
@@ -70,11 +70,11 @@ public abstract class AbstractQueueMetaDeserializer<T> extends
         String createTime = safeGetElementContent(root, CREATE_TIME_TAG, "0");
         meta.setCreateTime(new Date(Long.parseLong(createTime) * 1000));
 
-        String lastModifyTime = safeGetElementContent(root, LASTMODIFYTIME_TAG,
+        String lastModifyTime = safeGetElementContent(root, LAST_MODIFY_TIME_TAG,
             "0");
         meta.setLastModifyTime(new Date(Long.parseLong(lastModifyTime) * 1000));
 
-        String waitSeconds = safeGetElementContent(root, POLLING_WAITSECONDS_TAG,
+        String waitSeconds = safeGetElementContent(root, POLLING_WAIT_SECONDS_TAG,
             "0");
         meta.setPollingWaitSeconds(Integer.parseInt(waitSeconds));
 

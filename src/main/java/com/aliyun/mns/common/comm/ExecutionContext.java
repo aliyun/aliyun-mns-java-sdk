@@ -69,20 +69,6 @@ public class ExecutionContext {
     }
 
     /**
-     * @return the signer
-     */
-    public RequestSigner getSigner() {
-        return signer;
-    }
-
-    /**
-     * @param signer the signer to set
-     */
-    public void setSigner(RequestSigner signer) {
-        this.signer = signer;
-    }
-
-    /**
      * @return the responseHandlers
      */
     public List<ResponseHandler> getResponseHandlers() {

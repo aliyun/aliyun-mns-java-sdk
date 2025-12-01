@@ -20,12 +20,14 @@
 package com.aliyun.mns.common.http;
 
 import com.aliyun.mns.common.HttpMethod;
+
 import java.net.URI;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.aliyun.mns.common.utils.CodingUtils.assertParameterNotNull;
-import static com.aliyun.mns.common.utils.CodingUtils.assertStringNotNullOrEmpty;
+import static com.aliyun.mns.common.utils.CodingUtils.assertStringNotEmpty;
 
 /**
  * 表示发送请求的信息。
@@ -34,12 +36,14 @@ public class RequestMessage extends HttpMesssage {
     private HttpMethod method = HttpMethod.GET; // HTTP Method. default GET.
     private URI endpoint;
     private String resourcePath;
+    private final Date requestDateTime;
     private Map<String, String> parameters = new HashMap<String, String>();
 
     /**
      * 构造函数。
      */
     public RequestMessage() {
+        this.requestDateTime = new Date();
     }
 
     /**
@@ -88,6 +92,10 @@ public class RequestMessage extends HttpMesssage {
         this.resourcePath = resourcePath;
     }
 
+    public Date getRequestDateTime() {
+        return requestDateTime;
+    }
+
     /**
      * @return the parameters
      */
@@ -105,13 +113,13 @@ public class RequestMessage extends HttpMesssage {
     }
 
     public void addParameter(String key, String value) {
-        assertStringNotNullOrEmpty(key, "key");
+        assertStringNotEmpty(key, "key");
 
         this.parameters.put(key, value);
     }
 
     public void removeParameter(String key) {
-        assertStringNotNullOrEmpty(key, "key");
+        assertStringNotEmpty(key, "key");
 
         this.parameters.remove(key);
     }

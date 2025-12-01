@@ -19,13 +19,9 @@
 
 package com.aliyun.mns.model.serialize.topic;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
 import com.aliyun.mns.common.utils.BooleanSerializer;
 import com.aliyun.mns.model.BaseAttributes;
 import com.aliyun.mns.model.MessageAttributes;
-import com.aliyun.mns.model.PushAttributes;
 import com.aliyun.mns.model.TopicMessage;
 import com.aliyun.mns.model.request.topic.PublishMessageRequest;
 import com.aliyun.mns.model.serialize.XMLSerializer;
@@ -36,9 +32,10 @@ import com.google.gson.GsonBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import static com.aliyun.mns.common.MNSConstants.DAYU_TAG;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import static com.aliyun.mns.common.MNSConstants.DEFAULT_XML_NAMESPACE;
-import static com.aliyun.mns.common.MNSConstants.DIRECT_MAIL_TAG;
 import static com.aliyun.mns.common.MNSConstants.DM_TAG;
 import static com.aliyun.mns.common.MNSConstants.DYSMS_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_ATTRIBUTES_TAG;
@@ -48,11 +45,8 @@ import static com.aliyun.mns.common.MNSConstants.MESSAGE_PROPERTY_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_SYSTEM_PROPERTY_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_TAG_TAG;
-import static com.aliyun.mns.common.MNSConstants.PUSH_TAG;
-import static com.aliyun.mns.common.MNSConstants.SMS_TAG;
 import static com.aliyun.mns.common.MNSConstants.SYSTEM_PROPERTIES_TAG;
 import static com.aliyun.mns.common.MNSConstants.USER_PROPERTIES_TAG;
-import static com.aliyun.mns.common.MNSConstants.WEBSOCKET_TAG;
 
 public class TopicMessageSerializer extends XMLSerializer<PublishMessageRequest> {
 
@@ -65,7 +59,6 @@ public class TopicMessageSerializer extends XMLSerializer<PublishMessageRequest>
             BooleanSerializer serializer = new BooleanSerializer();
             b.registerTypeAdapter(Boolean.class, serializer);
             b.registerTypeAdapter(boolean.class, serializer);
-            b.registerTypeAdapter(PushAttributes.class, new PushAttributes.PushAttributesSerializer());
             gson = b.create();
         }
         return gson;
@@ -109,12 +102,6 @@ public class TopicMessageSerializer extends XMLSerializer<PublishMessageRequest>
         if (messageAttributes != null) {
             Element attributesNode = doc.createElement(MESSAGE_ATTRIBUTES_TAG);
             root.appendChild(attributesNode);
-            appendAttributeElement(doc, attributesNode, DIRECT_MAIL_TAG, messageAttributes.getMailAttributes());
-            appendAttributeElement(doc, attributesNode, DAYU_TAG, messageAttributes.getDayuAttributes());
-            appendAttributeElement(doc, attributesNode, SMS_TAG, messageAttributes.getSmsAttributes());
-            appendAttributeElement(doc, attributesNode, SMS_TAG, messageAttributes.getBatchSmsAttributes());
-            appendAttributeElement(doc, attributesNode, WEBSOCKET_TAG, messageAttributes.getWebSocketAttributes());
-            appendAttributeElement(doc, attributesNode, PUSH_TAG, messageAttributes.getPushAttributes());
             appendAttributeElement(doc, attributesNode, DYSMS_TAG, messageAttributes.getDysmsAttributes());
             appendAttributeElement(doc, attributesNode, DM_TAG, messageAttributes.getDmAttributes());
         }
