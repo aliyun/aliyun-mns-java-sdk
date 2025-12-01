@@ -66,6 +66,14 @@ public final class CloudAccount {
 
     /**
      * 推荐使用 {@link MNSClientBuilder} 来创建CloudAccount对象。
+     *
+     * @param accessKeyId     Access Key ID
+     * @param accessKeySecret Access Key Secret
+     * @param accountEndpoint Account endpoint
+     * @param securityToken   Security token (optional)
+     * @param provider        Alibaba Cloud credentials provider
+     * @param config          Client configuration
+     * @param region          Region
      */
     public CloudAccount(String accessKeyId, String accessKeySecret,
                         String accountEndpoint, String securityToken,

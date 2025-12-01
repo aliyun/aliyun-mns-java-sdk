@@ -28,7 +28,6 @@ import static com.aliyun.mns.common.MNSConstants.X_HEADER_MNS_PREFIX;
  * <p>V4签名，主要解决 {@link MNSV2Signer} V2签名 无地域限制、无时间限制、无产品限制等全局可用特性从而导致的安全风险问题。
  *
  * @author yuanzhi
- * @date 2025/6/3.
  */
 public class MNSV4Signer implements RequestSigner {
 

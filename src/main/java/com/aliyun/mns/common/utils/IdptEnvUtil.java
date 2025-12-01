@@ -7,7 +7,6 @@ import java.util.Properties;
  * 独立输出云环境，对客透出的 API/错误码/角色名/策略名等 做不同替换处理
  *
  * @author yuanzhi
- * @date 2025/4/30.
  */
 public class IdptEnvUtil {
     private static volatile Boolean isIdptEnv;

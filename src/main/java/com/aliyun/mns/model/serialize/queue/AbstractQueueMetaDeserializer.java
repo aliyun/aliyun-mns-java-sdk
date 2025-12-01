@@ -38,13 +38,27 @@ import static com.aliyun.mns.common.MNSConstants.QUEUE_NAME_TAG;
 import static com.aliyun.mns.common.MNSConstants.QUEUE_URL_TAG;
 import static com.aliyun.mns.common.MNSConstants.VISIBILITY_TIMEOUT;
 
+/**
+ * Abstract base class for queue metadata deserializers
+ *
+ * @param <T> the type of object to deserialize
+ */
 public abstract class AbstractQueueMetaDeserializer<T> extends
     XMLDeserializer<T> {
 
+    /**
+     * Constructor
+     */
     public AbstractQueueMetaDeserializer() {
         super();
     }
 
+    /**
+     * Parse queue metadata from XML element
+     *
+     * @param root the root XML element
+     * @return parsed queue metadata
+     */
     protected QueueMeta parseQueueMeta(Element root) {
         QueueMeta meta = new QueueMeta();
 
@@ -63,9 +77,9 @@ public abstract class AbstractQueueMetaDeserializer<T> extends
             MESSAGE_RETENTION_PERIOD_TAG, "0");
         meta.setMessageRetentionPeriod(Long.parseLong(messageRetentionPeriod));
 
-        String visibiltyTimeout = safeGetElementContent(root,
-            VISIBILITY_TIMEOUT, "0");
-        meta.setVisibilityTimeout(Long.parseLong(visibiltyTimeout));
+        String visibilityTimeout = safeGetElementContent(root,
+                    VISIBILITY_TIMEOUT, "0");
+                meta.setVisibilityTimeout(Long.parseLong(visibilityTimeout));
 
         String createTime = safeGetElementContent(root, CREATE_TIME_TAG, "0");
         meta.setCreateTime(new Date(Long.parseLong(createTime) * 1000));
