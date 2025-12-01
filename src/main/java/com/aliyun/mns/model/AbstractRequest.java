@@ -19,6 +19,9 @@
 
 package com.aliyun.mns.model;
 
+/**
+ * Abstract base class for request objects
+ */
 public class AbstractRequest {
 
     /**
@@ -31,18 +34,38 @@ public class AbstractRequest {
      */
     protected transient String host;
 
+    /**
+     * Get request path
+     *
+     * @return request path
+     */
     public String getRequestPath() {
         return requestPath;
     }
 
+    /**
+     * Set request path
+     *
+     * @param requestPath request path
+     */
     public void setRequestPath(String requestPath) {
         this.requestPath = requestPath;
     }
 
+    /**
+     * Get host
+     *
+     * @return host
+     */
     public String getHost() {
         return host;
     }
 
+    /**
+     * Set host
+     *
+     * @param host host
+     */
     public void setHost(String host) {
         this.host = host;
     }

@@ -4,7 +4,6 @@ package com.aliyun.mns.common.auth;
  * 对访问密钥进行签名的算法版本
  *
  * @author yuanzhi
- * @date 2025/6/2.
  */
 public enum SignVersion {
     /**

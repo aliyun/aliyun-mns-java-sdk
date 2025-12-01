@@ -21,6 +21,9 @@ package com.aliyun.mns.model;
 
 import java.io.Serializable;
 
+/**
+ * Account attributes model
+ */
 public class AccountAttributes implements Serializable {
     private static final long serialVersionUID = 1159160616345899035L;
 
@@ -28,18 +31,38 @@ public class AccountAttributes implements Serializable {
 
     private Integer traceEnabled;
 
+    /**
+     * Get logging bucket
+     *
+     * @return logging bucket
+     */
     public String getLoggingBucket() {
         return loggingBucket;
     }
 
+    /**
+     * Set logging bucket
+     *
+     * @param loggingBucket logging bucket
+     */
     public void setLoggingBucket(String loggingBucket) {
         this.loggingBucket = loggingBucket;
     }
 
+    /**
+     * Get trace enabled flag
+     *
+     * @return trace enabled flag
+     */
     public Integer getTraceEnabled() {
         return traceEnabled;
     }
 
+    /**
+     * Set trace enabled flag
+     *
+     * @param traceEnabled trace enabled flag
+     */
     public void setTraceEnabled(Integer traceEnabled) {
         this.traceEnabled = traceEnabled;
     }

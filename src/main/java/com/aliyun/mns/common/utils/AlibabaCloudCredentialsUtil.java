@@ -10,6 +10,7 @@ public class AlibabaCloudCredentialsUtil {
     /**
      * 通过credential provider获取security token
      *
+     * @param credential the Alibaba Cloud credentials
      * @return securityToken.
      */
     public static String getSecurityToken(AlibabaCloudCredentials credential) {

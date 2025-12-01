@@ -119,6 +119,8 @@ public abstract class BaseMessage {
 
     /**
      * 基于 bytes 获得最原始的 string 值，不受子类影响
+     *
+     * @return original message body as string
      */
     public String getOriginalMessageBody() {
         byte[] messageBodyAsBytes = getMessageBodyBytes();
