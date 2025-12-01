@@ -20,10 +20,8 @@
 package com.aliyun.mns.common.http;
 
 import java.net.URI;
-import org.apache.http.annotation.NotThreadSafe;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 
-@NotThreadSafe
 public class MNSHttpDelete extends HttpEntityEnclosingRequestBase {
 
     public final static String METHOD_NAME = "DELETE";

@@ -43,14 +43,15 @@ import com.aliyun.mns.model.request.queue.CreateQueueRequest;
 import com.aliyun.mns.model.request.queue.ListQueueRequest;
 import com.aliyun.mns.model.request.topic.ListTopicRequest;
 import com.aliyun.mns.model.response.commonbuy.OpenServiceResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.aliyun.mns.common.MNSConstants.URI_OPEN_SERVICE;
 
@@ -69,53 +70,30 @@ public class DefaultMNSClient implements MNSClient {
     // 用户身份信息。
     private ServiceCredentials credentials = new ServiceCredentials();
 
-    private final Map<String, String> customHeaders = new HashMap<String, String>();
-
-    /**
-     * 使用指定的MNS Endpoint构造一个新的{@link MNSClient}对象。
-     *
-     * @param endpoint  MNS服务的Endpoint。
-     * @param accessId  访问MNS的Access ID。
-     * @param accessKey 访问MNS的Access Key。
-     */
-    public DefaultMNSClient(String endpoint, String accessId, String accessKey) {
-        this(endpoint, accessId, accessKey, null);
-    }
+    private final Map<String, String> customHeaders = new HashMap<>();
 
     /**
      * 使用指定的MNS Endpoint和配置构造一个新的{@link MNSClient}对象。
      *
      * @param endpoint  MNS服务的Endpoint。
-     * @param accessId  访问MNS的Access ID。
-     * @param accessKey 访问MNS的Access Key。
+     * @param accessKeyId  访问MNS的AK。
+     * @param accessKeySecret 访问MNS的SK。
      * @param config    客户端配置 {@link ClientConfiguration}。
+     * @param region    MNS服务的区域ID。
      */
-    public DefaultMNSClient(String endpoint, String accessId, String accessKey,
-        ClientConfiguration config) {
-        setEndpoint(endpoint);
-        this.credentials = new ServiceCredentials(accessId, accessKey);
-        if (config == null) {
-            config = new ClientConfiguration();
-            config.setExceptContinue(false);
-        }
-
-        this.serviceClient = ServiceClientFactory.createServiceClient(config);
-
-        if (log.isDebugEnabled()) {
-            log.debug("initiated MNSClientImpl,accessId=" + accessId
-                + ", endpoint=" + endpoint);
-        }
-    }
-
-    public int getServiceClientHashCode() {
-        return serviceClient.hashCode();
+    public DefaultMNSClient(String endpoint, String accessKeyId, String accessKeySecret,
+                            ClientConfiguration config, String region) {
+        this(new ServiceCredentials(accessKeyId, accessKeySecret),
+            ServiceClientFactory.createServiceClient(config),
+            endpoint, region);
     }
 
     protected DefaultMNSClient(ServiceCredentials credentials,
-        ServiceClient serviceClient, String endpoint) {
-        this.serviceClient = serviceClient;
-        this.credentials = credentials;
+                               ServiceClient serviceClient, String endpoint, String region) {
         setEndpoint(endpoint);
+        this.serviceClient = serviceClient
+            .setRegion(region);
+        this.credentials = credentials;
     }
 
     @Override
@@ -134,7 +112,7 @@ public class DefaultMNSClient implements MNSClient {
     }
 
     @Override
-    public void SetAccountAttributes(AccountAttributes accountAttributes) throws ServiceException, ClientException {
+    public void setAccountAttributes(AccountAttributes accountAttributes) throws ServiceException, ClientException {
         SetAccountAttributesAction action = new SetAccountAttributesAction(serviceClient,
             credentials, endpoint);
         SetAccountAttributesRequest request = new SetAccountAttributesRequest();
@@ -143,7 +121,7 @@ public class DefaultMNSClient implements MNSClient {
     }
 
     @Override
-    public AccountAttributes GetAccountAttributes() throws ServiceException, ClientException {
+    public AccountAttributes getAccountAttributes() throws ServiceException, ClientException {
         GetAccountAttributesAction action = new GetAccountAttributesAction(serviceClient,
             credentials, endpoint);
         GetAccountAttributesRequest request = new GetAccountAttributesRequest();
@@ -250,9 +228,9 @@ public class DefaultMNSClient implements MNSClient {
         if (queueNameList == null || queueNameList.size() <= 0) {
             throw new IllegalArgumentException("queueNameList should not be null or empty.");
         }
-        Vector<CloudQueue> queueList = new Vector<CloudQueue>();
+        Vector<CloudQueue> queueList = new Vector<>();
         if (needCreateQueue) {
-            QueueMeta queueMeta = null;
+            QueueMeta queueMeta;
             if (queueMetaTemplate != null) {
                 queueMeta = queueMetaTemplate;
             } else {
@@ -260,18 +238,16 @@ public class DefaultMNSClient implements MNSClient {
                 queueMeta.setPollingWaitSeconds(30);
                 //add some default settings;
             }
-            for (int i = 0; i < queueNameList.size(); i++) {
-                String queueName = queueNameList.get(i);
+            for (String queueName : queueNameList) {
                 queueMeta.setQueueName(queueName);
                 CloudQueue queue = new CloudQueue(queueName, this.serviceClient, this.credentials, this.endpoint);
                 queue.create(queueMeta);
                 queueList.add(queue);
             }
         } else {
-            for (int i = 0; i < queueNameList.size(); i++) {
-                String queueName = queueNameList.get(i);
+            for (String queueName : queueNameList) {
                 CloudQueue queue = new CloudQueue(queueName, this.serviceClient, this.credentials,
-                    this.endpoint);
+                        this.endpoint);
                 queueList.add(queue);
             }
         }
@@ -289,9 +265,9 @@ public class DefaultMNSClient implements MNSClient {
         if (tagList == null || tagList.size() != queueNameList.size()) {
             throw new IllegalArgumentException("Size of tagList should be equal with queueNameList.");
         }
-        Vector<CloudQueue> queueList = new Vector<CloudQueue>();
+        Vector<CloudQueue> queueList = new Vector<>();
         if (needCreateQueue) {
-            QueueMeta queueMeta = null;
+            QueueMeta queueMeta;
             if (queueMetaTemplate != null) {
                 queueMeta = queueMetaTemplate;
             } else {
@@ -299,18 +275,16 @@ public class DefaultMNSClient implements MNSClient {
                 queueMeta.setPollingWaitSeconds(30);
                 //add some default settings;
             }
-            for (int i = 0; i < queueNameList.size(); i++) {
-                String queueName = queueNameList.get(i);
+            for (String queueName : queueNameList) {
                 queueMeta.setQueueName(queueName);
                 CloudQueue queue = new CloudQueue(queueName, this.serviceClient, this.credentials, this.endpoint);
                 queue.create(queueMeta);
                 queueList.add(queue);
             }
         } else {
-            for (int i = 0; i < queueNameList.size(); i++) {
-                String queueName = queueNameList.get(i);
+            for (String queueName : queueNameList) {
                 CloudQueue queue = new CloudQueue(queueName, this.serviceClient, this.credentials,
-                    this.endpoint);
+                        this.endpoint);
                 queueList.add(queue);
             }
         }
@@ -327,11 +301,11 @@ public class DefaultMNSClient implements MNSClient {
     @Override
     public PagingListResult<String> listQueueURL(String prefix, String marker,
         Integer retNumber) throws ClientException, ServiceException {
-        PagingListResult<String> results = new PagingListResult<String>();
+        PagingListResult<String> results = new PagingListResult<>();
         PagingListResult<QueueMeta> list = this.listQueue(prefix, marker,
             retNumber, false);
         if (list != null && list.getResult() != null) {
-            List<String> queues = new ArrayList<String>();
+            List<String> queues = new ArrayList<>();
             for (QueueMeta meta : list.getResult()) {
                 queues.add(meta.getQueueURL());
             }
@@ -420,10 +394,10 @@ public class DefaultMNSClient implements MNSClient {
     public PagingListResult<String> listTopicURL(String prefix, String marker,
         Integer retNumber) throws ClientException, ServiceException {
         PagingListResult<TopicMeta> results = listTopic(prefix, marker, retNumber, false);
-        PagingListResult<String> ret = new PagingListResult<String>();
+        PagingListResult<String> ret = new PagingListResult<>();
 
         if (results != null) {
-            List<String> topics = new ArrayList<String>();
+            List<String> topics = new ArrayList<>();
             for (TopicMeta meta : results.getResult()) {
                 topics.add(meta.getTopicURL());
             }

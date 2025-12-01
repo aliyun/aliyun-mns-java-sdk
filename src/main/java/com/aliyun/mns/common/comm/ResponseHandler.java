@@ -35,6 +35,6 @@ public interface ResponseHandler {
      * @throws ServiceException exception
      * @throws ClientException exception
      */
-    public void handle(ResponseMessage responseData)
+    void handle(ResponseMessage responseData)
         throws ServiceException, ClientException;
 }

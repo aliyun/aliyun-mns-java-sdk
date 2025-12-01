@@ -35,6 +35,6 @@ public interface RequestHandler {
      * @throws ServiceException exception
      * @throws ClientException  exception
      */
-    public void handle(Request message)
+    void handle(Request message)
         throws ServiceException, ClientException;
 }

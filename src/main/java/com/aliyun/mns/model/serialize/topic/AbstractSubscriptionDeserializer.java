@@ -27,7 +27,7 @@ import static com.aliyun.mns.common.MNSConstants.CREATE_TIME_TAG;
 import static com.aliyun.mns.common.MNSConstants.DEFAULT_NOTIFY_CONTENT_TYPE;
 import static com.aliyun.mns.common.MNSConstants.ENDPOINT_TAG;
 import static com.aliyun.mns.common.MNSConstants.FILTER_TAG_TAG;
-import static com.aliyun.mns.common.MNSConstants.LASTMODIFYTIME_TAG;
+import static com.aliyun.mns.common.MNSConstants.LAST_MODIFY_TIME_TAG;
 import static com.aliyun.mns.common.MNSConstants.NOTIFY_CONTENT_FORMAT_TAG;
 import static com.aliyun.mns.common.MNSConstants.NOTIFY_STRATEGY_TAG;
 import static com.aliyun.mns.common.MNSConstants.SUBSCRIPTION_NAME_TAG;
@@ -96,7 +96,7 @@ public abstract class AbstractSubscriptionDeserializer<T> extends XMLDeserialize
             meta.setCreateTime(Long.parseLong(createTime));
         }
 
-        String lastModifyTime = safeGetElementContent(root, LASTMODIFYTIME_TAG, null);
+        String lastModifyTime = safeGetElementContent(root, LAST_MODIFY_TIME_TAG, null);
         if (lastModifyTime != null) {
             meta.setLastModifyTime(Long.parseLong(lastModifyTime));
         }

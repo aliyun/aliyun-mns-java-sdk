@@ -19,6 +19,7 @@
 
 package com.aliyun.mns.common.http;
 
+import com.aliyun.mns.client.AsyncResult;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.HttpMethod;
 import com.aliyun.mns.common.ServiceException;
@@ -29,15 +30,16 @@ import com.aliyun.mns.common.comm.RetryStrategy;
 import com.aliyun.mns.common.utils.HttpUtil;
 import com.aliyun.mns.common.utils.ResourceManager;
 import com.aliyun.mns.common.utils.ServiceConstants;
+import org.apache.http.HttpResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.concurrent.Future;
-import org.apache.http.HttpResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The client that accesses Aliyun services.
@@ -47,10 +49,11 @@ import org.slf4j.LoggerFactory;
 public abstract class ServiceClient {
 
     private static final int DEFAULT_MARK_LIMIT = 1024 * 4;
-    private static final Logger log = LoggerFactory.getLogger(ServiceClient.class);
+    protected static final Logger log = LoggerFactory.getLogger(ServiceClient.class);
     private static ResourceManager rm = ResourceManager
         .getInstance(ServiceConstants.RESOURCE_NAME_COMMON);
     protected ClientConfiguration config;
+    protected String region;
 
     protected ServiceClient(ClientConfiguration config) {
         this.config = config;
@@ -58,16 +61,26 @@ public abstract class ServiceClient {
 
     public ClientConfiguration getClientConfiguration() {
         try {
-            return (ClientConfiguration) this.config.clone();
+            return (ClientConfiguration)this.config.clone();
         } catch (CloneNotSupportedException ex) {
             // this should not happen
-            return null;
+            throw new ClientException(ex);
         }
     }
 
     // for internal use, as the config must not be changed
     ClientConfiguration getClientConfigurationNoClone() {
         return this.config;
+    }
+
+    public <T> AsyncResult<T> asyncSendRequest(RequestMessage request,
+                                               ExecutionContext context,
+                                               HttpCallback<T> callback, long timewaitMillis) throws ServiceException {
+        Future<HttpResponse> future = sendRequest(request, context, callback);
+        AsyncResult<T> asyncResult = callback.getAsyncResult();
+        asyncResult.setTimewait(timewaitMillis);
+        asyncResult.setFuture(future);
+        return asyncResult;
     }
 
     public <T> Future<HttpResponse> sendRequest(RequestMessage request,
@@ -90,11 +103,6 @@ public abstract class ServiceClient {
 
         RetryStrategy retryStrategy = context.getRetryStrategy() != null ? context
             .getRetryStrategy() : this.getDefaultRetryStrategy();
-
-        // Sign the request if a signer is provided.
-        if (context.getSigner() != null) {
-            context.getSigner().sign(request);
-        }
 
         int retries = 0;
         ResponseMessage response = null;
@@ -299,6 +307,15 @@ public abstract class ServiceClient {
     public abstract boolean isOpen();
 
     protected abstract RetryStrategy getDefaultRetryStrategy();
+
+    public ServiceClient setRegion(String region) {
+        this.region = region;
+        return this;
+    }
+
+    public  String getRegion() {
+        return region;
+    }
 
     /**
      * A wrapper class to HttpMessage. It contains the data to create

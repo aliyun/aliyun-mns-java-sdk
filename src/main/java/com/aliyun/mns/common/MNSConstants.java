@@ -58,9 +58,9 @@ public interface MNSConstants extends HttpHeaders {
     String ACTIVE_MESSAGES_TAG = "ActiveMessages";
     String INACTIVE_MESSAGES_TAG = "InactiveMessages";
     String DELAY_MESSAGES_TAG = "DelayMessages";
-    String LASTMODIFYTIME_TAG = "LastModifyTime";
+    String LAST_MODIFY_TIME_TAG = "LastModifyTime";
     String CREATE_TIME_TAG = "CreateTime";
-    String POLLING_WAITSECONDS_TAG = "PollingWaitSeconds";
+    String POLLING_WAIT_SECONDS_TAG = "PollingWaitSeconds";
     String MESSAGE_COUNT_TAG = "MessageCount";
     String LOGGING_BUCKET_TAG = "LoggingBucket";
     String TRACE_ENABLED_TAG = "TraceEnabled";
@@ -102,14 +102,9 @@ public interface MNSConstants extends HttpHeaders {
     String DEQUEUE_COUNT_TAG = "DequeueCount";
     String MESSAGE_ATTRIBUTES_TAG = "MessageAttributes";
 
-    String DIRECT_MAIL_TAG = "DirectMail";
     String MESSAGE_TAG_TAG = "MessageTag";
-    String DAYU_TAG = "Dayu";
-    String SMS_TAG = "DirectSMS";
     String DYSMS_TAG = "DYSMS";
     String DM_TAG = "DM";
-    String WEBSOCKET_TAG = "WebSocket";
-    String PUSH_TAG = "Push";
 
     String ERROR_LIST_TAG = "Errors";
     String ERROR_TAG = "Error";
@@ -117,14 +112,14 @@ public interface MNSConstants extends HttpHeaders {
     String ERROR_MESSAGE_TAG = "Message";
     String ERROR_REQUEST_ID_TAG = "RequestId";
     String ERROR_HOST_ID_TAG = "HostId";
-    String MESSAGE_ERRORCODE_TAG = "ErrorCode";
-    String MESSAGE_ERRORMESSAGE_TAG = "ErrorMessage";
+    String MESSAGE_ERROR_CODE_TAG = "ErrorCode";
+    String MESSAGE_ERROR_MESSAGE_TAG = "ErrorMessage";
 
     String OPEN_SERVICE_ORDER_TAG = "OrderId";
 
     String ACCOUNT_ID_TAG = "AccountId";
 
-    String PARAM_WAITSECONDS = "waitseconds";
+    String PARAM_WAIT_SECONDS = "waitseconds";
 
     String SUBSCRIPTION = "subscriptions";
 
@@ -133,6 +128,9 @@ public interface MNSConstants extends HttpHeaders {
      */
     String ALIYUN_AK_ENV_KEY = "ALIBABA_CLOUD_ACCESS_KEY_ID";
     String ALIYUN_SK_ENV_KEY = "ALIBABA_CLOUD_ACCESS_KEY_SECRET";
+
+    String IDPT_AK_ENV_KEY = "CLOUD_ACCESS_KEY_ID";
+    String IDPT_SK_ENV_KEY = "CLOUD_ACCESS_KEY_SECRET";
 
     Long MAX_MESSAGE_SIZE = 65536L;
     Long DEFAULT_MESSAGE_RETENTION_PERIOD = 86400L;

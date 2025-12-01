@@ -27,19 +27,23 @@ import com.aliyun.mns.common.http.ClientConfiguration;
 import com.aliyun.mns.common.http.HttpCallback;
 import com.aliyun.mns.common.http.ServiceClient;
 import com.aliyun.mns.common.http.ServiceClientFactory;
+import com.aliyun.mns.common.utils.CodingUtils;
+import com.aliyun.mns.common.utils.IdptEnvUtil;
 import com.aliyuncs.auth.AlibabaCloudCredentialsProvider;
-import java.util.concurrent.ExecutorService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.concurrent.ExecutorService;
 
 public final class CloudAccount {
     private static Logger log = LoggerFactory.getLogger(CloudAccount.class);
 
-    private String accessId;
-    private String accessKey;
-    private String securityToken;
-    private String accountEndpoint;
-    private AlibabaCloudCredentialsProvider credentialsProvider;
+    private final String accessKeyId;
+    private final String accessKeySecret;
+    private final String securityToken;
+    private final String accountEndpoint;
+    private final AlibabaCloudCredentialsProvider credentialsProvider;
 
     // 访问MNS服务的client
     private ServiceClient serviceClient = null;
@@ -47,6 +51,7 @@ public final class CloudAccount {
     // 用户身份信息。
     private ServiceCredentials credentials = new ServiceCredentials();
     private ClientConfiguration config;
+    private final String region;
 
     private MNSClient mnsClient;
 
@@ -59,71 +64,20 @@ public final class CloudAccount {
         HttpCallback.setCallbackExecutor(executor);
     }
 
-    public CloudAccount(String accountEndpoint) {
-        this(System.getenv(MNSConstants.ALIYUN_AK_ENV_KEY), System.getenv(MNSConstants.ALIYUN_SK_ENV_KEY), accountEndpoint, "", null, null);
-    }
-
-
-    public CloudAccount(String accountEndpoint, String securityToken) {
-        this(System.getenv(MNSConstants.ALIYUN_AK_ENV_KEY), System.getenv(MNSConstants.ALIYUN_SK_ENV_KEY),  accountEndpoint, securityToken, null, null);
-    }
-
-    public CloudAccount(String accountEndpoint, ClientConfiguration config) {
-        this(System.getenv(MNSConstants.ALIYUN_AK_ENV_KEY), System.getenv(MNSConstants.ALIYUN_SK_ENV_KEY),  accountEndpoint, "", null, config);
-    }
-
     /**
-     * 推荐使用 {@link #CloudAccount(String)} 作为替代
+     * 推荐使用 {@link MNSClientBuilder} 来创建CloudAccount对象。
      */
-    public CloudAccount(String accessId, String accessKey,
-        String accountEndpoint) {
-        this(accessId, accessKey, accountEndpoint, "", null, null);
-    }
-
-    /**
-     * 推荐使用 {@link #CloudAccount(String,String)} 作为替代
-     */
-    public CloudAccount(String accessId, String accessKey,
-        String accountEndpoint, String securityToken) {
-        this(accessId, accessKey, accountEndpoint, securityToken, null, null);
-    }
-
-    /**
-     * 推荐使用 {@link #CloudAccount(String,ClientConfiguration)} 作为替代
-     */
-    public CloudAccount(String accessId, String accessKey,
-        String accountEndpoint, ClientConfiguration config) {
-        this(accessId, accessKey, accountEndpoint, "", null, config);
-    }
-
-    public CloudAccount(String accountEndpoint, AlibabaCloudCredentialsProvider provider) {
-        this(null, null, accountEndpoint, null, provider, null);
-    }
-
-    public CloudAccount(String accountEndpoint, AlibabaCloudCredentialsProvider provider, ClientConfiguration config) {
-        this(null, null, accountEndpoint, null, provider, config);
-    }
-
-    public CloudAccount(String accessId, String accessKey,
-        String accountEndpoint, AlibabaCloudCredentialsProvider provider) {
-        this(accessId, accessKey, accountEndpoint, "", provider, null);
-    }
-
-    public CloudAccount(String accessId, String accessKey,
-        String accountEndpoint, String securityToken,
-        AlibabaCloudCredentialsProvider provider) {
-        this(accessId, accessKey, accountEndpoint, securityToken, provider, null);
-    }
-
-    public CloudAccount(String accessId, String accessKey,
-        String accountEndpoint, String securityToken,
-        AlibabaCloudCredentialsProvider provider, ClientConfiguration config) {
-        this.accessId = accessId;
-        this.accessKey = accessKey;
+    public CloudAccount(String accessKeyId, String accessKeySecret,
+                        String accountEndpoint, String securityToken,
+                        AlibabaCloudCredentialsProvider provider, ClientConfiguration config,
+                        String region) {
+        this.accessKeyId = StringUtils.trimToNull(accessKeyId);
+        this.accessKeySecret = StringUtils.trimToNull(accessKeySecret);
         this.accountEndpoint = Utils.getHttpURI(accountEndpoint).toString();
-        this.securityToken = securityToken;
+        this.securityToken = StringUtils.trimToNull(securityToken);
         this.credentialsProvider = provider;
         this.config = config;
+        this.region = region;
 
         init();
     }
@@ -136,7 +90,7 @@ public final class CloudAccount {
                     try {
                         serviceClient = ServiceClientFactory.createServiceClient(config);
                         mnsClient = new DefaultMNSClient(credentials, serviceClient,
-                            accountEndpoint);
+                            accountEndpoint, region);
                     } catch (Exception e) {
                         if (serviceClient != null) {
                             ServiceClientFactory.closeServiceClient(serviceClient);
@@ -151,23 +105,32 @@ public final class CloudAccount {
     }
 
     private void init() {
-        if (this.accessId != null && this.accessKey != null) {
-            this.credentials = new ServiceCredentials(accessId, accessKey, securityToken);
+        if (this.accessKeyId != null && this.accessKeySecret != null) {
+            this.credentials = new ServiceCredentials(accessKeyId, accessKeySecret, securityToken);
         } else if (credentialsProvider != null) {
             this.credentials = new ServiceCredentials(credentialsProvider);
-        }else {
+        } else {
             // 基于 env ak/sk 兜底
-            this.credentials = new ServiceCredentials(System.getenv(MNSConstants.ALIYUN_AK_ENV_KEY), System.getenv(MNSConstants.ALIYUN_SK_ENV_KEY), securityToken);
+            this.credentials = getCredentialsFromAkSkEnv();
         }
 
         if (config == null) {
             config = new ClientConfiguration();
         }
 
+        CodingUtils.assertParameterNotNull(this.accountEndpoint, "accountEndpoint");
+        CodingUtils.assertParameterNotNull(this.region, "region");
+
         if (log.isDebugEnabled()) {
-            log.debug("initiated CloudAccount, accessId=" + accessId + ",accessKey="
-                + accessKey + ", endpoint=" + accountEndpoint + " securityToken=" + securityToken);
+            log.debug("initiated CloudAccount, accessKeyId=" + accessKeyId + ",accessKeySecret="
+                + accessKeySecret + ", endpoint=" + accountEndpoint + " securityToken=" + securityToken);
         }
+    }
+
+    private ServiceCredentials getCredentialsFromAkSkEnv() {
+        String akEnvName = IdptEnvUtil.isIdptEnv() ? MNSConstants.IDPT_AK_ENV_KEY : MNSConstants.ALIYUN_AK_ENV_KEY;
+        String skEnvName = IdptEnvUtil.isIdptEnv() ? MNSConstants.IDPT_SK_ENV_KEY : MNSConstants.ALIYUN_SK_ENV_KEY;
+        return new ServiceCredentials(System.getenv(akEnvName), System.getenv(skEnvName), securityToken);
     }
 
     /**
@@ -177,7 +140,4 @@ public final class CloudAccount {
         return accountEndpoint;
     }
 
-    public void setAccountEndpoint(String endpoint) {
-        this.accountEndpoint = Utils.getHttpURI(endpoint).toString();
-    }
 }

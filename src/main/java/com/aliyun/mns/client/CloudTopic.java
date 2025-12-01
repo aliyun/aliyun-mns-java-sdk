@@ -51,13 +51,14 @@ import com.aliyun.mns.model.request.topic.SetSubscriptionAttrRequest;
 import com.aliyun.mns.model.request.topic.SetTopicAttrRequest;
 import com.aliyun.mns.model.request.topic.SubscribeRequest;
 import com.aliyun.mns.model.request.topic.UnsubscribeRequest;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CloudTopic {
     /**
@@ -105,7 +106,7 @@ public class CloudTopic {
         String host = endpoint.getHost();
         String[] hostPieces = host.split("\\.");
         this.accountId = hostPieces[0];
-        this.region = hostPieces[2].split("-internal")[0];
+        this.region = serviceClient.getRegion();
 
         String uri = endpoint.toString();
         if (!uri.endsWith("/")) {
@@ -214,7 +215,7 @@ public class CloudTopic {
         SetTopicAttrAction action = new SetTopicAttrAction(serviceClient, credentials, endpoint);
         SetTopicAttrRequest request = new SetTopicAttrRequest();
         request.setTopicMeta(meta);
-        request.setRequestPath(MNSConstants.QUEUE_PREFIX + meta.getTopicName());
+        request.setRequestPath(MNSConstants.TOPIC_PREFIX + meta.getTopicName());
         return action.executeWithCustomHeaders(request, callback, customHeaders);
     }
 

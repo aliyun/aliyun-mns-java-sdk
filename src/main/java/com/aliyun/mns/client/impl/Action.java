@@ -29,15 +29,15 @@ import com.aliyun.mns.common.http.ServiceClient;
 import com.aliyun.mns.model.AbstractRequest;
 
 public interface Action<T extends AbstractRequest, V> {
-    public String getActionName();
+    String getActionName();
 
-    public HttpMethod getMethod();
+    HttpMethod getMethod();
 
-    public ServiceClient getClient();
+    ServiceClient getClient();
 
-    public ServiceCredentials getCredentials();
+    ServiceCredentials getCredentials();
 
-    public AsyncResult<V> execute(T reqObject, AsyncCallback<V> asyncHandler) throws ClientException, ServiceException;
+    AsyncResult<V> execute(T reqObject, AsyncCallback<V> asyncHandler) throws ClientException, ServiceException;
 
-    public V execute(T reqObject) throws ClientException, ServiceException;
+    V execute(T reqObject) throws ClientException, ServiceException;
 }

@@ -38,7 +38,7 @@ public class BatchReceiveMessageActionTest {
         RequestMessage result = (RequestMessage) buildRequestMethod.invoke(batchReceiveMessageAction, batchReceiveMessageRequest);
 
         // expect the resource path contains the waitSeconds parameter
-        Assert.assertTrue(result.getResourcePath().contains(MNSConstants.PARAM_WAITSECONDS));
+        Assert.assertTrue(result.getResourcePath().contains(MNSConstants.PARAM_WAIT_SECONDS));
     }
 
     @Test
@@ -48,7 +48,7 @@ public class BatchReceiveMessageActionTest {
         RequestMessage result = (RequestMessage) buildRequestMethod.invoke(batchReceiveMessageAction, batchReceiveMessageRequest);
 
         // expect the resource path does not contain the waitSeconds parameter
-        Assert.assertFalse(result.getResourcePath().contains(MNSConstants.PARAM_WAITSECONDS));
+        Assert.assertFalse(result.getResourcePath().contains(MNSConstants.PARAM_WAIT_SECONDS));
     }
 
     @Test
@@ -60,7 +60,7 @@ public class BatchReceiveMessageActionTest {
         RequestMessage result = (RequestMessage) buildRequestMethod.invoke(batchReceiveMessageAction, batchReceiveMessageRequest);
 
         // expect the resource path does not contain the waitSeconds parameter
-        Assert.assertFalse(result.getResourcePath().contains(MNSConstants.PARAM_WAITSECONDS));
+        Assert.assertFalse(result.getResourcePath().contains(MNSConstants.PARAM_WAIT_SECONDS));
     }
 
     private BatchReceiveMessageRequest buildBatchReceiveMessageRequest() {

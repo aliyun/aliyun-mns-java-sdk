@@ -20,9 +20,16 @@
 package com.aliyun.mns.model;
 
 public class AbstractRequest {
-    protected String requestPath;
+
+    /**
+     * URI路径，不需要序列化
+     */
+    protected transient String requestPath;
     //protected ServiceCredentials credentials;
-    protected String host;
+    /**
+     * Host地址，不需要序列化
+     */
+    protected transient String host;
 
     public String getRequestPath() {
         return requestPath;

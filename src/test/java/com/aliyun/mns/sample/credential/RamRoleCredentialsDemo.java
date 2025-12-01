@@ -19,14 +19,15 @@
 
 package com.aliyun.mns.sample.credential;
 
-import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
+import com.aliyun.mns.client.MNSClientBuilder;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
+import com.aliyun.mns.common.auth.SignVersion;
+import com.aliyun.mns.common.http.ClientConfiguration;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
-import com.aliyun.oss.common.auth.CredentialsProviderFactory;
 import com.aliyuncs.auth.AlibabaCloudCredentialsProvider;
 import com.aliyuncs.auth.BasicCredentials;
 import com.aliyuncs.auth.STSAssumeRoleSessionCredentialsProvider;
@@ -45,7 +46,8 @@ import com.aliyuncs.profile.DefaultProfile;
  *
  * 1. 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
  * 2. ${"user.home"}/.aliyun-mns.properties 文件配置如下：
- *           mns.endpoint=http://xxxxxxx
+ *           mns.accountendpoint=http://xxxxxxx
+ *           mns.regionId=cn-xxxx
  */
 public class RamRoleCredentialsDemo {
 
@@ -53,7 +55,8 @@ public class RamRoleCredentialsDemo {
 
         String queueName = "testQueue";
         // 这个 region Id 和 mns endpoint 为一个region
-        String regionId = "cn-hangzhou";
+        String regionId = ServiceSettings.getMNSRegion(); // eg: "cn-hangzhou";
+        String endpoint = ServiceSettings.getMNSAccountEndpoint(); // eg: http://123.mns.cn-hangzhou.aliyuncs.com
 
         // 从环境变量中获取RAM用户的访问密钥（AccessKey ID和AccessKey Secret）。
         String accessKeyId = System.getenv("MNS_ACCESS_KEY_ID");
@@ -70,13 +73,18 @@ public class RamRoleCredentialsDemo {
 
 
         // 以 mns queue 发消息操作为业务逻辑模拟
-        mnsQueueSendMessage(queueName, provider);
+        mnsQueueSendMessage(regionId, endpoint, queueName, provider);
     }
 
-    private static void mnsQueueSendMessage(String queueName, AlibabaCloudCredentialsProvider provider) {
-        String endpoint = ServiceSettings.getMNSAccountEndpoint();
-        CloudAccount account = new CloudAccount(endpoint, provider);
-        MNSClient client = account.getMNSClient();
+    private static void mnsQueueSendMessage(String regionId, String endpoint, String queueName, AlibabaCloudCredentialsProvider provider) {
+        ClientConfiguration clientConfig = new ClientConfiguration();
+        clientConfig.setSignatureVersion(SignVersion.V4);
+        MNSClient client = MNSClientBuilder.create()
+            .accountEndpoint(endpoint)
+            .credentialsProvider(provider)
+            .clientConfiguration(clientConfig)
+            .region(regionId)
+            .build();
 
         try {
             CloudQueue queue = client.getQueueRef(queueName);
@@ -97,7 +105,6 @@ public class RamRoleCredentialsDemo {
             }
             se.printStackTrace();
         } catch (Exception e) {
-            System.out.println("Unknown exception happened!");
             e.printStackTrace();
         }finally {
 

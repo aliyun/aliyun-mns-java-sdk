@@ -20,14 +20,16 @@ package com.aliyun.mns.sample.scenarios.quickstart.service;
 
 import com.aliyun.mns.client.AsyncCallback;
 import com.aliyun.mns.client.AsyncResult;
-import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.CloudTopic;
 import com.aliyun.mns.client.MNSClient;
+import com.aliyun.mns.client.MNSClientBuilder;
 import com.aliyun.mns.common.BatchDeleteException;
 import com.aliyun.mns.common.BatchSendException;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
+import com.aliyun.mns.common.auth.SignVersion;
+import com.aliyun.mns.common.http.ClientConfiguration;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Base64TopicMessage;
 import com.aliyun.mns.model.ErrorMessageResult;
@@ -39,6 +41,7 @@ import com.aliyun.mns.model.SubscriptionMeta.NotifyContentFormat;
 import com.aliyun.mns.model.TopicMessage;
 import com.aliyun.mns.model.TopicMeta;
 import com.aliyun.mns.sample.topic.subscription.HttpEndpointSubscription;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -61,8 +64,13 @@ public class Sample {
 
     public Sample() {
         // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
-        CloudAccount account = new CloudAccount(ServiceSettings.getMNSAccountEndpoint());
-        client = account.getMNSClient();
+        ClientConfiguration clientConfig = new ClientConfiguration();
+        clientConfig.setSignatureVersion(SignVersion.V4);
+        MNSClient client = MNSClientBuilder.create()
+            .accountEndpoint(ServiceSettings.getMNSAccountEndpoint()) // eg: http://123.mns.cn-hangzhou.aliyuncs.com
+            .clientConfiguration(clientConfig)
+            .region(ServiceSettings.getMNSRegion()) // eg: "cn-hangzhou"
+            .build();
     }
 
     public void queueOperators() {

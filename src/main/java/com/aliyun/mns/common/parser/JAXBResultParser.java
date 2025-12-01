@@ -44,7 +44,7 @@ public class JAXBResultParser implements ResultParser<Object> {
     // Because JAXBContext.newInstance() is a very slow method,
     // it can improve performance a lot to cache the instances of JAXBContext
     // for used context paths or class types.
-    private static HashMap<Object, JAXBContext> cachedContexts = new HashMap<Object, JAXBContext>();
+    private static HashMap<Object, JAXBContext> cachedContexts = new HashMap<>();
 
     static {
         saxParserFactory.setNamespaceAware(true);
@@ -98,13 +98,7 @@ public class JAXBResultParser implements ResultParser<Object> {
             // than to call Unmarshaller#unmarshall(InputStream)
             // if XMLReader is specified in the SAXSource instance.
             return um.unmarshal(getSAXSource(is));
-        } catch (JAXBException e) {
-            throw new ResultParseException(ResourceManager.getInstance(ServiceConstants.RESOURCE_NAME_COMMON)
-                .getString("FailedToParseResponse"), e);
-        } catch (SAXException e) {
-            throw new ResultParseException(ResourceManager.getInstance(ServiceConstants.RESOURCE_NAME_COMMON)
-                .getString("FailedToParseResponse"), e);
-        } catch (ParserConfigurationException e) {
+        } catch (JAXBException | SAXException | ParserConfigurationException e) {
             throw new ResultParseException(ResourceManager.getInstance(ServiceConstants.RESOURCE_NAME_COMMON)
                 .getString("FailedToParseResponse"), e);
         }

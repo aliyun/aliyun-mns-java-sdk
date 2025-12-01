@@ -47,6 +47,10 @@ public class ServiceSettings {
         return properties.getProperty("mns.accountendpoint");
     }
 
+    public static String getMNSRegion() {
+        return properties.getProperty("mns.region");
+    }
+
     public static void setMNSAccountEndpoint(String accountEndpoint) {
         properties.setProperty("mns.accountendpoint", accountEndpoint);
     }
@@ -104,7 +108,7 @@ public class ServiceSettings {
     /**
      * Load settings from the configuration file.
      * <p>
-     * The configuration format: mns.endpoint= mns.accesskeyid= mns.accesskeysecret= proxy.host= proxy.port=
+     * The configuration format: mns.accountendpoint= mns.accesskeyid= mns.accesskeysecret= proxy.host= proxy.port=
      * </p>
      */
     public static void load() {

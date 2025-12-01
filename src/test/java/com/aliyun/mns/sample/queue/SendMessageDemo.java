@@ -19,25 +19,27 @@
 
 package com.aliyun.mns.sample.queue;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
+import com.aliyun.mns.client.MNSClientBuilder;
 import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.ServiceException;
+import com.aliyun.mns.common.auth.SignVersion;
+import com.aliyun.mns.common.http.ClientConfiguration;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.model.Message;
 import com.aliyun.mns.model.MessagePropertyValue;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
 /**
- * 1. 遵循阿里云规范，env 设置
- * ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment
- * -variable-on-linux-macos-and-windows-systems
+ * 1. 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
  * 2. ${"user.home"}/.aliyun-mns.properties 文件配置如下：
- * mns.endpoint=http://xxxxxxx
- * mns.msgBodyBase64Switch=true/false
+ *           mns.accountendpoint=http://xxxxxxx
+ *           mns.regionId=cn-xxxx
+ *           mns.msgBodyBase64Switch=true/false
  */
 public class SendMessageDemo {
 
@@ -51,15 +53,25 @@ public class SendMessageDemo {
 
     public static void main(String[] args) {
         // 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
-        CloudAccount account = new CloudAccount(ServiceSettings.getMNSAccountEndpoint());
-        MNSClient client = account.getMNSClient();
+        ClientConfiguration clientConfig = new ClientConfiguration();
+        clientConfig.setSignatureVersion(SignVersion.V4);
+        MNSClient client = MNSClientBuilder.create()
+            .accountEndpoint(ServiceSettings.getMNSAccountEndpoint()) // eg: http://123.mns.cn-hangzhou.aliyuncs.com
+            .clientConfiguration(clientConfig)
+            .region(ServiceSettings.getMNSRegion()) // eg: "cn-hangzhou"
+            .build();
 
         // Demo for send message code, send 10 test message
         try {
             CloudQueue queue = client.getQueueRef(QUEUE_NAME);
             for (int i = 0; i < 10; i++) {
                 Message message = new Message();
-                String messageValue = "demo_message_body" + i;
+                //String messageValue = "demo_message_body" + i;
+                // 生成 1~512 KB 随机大小的可读字符串
+                int xKB = new Random().nextInt(512) + 1;
+                String messageValue = generateRandomReadableString(1);
+                System.out.println("Generated message body size: " + xKB + " KB");
+
                 if (IS_BASE64) {
                     // base 64 编码
                     message.setMessageBody(messageValue);
@@ -95,4 +107,21 @@ public class SendMessageDemo {
         client.close();
     }
 
+    // 在类中添加以下方法
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+[]{}|;:,.<>?/";
+
+    /**
+     * 生成指定大小（KB）的随机可读字符串
+     */
+    public static String generateRandomReadableString(int sizeInKB) {
+        int sizeInBytes = sizeInKB * 1024;
+        StringBuilder sb = new StringBuilder(sizeInBytes);
+        Random random = new Random();
+
+        for (int i = 0; i < sizeInBytes; i++) {
+            sb.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
+        }
+
+        return sb.toString();
+    }
 }

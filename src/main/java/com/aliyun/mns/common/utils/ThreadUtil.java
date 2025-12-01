@@ -1,11 +1,8 @@
 package com.aliyun.mns.common.utils;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -26,14 +23,11 @@ public class ThreadUtil {
     private static final ThreadPoolExecutor DEFAULT_THREAD_POOL_EXECUTOR = ThreadUtil.initThreadPoolExecutorAbort();
 
     public static ScheduledExecutorService initScheduledExecutorService(final String name,final boolean isDaemon,Integer poolSize){
-        ThreadFactory threadFactory = new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread t = new Thread(r);
-                t.setName(name);
-                t.setDaemon(isDaemon);
-                return t;
-            }
+        ThreadFactory threadFactory = r -> {
+            Thread t = new Thread(r);
+            t.setName(name);
+            t.setDaemon(isDaemon);
+            return t;
         };
         if (poolSize == null || poolSize == 0){
             poolSize = Runtime.getRuntime().availableProcessors() * 2;
@@ -66,7 +60,7 @@ public class ThreadUtil {
         // 存活时间的单位
         TimeUnit timeUnit = TimeUnit.MILLISECONDS;
         // 设置缓存队列,设置大小为2000，防止 oom
-        BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<Runnable>(2000);
+        BlockingQueue<Runnable> workQueue = new LinkedBlockingQueue<>(2000);
         // 使用默认的工厂类，不做改动
         ThreadFactory namedThreadFactory = Executors.defaultThreadFactory();
         // RejectedExecutionHandler  中的AbortPolicy 策略，默认若超出了，则直接抛出异常，不对新的任务进行处理
@@ -90,12 +84,7 @@ public class ThreadUtil {
      * 设置多线程处理,不等待处理完即返回
      */
     public static void asyncWithoutReturn(ThreadPoolExecutor threadPoolExecutor, final AsyncRunInterface asyncRunInterface){
-        threadPoolExecutor.execute(new Runnable() {
-            @Override
-            public void run() {
-                asyncRunInterface.run();
-            }
-        });
+        threadPoolExecutor.execute(asyncRunInterface::run);
     }
 
     /**
@@ -106,14 +95,9 @@ public class ThreadUtil {
             maxThreadNum = 50;
         }
 
-        List<Future<?>> futures = new ArrayList<Future<?>>();
+        List<Future<?>> futures = new ArrayList<>();
         for (int i = 0; i < maxThreadNum; i++) {
-            Future<?> future = threadPoolExecutor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    asyncRunInterface.run();
-                }
-            });
+            Future<?> future = threadPoolExecutor.submit(asyncRunInterface::run);
             futures.add(future);
         }
 

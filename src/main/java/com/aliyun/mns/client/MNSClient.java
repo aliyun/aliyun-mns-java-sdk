@@ -32,14 +32,14 @@ public interface MNSClient {
     /**
      * 关闭 client, close之后这个client的资源可能随时被释放
      */
-    public void close();
+    void close();
 
     /**
      * 检查client是否为打开状态
      *
      * @return is open or not
      */
-    public boolean isOpen();
+    boolean isOpen();
 
     /**
      * 设置当前用户的账号级别属性
@@ -48,7 +48,7 @@ public interface MNSClient {
      * @throws ServiceException exception
      * @throws ClientException  exception
      */
-    public void SetAccountAttributes(AccountAttributes accountAttributes) throws ServiceException, ClientException;
+    void setAccountAttributes(AccountAttributes accountAttributes) throws ServiceException, ClientException;
 
     /**
      * 获取当前用户的账号级别属性
@@ -57,7 +57,7 @@ public interface MNSClient {
      * @throws ServiceException exception
      * @throws ClientException  exception
      */
-    public AccountAttributes GetAccountAttributes() throws ServiceException, ClientException;
+    AccountAttributes getAccountAttributes() throws ServiceException, ClientException;
 
     /**
      * 根据队列的URL创建CloudQueue对象，后于后续对改对象的创建、查询等
@@ -65,7 +65,7 @@ public interface MNSClient {
      * @param queueName exception
      * @return CloudQueue object
      */
-    public CloudQueue getQueueRef(String queueName);
+    CloudQueue getQueueRef(String queueName);
 
     /**
      * 创建队列
@@ -75,7 +75,7 @@ public interface MNSClient {
      * @throws ClientException  exception
      * @throws ServiceException exception
      */
-    public CloudQueue createQueue(QueueMeta queue) throws ClientException,
+    CloudQueue createQueue(QueueMeta queue) throws ClientException,
         ServiceException;
 
     /**
@@ -90,7 +90,7 @@ public interface MNSClient {
      * The product no longer supports this function
      */
     @Deprecated
-    public TransactionQueue getTransQueueRef(String queueName, TransactionChecker checker);
+    TransactionQueue getTransQueueRef(String queueName, TransactionChecker checker);
 
     /**
      * Creates transaction queue.
@@ -108,7 +108,7 @@ public interface MNSClient {
      * The product no longer supports this function
      */
     @Deprecated
-    public TransactionQueue createTransQueue(QueueMeta queueMeta, TransactionChecker checker, long lifeTime,
+    TransactionQueue createTransQueue(QueueMeta queueMeta, TransactionChecker checker, long lifeTime,
         long delayTime) throws ClientException,
         ServiceException;
 
@@ -124,7 +124,7 @@ public interface MNSClient {
      * The product no longer supports this function
      */
     @Deprecated
-    public TransactionQueue createTransQueue(QueueMeta queueMeta,
+    TransactionQueue createTransQueue(QueueMeta queueMeta,
         TransactionChecker checker) throws ClientException, ServiceException;
 
     /**
@@ -138,7 +138,7 @@ public interface MNSClient {
      * @throws ClientException  exception
      * @throws ServiceException exception
      */
-    public CloudPullTopic createPullTopic(TopicMeta topicMeta, Vector<String> queueNameList, boolean needCreateQueue,
+    CloudPullTopic createPullTopic(TopicMeta topicMeta, Vector<String> queueNameList, boolean needCreateQueue,
         QueueMeta queueMetaTemplate) throws ClientException, ServiceException;
 
     /**
@@ -153,7 +153,7 @@ public interface MNSClient {
      * @throws ClientException  exception
      * @throws ServiceException exception
      */
-    public CloudPullTopic createPullTopic(TopicMeta topicMeta, Vector<String> queueNameList, boolean needCreateQueue,
+    CloudPullTopic createPullTopic(TopicMeta topicMeta, Vector<String> queueNameList, boolean needCreateQueue,
         QueueMeta queueMetaTemplate, Vector<String> tagList) throws ClientException, ServiceException;
 
     /**
@@ -165,7 +165,7 @@ public interface MNSClient {
      * @throws ClientException  exception
      * @throws ServiceException exception
      */
-    public CloudPullTopic createPullTopic(TopicMeta topicMeta,
+    CloudPullTopic createPullTopic(TopicMeta topicMeta,
         Vector<String> queueNameList) throws ClientException, ServiceException;
 
     /**
@@ -179,7 +179,7 @@ public interface MNSClient {
      * The product no longer supports this function
      */
     @Deprecated
-    public TransactionQueue createTransQueue(QueueMeta queueMeta) throws ClientException, ServiceException;
+    TransactionQueue createTransQueue(QueueMeta queueMeta) throws ClientException, ServiceException;
 
     /**
      * 列举队列
@@ -208,12 +208,12 @@ public interface MNSClient {
         Integer retNumber) throws ClientException, ServiceException;
 
     /**
-     * 根据Tpoic的URL创建CloudTopic对象，后于后续对改对象的创建、查询等
+     * 根据Topic的URL创建CloudTopic对象，后于后续对改对象的创建、查询等
      *
      * @param topicName topic name
      * @return CloudTopic
      */
-    public CloudTopic getTopicRef(String topicName);
+    CloudTopic getTopicRef(String topicName);
 
     /**
      * 根据Topic的meta数据，创建CloudTopic对象，用于后续的消息发送等
@@ -221,7 +221,7 @@ public interface MNSClient {
      * @param meta CloudTpoic的meta数据
      * @return CloudTpoic对象
      */
-    public CloudTopic createTopic(TopicMeta meta) throws ServiceException;
+    CloudTopic createTopic(TopicMeta meta) throws ServiceException;
 
     /**
      * @param prefix    topic name前缀
@@ -231,7 +231,7 @@ public interface MNSClient {
      * @throws ClientException  exception
      * @throws ServiceException exception
      */
-    public PagingListResult<TopicMeta> listTopic(String prefix, String marker,
+    PagingListResult<TopicMeta> listTopic(String prefix, String marker,
         Integer retNumber) throws ClientException, ServiceException;
 
     /**
@@ -242,7 +242,7 @@ public interface MNSClient {
      * @throws ClientException  exception
      * @throws ServiceException exception
      */
-    public PagingListResult<String> listTopicURL(String prefix, String marker,
+    PagingListResult<String> listTopicURL(String prefix, String marker,
         Integer retNumber) throws ClientException, ServiceException;
 
     /**
@@ -250,5 +250,5 @@ public interface MNSClient {
      *
      * @return response
      */
-    public OpenServiceResponse openService() throws ServiceException;
+    OpenServiceResponse openService() throws ServiceException;
 }

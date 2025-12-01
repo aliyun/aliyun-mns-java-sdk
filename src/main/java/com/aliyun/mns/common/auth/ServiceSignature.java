@@ -19,20 +19,39 @@
 
 package com.aliyun.mns.common.auth;
 
+import com.aliyun.mns.common.utils.BinaryUtil;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
 /**
- * 表示用于计算访问签名的接口。
+ * 采用哈希算法进行签名的处理类
  */
 public abstract class ServiceSignature {
-    public ServiceSignature() {
+
+    private static final Object LOCK = new Object();
+
+    protected volatile Mac macInstance;
+
+    protected ServiceSignature() {
+        lazyInitMacInstance();
     }
 
-    /**
-     * 创建默认的<code>ServiceSignature</code>实例。
-     *
-     * @return 默认的<code>ServiceSignature</code>实现。
-     */
-    public static ServiceSignature create() {
-        return new HmacSHA1Signature();
+    private void lazyInitMacInstance() {
+        if (macInstance == null) {
+            synchronized (LOCK) {
+                if (macInstance == null) {
+                    try {
+                        macInstance = Mac.getInstance(getAlgorithm());
+                    } catch (NoSuchAlgorithmException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -43,18 +62,39 @@ public abstract class ServiceSignature {
     public abstract String getAlgorithm();
 
     /**
-     * 获取签名算法的版本信息。
-     *
-     * @return 签名算法的版本。
-     */
-    public abstract String getVersion();
-
-    /**
      * 计算签名。
      *
      * @param key  签名所需的密钥，对应于访问的Access Key。
      * @param data 用于计算签名的字符串信息。
      * @return 签名字符串。
      */
-    public abstract String computeSignature(String key, String data);
+    public String computeHashAndBase64Encode(String key, String data) {
+        byte[] keyBytes = key.getBytes(StandardCharsets.UTF_8);
+        byte[] dataBytes = data.getBytes(StandardCharsets.UTF_8);
+        byte[] signData = sign(keyBytes, dataBytes, macInstance, getAlgorithm());
+        return BinaryUtil.toBase64String(signData);
+    }
+
+    public byte[] computeHash(byte[] key, byte[] data) {
+        return this.sign(key, data, macInstance, getAlgorithm());
+    }
+
+    private byte[] sign(byte[] key, byte[] data, Mac macInstance, String algorithm) {
+        try {
+            Mac mac;
+            try {
+                mac = (Mac)macInstance.clone();
+            } catch (CloneNotSupportedException e) {
+                // If it is not clonable, create a new one.
+                mac = Mac.getInstance(algorithm);
+            }
+            mac.init(new SecretKeySpec(key, algorithm));
+            return mac.doFinal(data);
+        } catch (NoSuchAlgorithmException ex) {
+            throw new RuntimeException("Unsupported algorithm: " + algorithm, ex);
+        } catch (InvalidKeyException ex) {
+            throw new RuntimeException("Invalid key", ex);
+        }
+    }
+
 }

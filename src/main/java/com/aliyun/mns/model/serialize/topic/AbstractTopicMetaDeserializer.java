@@ -24,7 +24,7 @@ import com.aliyun.mns.model.serialize.XMLDeserializer;
 import org.w3c.dom.Element;
 
 import static com.aliyun.mns.common.MNSConstants.CREATE_TIME_TAG;
-import static com.aliyun.mns.common.MNSConstants.LASTMODIFYTIME_TAG;
+import static com.aliyun.mns.common.MNSConstants.LAST_MODIFY_TIME_TAG;
 import static com.aliyun.mns.common.MNSConstants.LOGGING_ENABLED_TAG;
 import static com.aliyun.mns.common.MNSConstants.MAX_MESSAGE_SIZE_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_COUNT_TAG;
@@ -49,7 +49,7 @@ public abstract class AbstractTopicMetaDeserializer<T> extends XMLDeserializer<T
         String createTime = safeGetElementContent(root, CREATE_TIME_TAG, "0");
         meta.setCreateTime(Long.parseLong(createTime));
 
-        String lastModifyTime = safeGetElementContent(root, LASTMODIFYTIME_TAG, "0");
+        String lastModifyTime = safeGetElementContent(root, LAST_MODIFY_TIME_TAG, "0");
         meta.setLastModifyTime(Long.parseLong(lastModifyTime));
 
         String maxMessageSize = safeGetElementContent(root,

@@ -29,5 +29,5 @@ public interface TransactionOperations {
     /*
      * do the transaction related to the message.
      */
-    public boolean doTransaction(Message message);
+    boolean doTransaction(Message message);
 }

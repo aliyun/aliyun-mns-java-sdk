@@ -19,11 +19,14 @@
 
 package com.aliyun.mns.common.auth;
 
-import com.aliyun.mns.common.ClientException;
 import com.aliyun.mns.common.http.RequestMessage;
 
 public interface RequestSigner {
 
-    public void sign(RequestMessage request)
-        throws ClientException;
+    /**
+     * 客户端生成包含 ak 和 sk密钥签名 的认证信息。后续在调用服务端时放置于请求头中，供服务端进行身份校验。
+     */
+    String getAuthorization(String accessKeyId, String accessKeySecret,
+                            RequestMessage request, String region);
+
 }

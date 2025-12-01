@@ -19,29 +19,32 @@
 
 package com.aliyun.mns.sample.scenarios.perf;
 
-import com.aliyun.mns.client.CloudAccount;
 import com.aliyun.mns.client.CloudQueue;
 import com.aliyun.mns.client.MNSClient;
+import com.aliyun.mns.client.MNSClientBuilder;
 import com.aliyun.mns.common.ServiceException;
 import com.aliyun.mns.common.ServiceHandlingRequiredException;
+import com.aliyun.mns.common.auth.SignVersion;
 import com.aliyun.mns.common.http.ClientConfiguration;
 import com.aliyun.mns.common.utils.ServiceSettings;
 import com.aliyun.mns.common.utils.ThreadUtil;
 import com.aliyun.mns.model.Message;
 import com.aliyun.mns.sample.utils.ReCreateUtil;
+import org.apache.commons.lang3.StringUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * 并发测试示例代码
  * 前置要求
  * 1. 遵循阿里云规范，env 设置 ak、sk，详见：https://help.aliyun.com/zh/sdk/developer-reference/configure-the-alibaba-cloud-accesskey-environment-variable-on-linux-macos-and-windows-systems
  * 2.  ${"user.home"}/.aliyun-mns.properties 文件配置如下：
- *          mns.endpoint=http://xxxxxxx
+ *          mns.accountendpoint=http://xxxxxxx
+ *          mns.regionId=cn-xxxx
  *          mns.perf.queueName=JavaSDKPerfTestQueue # queue名称
  *          mns.perf.threadNum=200 # 并发线程数
  *          mns.perf.durationTime=180 # 测试持续时间（秒）
@@ -69,8 +72,12 @@ public class JavaSDKPerfTest {
         ClientConfiguration clientConfiguration = new ClientConfiguration();
         clientConfiguration.setMaxConnections(threadNum);
         clientConfiguration.setMaxConnectionsPerRoute(threadNum);
-        CloudAccount cloudAccount = new CloudAccount(endpoint, clientConfiguration);
-        client = cloudAccount.getMNSClient();
+        clientConfiguration.setSignatureVersion(SignVersion.V4);
+        MNSClient client = MNSClientBuilder.create()
+            .accountEndpoint(endpoint) // eg: http://123.mns.cn-hangzhou.aliyuncs.com
+            .clientConfiguration(clientConfiguration)
+            .region(ServiceSettings.getMNSRegion()) // eg: "cn-hangzhou"
+            .build();
 
         // 2. reCreateQueue
         ReCreateUtil.reCreateQueue(client,queueName);

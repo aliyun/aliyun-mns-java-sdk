@@ -20,6 +20,7 @@
 package com.aliyun.mns.common.auth;
 
 import com.aliyuncs.auth.AlibabaCloudCredentialsProvider;
+import org.apache.commons.lang3.StringUtils;
 
 import static com.aliyun.mns.common.utils.CodingUtils.assertParameterNotNull;
 
@@ -88,6 +89,7 @@ public class ServiceCredentials {
      * @param accessKeyId Access Key ID。
      */
     public void setAccessKeyId(String accessKeyId) {
+        accessKeyId = StringUtils.trimToNull(accessKeyId);
         assertParameterNotNull(accessKeyId, "accessKeyId");
         this.accessKeyId = accessKeyId;
     }
@@ -107,6 +109,7 @@ public class ServiceCredentials {
      * @param accessKeySecret Access Key Secret。
      */
     public void setAccessKeySecret(String accessKeySecret) {
+        accessKeySecret = StringUtils.trimToNull(accessKeySecret);
         assertParameterNotNull(accessKeySecret, "accessKeySecret");
 
         this.accessKeySecret = accessKeySecret;
@@ -127,7 +130,7 @@ public class ServiceCredentials {
      * @param securityToken token.
      */
     public void setSecurityToken(String securityToken) {
-        this.securityToken = securityToken;
+        this.securityToken = StringUtils.trimToNull(securityToken);
     }
 
     /**

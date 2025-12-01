@@ -28,7 +28,7 @@ import static com.aliyun.mns.common.MNSConstants.DELAY_SECONDS_TAG;
 import static com.aliyun.mns.common.MNSConstants.LOGGING_ENABLED_TAG;
 import static com.aliyun.mns.common.MNSConstants.MAX_MESSAGE_SIZE_TAG;
 import static com.aliyun.mns.common.MNSConstants.MESSAGE_RETENTION_PERIOD_TAG;
-import static com.aliyun.mns.common.MNSConstants.POLLING_WAITSECONDS_TAG;
+import static com.aliyun.mns.common.MNSConstants.POLLING_WAIT_SECONDS_TAG;
 import static com.aliyun.mns.common.MNSConstants.QUEUE_TAG;
 import static com.aliyun.mns.common.MNSConstants.VISIBILITY_TIMEOUT;
 
@@ -46,7 +46,7 @@ public class QueueMetaSerializer extends XMLSerializer<QueueMeta> {
             put(VISIBILITY_TIMEOUT, QueueMeta::getVisibilityTimeout);
             put(MAX_MESSAGE_SIZE_TAG, QueueMeta::getMaxMessageSize);
             put(MESSAGE_RETENTION_PERIOD_TAG, QueueMeta::getMessageRetentionPeriod);
-            put(POLLING_WAITSECONDS_TAG, QueueMeta::getPollingWaitSeconds);
+            put(POLLING_WAIT_SECONDS_TAG, QueueMeta::getPollingWaitSeconds);
             put(LOGGING_ENABLED_TAG, QueueMeta::isLoggingEnabled);
         }};
     }

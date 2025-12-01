@@ -30,19 +30,6 @@ public class BaseXMLSerializer<T> {
 
     private static ThreadLocal<DocumentBuilder> sps = new ThreadLocal<DocumentBuilder>();
 
-    /**
-     * 该方法已废弃，请使用 {@link #getDocumentBuilder()}
-     */
-    @Deprecated
-    protected DocumentBuilder getDocmentBuilder() throws ParserConfigurationException {
-        DocumentBuilder db = sps.get();
-        if (db == null) {
-            db = factory.newDocumentBuilder();
-            sps.set(db);
-        }
-        return db;
-    }
-
     protected DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
         DocumentBuilder db = sps.get();
         if (db == null) {
